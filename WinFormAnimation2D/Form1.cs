@@ -17,17 +17,75 @@ namespace WinFormAnimation2D
 {
     public partial class MyForm : Form
     {
+        private World world = new World();
+        private bool drawModel = false;
+
+        public Timer tm = new Timer();
+        public int cur_count = 1;
+        public bool animate = false;
+
         public MyForm()
         {
             InitializeComponent();
-            LoadModel();
+            tm.Interval = 150;
+            tm.Tick += delegate { this.pictureBox_main.Invalidate(); };
+            // world.RenderModel(this.button_start.CreateGraphics());
         }
         
-		protected override void OnPaint(PaintEventArgs pea)
+		protected void DoRedraw()
 		{
-			// should do this a long time ago
-			Graphics g = pea.Graphics;
-            g.DrawRectangle(new Pen(Color.AliceBlue, 3.0f), new Rectangle(10, 10, 500, 500));
+			Invalidate ();
+			foreach (Control ctrl in Controls)
+				ctrl.Invalidate();
+		}
+
+		protected override void OnMove (EventArgs ea)
+		{
+			base.OnMove(ea);
+            DoRedraw();
+		}
+
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Starting everything");
+            animate = true;
+            //tm.Start();
+        }
+
+        private void pictureBox_main_Paint(object sender, PaintEventArgs e)
+        {
+ 			// should do this a long time ago
+			Graphics g = e.Graphics;
+            //g.TranslateTransform(50, 50);
+            //RecursiveRender(Current_Scene.mRootNode);
+            // g.DrawRectangle(new Pen(Color.Blue, 10.0f), new Rectangle(500, 200, 40, 70));
+            g.DrawRectangle(new Pen(Color.Blue, 10.0f), pictureBox_main.DisplayRectangle);
+            // g.DrawEllipse(Pens.Green, new Rectangle(0, 0, 10, 10));
+
+            // g.DrawPoint(new Point(500, 50));
+
+            // g.ScaleTransform(15.0f, 15.0f);
+            world.RenderModel(g);
+
+            /***
+            if (animate)
+            {
+                Random rand = new Random();
+                g.MultiplyTransform(world.debug_mat);
+                foreach (Point p in world.debug_vertices.Take(cur_count))
+                {
+                    Point p = world.debug_mat.TransformPoints()
+                    g.DrawPoint(p);
+                }
+                cur_count++;
+                if (cur_count >= world.debug_vertices.Count)
+                {
+                    animate = false;
+                    tm.Stop();
+                }
+            }
+            ***/
 
             // How to draw example
             /*
@@ -40,51 +98,6 @@ namespace WinFormAnimation2D
 			g.ResetClip ();
 			g.Restore(transState);	
             */
-		}
-
-
-		protected void DoRedraw()
-		{
-			Invalidate ();
-			foreach (Control ctrl in Controls)
-				ctrl.Invalidate();
-		}
-
-		protected override void OnMove (EventArgs ea)
-		{
-			base.OnMove (ea);
-            DoRedraw();
-		}
-
-        static void LoadModel()
-        {
-            //Filepath to our model
-            string curdir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location); 
-            String fileName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Seymour.dae");
-
-            //Create a new importer
-            AssimpContext importer = new AssimpContext();
-
-            //This is how we add a configuration (each config is its own class)
-            NormalSmoothingAngleConfig config = new NormalSmoothingAngleConfig(66.0f);
-            importer.SetConfig(config);
-
-            //This is how we add a logging callback 
-            LogStream logstream = new LogStream(delegate (String msg, String userData) {
-                Console.WriteLine(msg);
-            });
-            logstream.Attach();
-
-            //Import the model. All configs are set. The model
-            //is imported, loaded into managed memory. Then the unmanaged memory is released, and everything is reset.
-            Scene model = importer.ImportFile(fileName, PostProcessPreset.TargetRealTimeMaximumQuality);
-
-            Console.WriteLine("All is good artem !!!!!");
-            //TODO: Load the model data into your own structures
-
-            //End of example
-            importer.Dispose();
         }
-
     }
 }

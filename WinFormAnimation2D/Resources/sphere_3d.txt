@@ -1,3 +1,9 @@
 # begin file
-s 0.0 0.0 1.0 3.0
+# s 50.0 15.0 99.0 4.5
+# polygon of a square. top left is (100, 100) bottom right is (500, 300)
+p 4
+100.0 100.0 0.0
+100.0 300.0 0.0
+500.0 100.0 0.0
+500.0 300.0 0.0
 # end file
