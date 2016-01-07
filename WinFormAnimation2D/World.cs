@@ -18,9 +18,10 @@ namespace WinFormAnimation2D
         /// debug stuff
         public List<Point> debug_vertices = new List<Point>();
         public Matrix debug_mat = null;
+        public Point[] debug_points = null;
         
         /// This is a singleton
-        static bool hasInit = false;
+        private static bool hasInit = false;
         
         /// Currently loaded assimp scene
         private static Scene Current_Scene = null;
@@ -79,7 +80,12 @@ namespace WinFormAnimation2D
         /// </summary>
         public void RenderModel(Graphics g)
         {
-            RecursiveRender(g, Current_Scene.RootNode, new Matrix());
+            RenderPoints(g);
+        }
+
+        public void ApplyMatrix(Graphics g, Matrix mat)
+        {
+            RecursiveApplyMatrix(g, Current_Scene.RootNode, mat);
         }
 
         //-------------------------------------------------------------------------------------------------
@@ -87,7 +93,8 @@ namespace WinFormAnimation2D
         // Begin at the root node of the imported data and traverse
         // the scenegraph by multiplying subsequent local transforms
         // together on OpenGL matrix stack.
-        private void RecursiveRender(Graphics g, Node nd, Matrix mat)
+        // We want the matrix to change only the point's positions, not how the triangles are drawn.
+        private void RecursiveApplyMatrix(Graphics g, Node nd, Matrix mat)
         {
             Matrix4x4 mat44 = nd.Transform;
             var cur_mat = mat44.To3x2();
@@ -100,26 +107,31 @@ namespace WinFormAnimation2D
             foreach(int mesh_id in nd.MeshIndices)
             {
                 Mesh cur_mesh = Current_Scene.Meshes[mesh_id];
+                mat.TransformPoints(debug_points);
                 foreach (Face cur_face in cur_mesh.Faces)
                 {
                     // get array of all points
-                    var points = cur_face.Indices.Select(i => cur_mesh.Vertices[i].ToPoint()).ToArray();
+                    // var points = cur_face.Indices.Select(i => cur_mesh.Vertices[i].ToPoint()).ToList();
                     // apply transformation matrix to each point
-                    mat.TransformPoints(points);
-                    foreach (var p in points)
-                    {
-                        // Bad code to draw a single point.
-                        // Better use DrawEllipse.
-                        // But too lazy.
-                        g.DrawPoint(p);
-                    }
+                    // mat.TransformPoints(debug_points.ToArray());
                 }
             }
 
             // draw all children
             foreach (Node child in nd.Children)
             {
-                RecursiveRender(g, child, mat.Clone());
+                RecursiveApplyMatrix(g, child, mat.Clone());
+            }
+        }
+
+        private void RenderPoints(Graphics g)
+        {
+            foreach (var p in debug_points)
+            {
+                // Bad code to draw a single point.
+                // Better use DrawEllipse.
+                // But too lazy.
+                g.DrawPoint(p);
             }
         }
 
