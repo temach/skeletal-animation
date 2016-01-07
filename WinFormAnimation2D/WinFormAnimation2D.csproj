@@ -98,6 +98,7 @@
     <None Include="Resources\bird_plane_5.obj" />
     <None Include="Resources\bird_plane_6.obj" />
     <None Include="Resources\bird_plane_7.dae" />
+    <None Include="Resources\bird_plane_8.dae" />
     <None Include="Resources\sphere_3d.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

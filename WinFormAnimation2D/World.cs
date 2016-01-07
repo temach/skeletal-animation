@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.Drawing;
 using System.IO;        // for MemoryStream
+using System.Reflection;
 
 
 namespace WinFormAnimation2D
@@ -19,6 +20,8 @@ namespace WinFormAnimation2D
         public List<Point> debug_vertices = new List<Point>();
         public Matrix debug_mat = null;
         public Point[] debug_points = null;
+        public Random rand = new Random();
+        public int rand_brush_count = 0;
         
         /// This is a singleton
         private static bool hasInit = false;
@@ -34,7 +37,7 @@ namespace WinFormAnimation2D
 
             //Filepath to our model
             // byte[] filedata = Encoding.UTF8.GetBytes(Properties.Resources.sphere_3d);
-            byte[] filedata = Properties.Resources.bird_plane_6;
+            byte[] filedata = Properties.Resources.bird_plane_8;
 
             MemoryStream sphere = new MemoryStream(filedata);
 
@@ -42,10 +45,32 @@ namespace WinFormAnimation2D
             // LoadModel(sphere, "nff");
 
             // use format "dae" for bird_plane
-            // LoadModel(sphere, "dae");
+            LoadModel(sphere, "dae");
 
             // use format "obj" for bird_plane_5
-            LoadModel(sphere, "obj");
+            // LoadModel(sphere, "obj");
+        }
+
+        /// <summary>
+        /// Get a brush of random color.
+        /// </summary>
+        /// <returns></returns>
+        public Brush GetRandBrush()
+        {
+            rand_brush_count++;
+            switch (rand_brush_count % 4)
+            {
+                case 0:
+                    return Brushes.LawnGreen;
+                case 1:
+                    return Brushes.Green;
+                case 2:
+                    return Brushes.GreenYellow;
+                case 3:
+                    return Brushes.LightSeaGreen;
+                default:
+                    return Brushes.Red;
+            }
         }
 
         public void LoadModel(MemoryStream model_data, string format_hint)
@@ -80,12 +105,7 @@ namespace WinFormAnimation2D
         /// </summary>
         public void RenderModel(Graphics g)
         {
-            RenderPoints(g);
-        }
-
-        public void ApplyMatrix(Graphics g, Matrix mat)
-        {
-            RecursiveApplyMatrix(g, Current_Scene.RootNode, mat);
+            RecursiveRender(g, Current_Scene.RootNode);
         }
 
         //-------------------------------------------------------------------------------------------------
@@ -93,45 +113,37 @@ namespace WinFormAnimation2D
         // Begin at the root node of the imported data and traverse
         // the scenegraph by multiplying subsequent local transforms
         // together on OpenGL matrix stack.
-        // We want the matrix to change only the point's positions, not how the triangles are drawn.
-        private void RecursiveApplyMatrix(Graphics g, Node nd, Matrix mat)
+        private void RecursiveRender(Graphics g, Node nd)
         {
             Matrix4x4 mat44 = nd.Transform;
-            var cur_mat = mat44.To3x2();
 
-            // accumulate matrix transforms
-            mat.Multiply(cur_mat, MatrixOrder.Append);
-
-            //g.MultiplyTransform(tmp);
+            var tmp = mat44.To3x2();
+            g.MultiplyTransform(tmp);
 
             foreach(int mesh_id in nd.MeshIndices)
             {
                 Mesh cur_mesh = Current_Scene.Meshes[mesh_id];
-                mat.TransformPoints(debug_points);
                 foreach (Face cur_face in cur_mesh.Faces)
                 {
-                    // get array of all points
-                    // var points = cur_face.Indices.Select(i => cur_mesh.Vertices[i].ToPoint()).ToList();
-                    // apply transformation matrix to each point
-                    // mat.TransformPoints(debug_points.ToArray());
+                    // list of 3 vertices
+                    var tri_vertices = cur_face.Indices.Select(i => cur_mesh.Vertices[i].ToPointFloat()).ToArray();
+
+                    // choose random brush color for this triangle
+                    var br = GetRandBrush();
+                    g.FillPolygon(br, tri_vertices);
+
+                    // Bad code to draw a single point. Better use DrawEllipse. But too lazy.
+                    foreach(var p in tri_vertices)
+                    {
+                        //g.DrawPoint(p);
+                    }
                 }
             }
 
             // draw all children
             foreach (Node child in nd.Children)
             {
-                RecursiveApplyMatrix(g, child, mat.Clone());
-            }
-        }
-
-        private void RenderPoints(Graphics g)
-        {
-            foreach (var p in debug_points)
-            {
-                // Bad code to draw a single point.
-                // Better use DrawEllipse.
-                // But too lazy.
-                g.DrawPoint(p);
+                RecursiveRender(g, child);
             }
         }
 

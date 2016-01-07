@@ -65,6 +65,15 @@ namespace WinFormAnimation2D
         {
             return new Point((int)v.X, (int)v.Y);
         }
+
+        /// <summary>
+        /// Convert assimp 3D vector to 2D System.Drawing.PointF (floating point)
+        /// for drawing with Graphics object.
+        /// </summary>
+        public static PointF ToPointFloat(this assimp.Vector3D v)
+        {
+            return new PointF(v.X, v.Y);
+        }
     }
 }
 /**************************

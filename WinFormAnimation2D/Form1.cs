@@ -66,10 +66,7 @@ namespace WinFormAnimation2D
             // g.DrawPoint(new Point(500, 50));
 
             // g.ScaleTransform(15.0f, 15.0f);
-            GraphicsState gr1 = g.Save();
             g.ScaleTransform(3.0f, 3.0f);
-            world.ApplyMatrix(g);
-            g.Restore(gr1);
             world.RenderModel(g);
 
             /***
