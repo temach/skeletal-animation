@@ -135,7 +135,7 @@ namespace WinFormAnimation2D
                     // Bad code to draw a single point. Better use DrawEllipse. But too lazy.
                     foreach(var p in tri_vertices)
                     {
-                        //g.DrawPoint(p);
+                        g.DrawPoint(p);
                     }
                 }
             }

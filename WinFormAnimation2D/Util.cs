@@ -13,6 +13,10 @@ namespace WinFormAnimation2D
 {
     static class Util
     {
+        // Static config fields
+        public static float stepsize = 10.0f;
+        public static double epsilon = 1E-8;
+
         /// <summary>
         /// Big + Green pen to render points on screen
         /// </summary>
@@ -26,7 +30,7 @@ namespace WinFormAnimation2D
         /// <summary>
         /// Small + Red pen to render points on screen
         /// </summary>
-        public static Pen pp3 = new Pen(Color.Red, 5.0f);
+        public static Pen pp3 = new Pen(Color.Red, 0.01f);
 
         /// <summary>
         /// Convert assimp 4 by 4 matrix into 3 by 2 matrix from System.Drawing.Drawing2D and use it
@@ -43,7 +47,7 @@ namespace WinFormAnimation2D
         /// </summary>
         public static void DrawCircle(this Graphics g, Pen pen, Point p, int rad)
         {
-            Rectangle rect = new Rectangle(p.X - rad, p.Y - rad, 2 * rad, 2 * rad);
+            var rect = new RectangleF(p.X - rad, p.Y - rad, 2 * rad, 2 * rad);
             g.DrawEllipse(pen, rect);
         }
 
@@ -52,8 +56,18 @@ namespace WinFormAnimation2D
         /// </summary>
         public static void DrawPoint(this Graphics g, Point p)
         {
-            int rad = 1;        // radius
-            Rectangle rect = new Rectangle(p.X - rad, p.Y - rad, 2 * rad, 2 * rad);
+            float rad = 0.3f;        // radius
+            var rect = new RectangleF(p.X - rad, p.Y - rad, 2 * rad, 2 * rad);
+            g.DrawEllipse(Util.pp3, rect);
+        }
+
+        /// <summary>
+        /// Debug function to quickly draw __floating__ points with Graphics
+        /// </summary>
+        public static void DrawPoint(this Graphics g, PointF p)
+        {
+            float rad = 0.03f;        // radius
+            var rect = new RectangleF(p.X - rad, p.Y - rad, 2 * rad, 2 * rad);
             g.DrawEllipse(Util.pp3, rect);
         }
 

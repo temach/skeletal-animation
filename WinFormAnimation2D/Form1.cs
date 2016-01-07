@@ -24,12 +24,29 @@ namespace WinFormAnimation2D
         public int cur_count = 1;
         public bool animate = false;
 
+        public Matrix camera_matrix = new Matrix();
+
+        private float _zoom = 1.0f;
+        public float Zoom
+        {
+            get {
+                return _zoom;
+            } set {
+                _zoom = value;
+                label_zoom.Text = _zoom.ToString();
+                pictureBox_main.Invalidate();
+            }
+        }
+
         public MyForm()
         {
             InitializeComponent();
             tm.Interval = 150;
             tm.Tick += delegate { this.pictureBox_main.Invalidate(); };
             // world.RenderModel(this.button_start.CreateGraphics());
+
+            // Allow to use arrow keys for navigation
+            KeyPreview = true;
         }
         
 		protected void DoRedraw()
@@ -48,22 +65,27 @@ namespace WinFormAnimation2D
 
         private void button1_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Starting everything");
-            animate = true;
+            pictureBox_main.Invalidate();
+            // MessageBox.Show("Starting everything");
+            // animate = true;
             //tm.Start();
         }
 
         private void pictureBox_main_Paint(object sender, PaintEventArgs e)
         {
- 			// should do this a long time ago
+ 			// Draw program elements
 			Graphics g = e.Graphics;
-            // g.TranslateTransform(100, 100);
-            //RecursiveRender(Current_Scene.mRootNode);
-            // g.DrawRectangle(new Pen(Color.Blue, 10.0f), new Rectangle(500, 200, 40, 70));
             g.DrawRectangle(new Pen(Color.Blue, 10.0f), pictureBox_main.DisplayRectangle);
-            // g.DrawEllipse(Pens.Green, new Rectangle(0, 0, 10, 10));
 
+            // Draw world elements
+            g.MultiplyTransform(camera_matrix);
+
+            // g.DrawEllipse(Pens.Green, new Rectangle(0, 0, 10, 10));
             // g.DrawPoint(new Point(500, 50));
+
+            // g.TranslateTransform(100, 100);
+            // RecursiveRender(Current_Scene.mRootNode);
+            // g.DrawRectangle(new Pen(Color.Blue, 10.0f), new Rectangle(500, 200, 40, 70));
 
             // g.ScaleTransform(15.0f, 15.0f);
             g.ScaleTransform(3.0f, 3.0f);
@@ -99,6 +121,93 @@ namespace WinFormAnimation2D
 			g.ResetClip ();
 			g.Restore(transState);	
             */
+        }
+
+        // functions to move the world objects left/right/up/down on 2D canvas
+        private void button_up_Click(object sender, EventArgs e) {
+            camera_matrix.Translate(0, (-1)*Util.stepsize);
+            pictureBox_main.Invalidate();
+        }
+        private void button_left_Click(object sender, EventArgs e) {
+            camera_matrix.Translate((-1)*Util.stepsize, 0);
+            pictureBox_main.Invalidate();
+        }
+        private void button_right_Click(object sender, EventArgs e) {
+            camera_matrix.Translate(Util.stepsize, 0);
+            pictureBox_main.Invalidate();
+        }
+        private void button_down_Click(object sender, EventArgs e) {
+            camera_matrix.Translate(0, Util.stepsize);
+            pictureBox_main.Invalidate();
+        }
+
+        private void button_resetzoom_Click(object sender, EventArgs e)
+        {
+            var curmat = camera_matrix.Elements;
+
+            // normalise the x and y axis to set scale to 1.0f
+            var x_axis = new Vector2D(curmat[0], curmat[1]);
+            var y_axis = new Vector2D(curmat[2], curmat[3]);
+            x_axis.Normalize();
+            y_axis.Normalize();
+
+            // make new matrix with scale of 1.0f 
+            // Use translation from the current one.
+            var newmat = new Matrix(x_axis[0], x_axis[1]
+                , y_axis[0], y_axis[1]
+                , curmat[4], curmat[5]);
+
+            camera_matrix = newmat.Clone();
+            Zoom = 1.0f;
+            trackBar_zoom.Value = 0;
+        }
+
+        private void button_zoom_Click(object sender, EventArgs e)
+        {
+            float delta = 0;
+            int val = trackBar_zoom.Value;
+            // Check when 0 (then we assign 1.0f) 
+            // when less than 0 (then we divide) 
+            // when more than zero (then we simply assign)
+            delta = (val == 0) ? (1.0f) :
+                (val < 0) ? (-1.0f / val) :         // note the (-1)
+                val;
+            Zoom *= delta;
+            camera_matrix.Scale(delta, delta);
+        }
+
+        private void trackBar_zoom_ValueChanged(object sender, EventArgs e)
+        {
+            float delta = 0;
+            int val = trackBar_zoom.Value;
+            // Check when 0 (then we assign 1.0f) 
+            // when less than 0 (then we divide) 
+            // when more than zero (then we simply assign)
+            delta = (val == 0) ? (1.0f) :
+                (val < 0) ? (-1.0f / val) :         // note the (-1)
+                val;
+            label_zoom.Text = (delta * Zoom).ToString();
+        }
+
+        private void MyForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyData)
+            {
+                case Keys.Left:
+                    button_left_Click(null, EventArgs.Empty);
+                    break;
+                case Keys.Up:
+                    button_up_Click(null, EventArgs.Empty);
+                    break;
+                case Keys.Right:
+                    button_right_Click(null, EventArgs.Empty);
+                    break;
+                case Keys.Down:
+                    button_down_Click(null, EventArgs.Empty);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }
