@@ -32,9 +32,19 @@ namespace WinFormAnimation2D
             }
 
             //Filepath to our model
-            byte[] filedata = Encoding.UTF8.GetBytes(Properties.Resources.sphere_3d);
+            // byte[] filedata = Encoding.UTF8.GetBytes(Properties.Resources.sphere_3d);
+            byte[] filedata = Properties.Resources.bird_plane_6;
+
             MemoryStream sphere = new MemoryStream(filedata);
-            LoadModel(sphere, "nff");
+
+            // use format "nff" for sphere_3d
+            // LoadModel(sphere, "nff");
+
+            // use format "dae" for bird_plane
+            // LoadModel(sphere, "dae");
+
+            // use format "obj" for bird_plane_5
+            LoadModel(sphere, "obj");
         }
 
         public void LoadModel(MemoryStream model_data, string format_hint)
@@ -69,7 +79,7 @@ namespace WinFormAnimation2D
         /// </summary>
         public void RenderModel(Graphics g)
         {
-            RecursiveRender(g, Current_Scene.RootNode);
+            RecursiveRender(g, Current_Scene.RootNode, new Matrix());
         }
 
         //-------------------------------------------------------------------------------------------------
@@ -77,21 +87,27 @@ namespace WinFormAnimation2D
         // Begin at the root node of the imported data and traverse
         // the scenegraph by multiplying subsequent local transforms
         // together on OpenGL matrix stack.
-        private void RecursiveRender(Graphics g, Node nd)
+        private void RecursiveRender(Graphics g, Node nd, Matrix mat)
         {
             Matrix4x4 mat44 = nd.Transform;
+            var cur_mat = mat44.To3x2();
 
-            var tmp = mat44.To3x2();
-            g.MultiplyTransform(tmp);
+            // accumulate matrix transforms
+            mat.Multiply(cur_mat, MatrixOrder.Append);
+
+            //g.MultiplyTransform(tmp);
 
             foreach(int mesh_id in nd.MeshIndices)
             {
                 Mesh cur_mesh = Current_Scene.Meshes[mesh_id];
                 foreach (Face cur_face in cur_mesh.Faces)
                 {
-                    foreach(int vertex_id in cur_face.Indices)
+                    // get array of all points
+                    var points = cur_face.Indices.Select(i => cur_mesh.Vertices[i].ToPoint()).ToArray();
+                    // apply transformation matrix to each point
+                    mat.TransformPoints(points);
+                    foreach (var p in points)
                     {
-                        Point p = cur_mesh.Vertices[vertex_id].ToPoint();
                         // Bad code to draw a single point.
                         // Better use DrawEllipse.
                         // But too lazy.
@@ -103,7 +119,7 @@ namespace WinFormAnimation2D
             // draw all children
             foreach (Node child in nd.Children)
             {
-                RecursiveRender(g, child);
+                RecursiveRender(g, child, mat.Clone());
             }
         }
 

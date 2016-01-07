@@ -90,6 +90,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\bird_plane.dae" />
+    <None Include="Resources\bird_plane_2.dae" />
+    <None Include="Resources\bird_plane_3.dae" />
+    <None Include="Resources\bird_plane_3_crap.dae" />
+    <None Include="Resources\bird_plane_4.dae" />
+    <None Include="Resources\bird_plane_5.obj" />
+    <None Include="Resources\bird_plane_6.obj" />
+    <None Include="Resources\bird_plane_7.dae" />
     <None Include="Resources\sphere_3d.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

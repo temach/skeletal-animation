@@ -57,7 +57,8 @@ namespace WinFormAnimation2D
         {
  			// should do this a long time ago
 			Graphics g = e.Graphics;
-            //g.TranslateTransform(50, 50);
+            g.TranslateTransform(100, 100);
+            g.ScaleTransform(3.0f, 3.0f);
             //RecursiveRender(Current_Scene.mRootNode);
             // g.DrawRectangle(new Pen(Color.Blue, 10.0f), new Rectangle(500, 200, 40, 70));
             g.DrawRectangle(new Pen(Color.Blue, 10.0f), pictureBox_main.DisplayRectangle);

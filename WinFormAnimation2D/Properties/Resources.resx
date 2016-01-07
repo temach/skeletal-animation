@@ -118,6 +118,24 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="bird_plane_3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\bird_plane_3.dae;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="bird_plane_3_crap" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\bird_plane_3_crap.dae;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="bird_plane_4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\bird_plane_4.dae;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="bird_plane_5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\bird_plane_5.obj;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="bird_plane_6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\bird_plane_6.obj;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="bird_plane_7" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\bird_plane_7.dae;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="sphere_3d" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\sphere_3d.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>

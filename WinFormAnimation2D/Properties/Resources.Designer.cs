@@ -61,8 +61,74 @@ namespace WinFormAnimation2D.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] bird_plane_3 {
+            get {
+                object obj = ResourceManager.GetObject("bird_plane_3", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] bird_plane_3_crap {
+            get {
+                object obj = ResourceManager.GetObject("bird_plane_3_crap", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] bird_plane_4 {
+            get {
+                object obj = ResourceManager.GetObject("bird_plane_4", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] bird_plane_5 {
+            get {
+                object obj = ResourceManager.GetObject("bird_plane_5", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] bird_plane_6 {
+            get {
+                object obj = ResourceManager.GetObject("bird_plane_6", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] bird_plane_7 {
+            get {
+                object obj = ResourceManager.GetObject("bird_plane_7", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to # begin file
-        ///s 0.0 0.0 1.0 3.0
+        ///# s 50.0 15.0 99.0 4.5
+        ///# polygon of a square. top left is (100, 100) bottom right is (500, 300)
+        ///p 4
+        ///100.0 100.0 0.0
+        ///100.0 300.0 0.0
+        ///500.0 100.0 0.0
+        ///500.0 300.0 0.0
         ///# end file.
         /// </summary>
         internal static string sphere_3d {
