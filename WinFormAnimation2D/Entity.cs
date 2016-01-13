@@ -23,6 +23,9 @@ namespace WinFormAnimation2D
 
     class Entity
     {
+        // MAtrix to track the state of the entity
+        public Matrix ent_mat = new Matrix();
+
         // where the entity keeps its information
         public Scene EntityScene = null;
 
@@ -32,11 +35,13 @@ namespace WinFormAnimation2D
             EntityScene = sc;
         }
 
+
         /// <summary>
         /// Render the model stored in EntityScene useing the Graphics object.
         /// </summary>
         public void RenderModel(Graphics g)
         {
+            g.MultiplyTransform(ent_mat);
             RecursiveRender(g, EntityScene.RootNode);
         }
 

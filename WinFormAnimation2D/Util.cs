@@ -95,8 +95,12 @@ namespace WinFormAnimation2D
         {
             return new PointF(v.X, v.Y);
         }
-
-        public static draw2D.Matrix eNormaliseScale(this draw2D.Matrix mat)
+        /// <summary>
+        /// Rescale the matrix. Preserve rotation and translation.
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <returns></returns>
+        public static draw2D.Matrix eSnapScale(this draw2D.Matrix mat, double scale = 1.0)
         {
             var curmat = mat.Elements;
 
@@ -105,6 +109,12 @@ namespace WinFormAnimation2D
             var y_axis = new assimp.Vector2D(curmat[2], curmat[3]);
             x_axis.Normalize();
             y_axis.Normalize();
+
+            // scale the axis
+            x_axis.X *= (float)scale;
+            x_axis.Y *= (float)scale;
+            y_axis.X *= (float)scale;
+            y_axis.Y *= (float)scale;
 
             // make new matrix with scale of 1.0f 
             // Do not change the translation
@@ -117,22 +127,68 @@ namespace WinFormAnimation2D
         }
 
         /// <summary>
+        /// Snap translation part of the matrix to a given vector.
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public static draw2D.Matrix eSnapTranslate(this draw2D.Matrix mat, double x, double y)
+        {
+            var curmat = mat.Elements;
+            var newmat = new draw2D.Matrix(curmat[0], curmat[1]
+                , curmat[2], curmat[3]
+                , (float)x, (float)y);
+            return newmat.Clone();
+        }
+
+        /// <summary>
+        /// Snap rotate to some angle. Preserve scale and translation.
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <returns></returns>
+        public static draw2D.Matrix eSnapRotate(this draw2D.Matrix mat, double angle)
+        {
+            var curmat = mat.Elements;
+
+            // get the vector components.
+            var x_axis = new assimp.Vector2D(curmat[0], curmat[1]);
+            var y_axis = new assimp.Vector2D(curmat[2], curmat[3]);
+
+            // Get the scale of current matrix
+            double x_len = x_axis.Length();
+            double y_len = y_axis.Length();
+
+            var newmat = new draw2D.Matrix();
+            newmat.Rotate((float)angle);
+
+            // Preserve scale and translation
+            newmat.Scale((float)x_len, (float)y_len);
+            newmat.Translate(curmat[5], curmat[6]);
+
+            return newmat.Clone();
+        }
+
+
+        /// <summary>
         /// Get a brush of random color.
         /// </summary>
         /// <returns></returns>
         public static Brush GetNextBrush()
         {
             _iter_nextbrush++;
-            switch (_iter_nextbrush % 4)
+            switch (_iter_nextbrush % 3)
             {
                 case 0:
-                    return Brushes.LawnGreen;
-                case 1:
-                    return Brushes.Green;
-                case 2:
                     return Brushes.GreenYellow;
+                case 1:
+                    return Brushes.SeaGreen;
+                case 2:
+                    return Brushes.Green;
                 case 3:
                     return Brushes.LightSeaGreen;
+                case 4:
+                    return Brushes.LawnGreen;
                 default:
                     return Brushes.Red;
             }

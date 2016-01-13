@@ -84,7 +84,7 @@ namespace WinFormAnimation2D
         /// <summary>
         /// Render the model stored in EntityScene useing the Graphics object.
         /// </summary>
-        public void RenderModel(Graphics g)
+        public void RenderWorld(Graphics g)
         {
             ent.RenderModel(g);
         }

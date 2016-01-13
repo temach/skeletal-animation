@@ -62,13 +62,12 @@ namespace WinFormAnimation2D
             DoRedraw();
 		}
 
-
         private void button1_Click(object sender, EventArgs e)
         {
             pictureBox_main.Invalidate();
             // MessageBox.Show("Starting everything");
             // animate = true;
-            //tm.Start();
+            tm.Start();
         }
 
         private void pictureBox_main_Paint(object sender, PaintEventArgs e)
@@ -89,7 +88,7 @@ namespace WinFormAnimation2D
 
             // g.ScaleTransform(15.0f, 15.0f);
             g.ScaleTransform(3.0f, 3.0f);
-            world.RenderModel(g);
+            world.RenderWorld(g);
 
             /***
             if (animate)
@@ -141,9 +140,16 @@ namespace WinFormAnimation2D
             pictureBox_main.Invalidate();
         }
 
+        // change the tranbslation part of the matrix to all zeros
+        private void button_resetpos_Click(object sender, EventArgs e)
+        {
+            camera_matrix = camera_matrix.eSnapTranslate(0.0, 0.0);
+            pictureBox_main.Invalidate();
+        }
+
         private void button_resetzoom_Click(object sender, EventArgs e)
         {
-            camera_matrix = camera_matrix.eNormaliseScale();
+            camera_matrix = camera_matrix.eSnapScale(1.0);
             Zoom = 1.0f;
             trackBar_zoom.Value = 0;
         }
@@ -197,15 +203,5 @@ namespace WinFormAnimation2D
             }
         }
 
-        // change the tranbslation part of the matrix to all zeros
-        private void button_resetpos_Click(object sender, EventArgs e)
-        {
-            var curmat = camera_matrix.Elements;
-            var newmat = new Matrix(curmat[0], curmat[1]
-                , curmat[2], curmat[3]
-                , 0.0f, 0.0f);
-            camera_matrix = newmat.Clone();
-            pictureBox_main.Invalidate();
-        }
     }
 }
