@@ -13,6 +13,27 @@ namespace WinFormAnimation2D
 {
     static class Util
     {
+        // Useful for random value generation. 
+        // We use only one Random instance in the whole program.
+        static Random rand = new Random();
+
+                
+        static IEnumerator<Brush> iter_randbrush = GetRandBrush().GetEnumerator();
+        static Brush NextRandBrush
+        {
+            get
+            {
+                if (iter_randbrush.MoveNext())
+                {
+                    return iter_randbrush.Current;
+                }
+                else
+                {
+                    return Brushes.Red;
+                }
+            }
+        }
+
         // Static config fields
         public static float stepsize = 10.0f;
         public static double epsilon = 1E-8;
@@ -108,6 +129,36 @@ namespace WinFormAnimation2D
 
             return newmat.Clone();
         }
+
+        /// <summary>
+        /// Get a brush of random color.
+        /// </summary>
+        /// <returns></returns>
+        public static IEnumerable<Brush> GetRandBrush()
+        {
+            // Note that this is Unsigned int (so overflow is ok)
+            uint rand_brush_count = 0;
+            while (true)
+            {
+                rand_brush_count++;
+                switch (rand_brush_count % 4)
+                {
+                    case 0:
+                        yield return Brushes.LawnGreen; break;
+                    case 1:
+                        yield return Brushes.Green; break;
+                    case 2:
+                        yield return Brushes.GreenYellow; break;
+                    case 3:
+                        yield return Brushes.LightSeaGreen; break;
+                    default:
+                        yield return Brushes.Red; break;
+                }
+            }
+        }
+
+
+
     }
 }
 /**************************
