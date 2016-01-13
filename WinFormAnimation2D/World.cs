@@ -117,7 +117,7 @@ namespace WinFormAnimation2D
         {
             Matrix4x4 mat44 = nd.Transform;
 
-            var tmp = mat44.To3x2();
+            var tmp = mat44.eTo3x2();
             g.MultiplyTransform(tmp);
 
             foreach(int mesh_id in nd.MeshIndices)
@@ -126,7 +126,7 @@ namespace WinFormAnimation2D
                 foreach (Face cur_face in cur_mesh.Faces)
                 {
                     // list of 3 vertices
-                    var tri_vertices = cur_face.Indices.Select(i => cur_mesh.Vertices[i].ToPointFloat()).ToArray();
+                    var tri_vertices = cur_face.Indices.Select(i => cur_mesh.Vertices[i].eToPointFloat()).ToArray();
 
                     // choose random brush color for this triangle
                     var br = GetRandBrush();
@@ -135,7 +135,7 @@ namespace WinFormAnimation2D
                     // Bad code to draw a single point. Better use DrawEllipse. But too lazy.
                     foreach(var p in tri_vertices)
                     {
-                        g.DrawPoint(p);
+                        g.eDrawPoint(p);
                     }
                 }
             }

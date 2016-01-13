@@ -36,7 +36,7 @@ namespace WinFormAnimation2D
         /// Convert assimp 4 by 4 matrix into 3 by 2 matrix from System.Drawing.Drawing2D and use it
         /// for drawing with Graphics object.
         /// </summary>
-        public static draw2D.Matrix To3x2(this assimp.Matrix4x4 m)
+        public static draw2D.Matrix eTo3x2(this assimp.Matrix4x4 m)
         {
             return new draw2D.Matrix(m.A1, m.B1, m.A2, m.B2, m.A4, m.B4);
             // return new draw2D.Matrix(m[0, 0], m[1, 0], m[0, 1], m[1, 1], m[0, 3], m[1, 3]);
@@ -45,7 +45,7 @@ namespace WinFormAnimation2D
         /// <summary>
         /// Draw circle with Graphics from point and radius.
         /// </summary>
-        public static void DrawCircle(this Graphics g, Pen pen, Point p, int rad)
+        public static void eDrawCircle(this Graphics g, Pen pen, Point p, int rad)
         {
             var rect = new RectangleF(p.X - rad, p.Y - rad, 2 * rad, 2 * rad);
             g.DrawEllipse(pen, rect);
@@ -54,7 +54,7 @@ namespace WinFormAnimation2D
         /// <summary>
         /// Debug function to quickly draw points with Graphics
         /// </summary>
-        public static void DrawPoint(this Graphics g, Point p)
+        public static void eDrawPoint(this Graphics g, Point p)
         {
             float rad = 0.3f;        // radius
             var rect = new RectangleF(p.X - rad, p.Y - rad, 2 * rad, 2 * rad);
@@ -64,7 +64,7 @@ namespace WinFormAnimation2D
         /// <summary>
         /// Debug function to quickly draw __floating__ points with Graphics
         /// </summary>
-        public static void DrawPoint(this Graphics g, PointF p)
+        public static void eDrawPoint(this Graphics g, PointF p)
         {
             float rad = 0.03f;        // radius
             var rect = new RectangleF(p.X - rad, p.Y - rad, 2 * rad, 2 * rad);
@@ -75,7 +75,7 @@ namespace WinFormAnimation2D
         /// Convert assimp 3D vector to 2D System.Drawing.Point
         /// for drawing with Graphics object.
         /// </summary>
-        public static Point ToPoint(this assimp.Vector3D v)
+        public static Point eToPoint(this assimp.Vector3D v)
         {
             return new Point((int)v.X, (int)v.Y);
         }
@@ -84,7 +84,7 @@ namespace WinFormAnimation2D
         /// Convert assimp 3D vector to 2D System.Drawing.PointF (floating point)
         /// for drawing with Graphics object.
         /// </summary>
-        public static PointF ToPointFloat(this assimp.Vector3D v)
+        public static PointF eToPointFloat(this assimp.Vector3D v)
         {
             return new PointF(v.X, v.Y);
         }
