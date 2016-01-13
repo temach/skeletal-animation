@@ -43,6 +43,7 @@
             this.button_zoom = new System.Windows.Forms.Button();
             this.button_resetzoom = new System.Windows.Forms.Button();
             this.label_zoom = new System.Windows.Forms.Label();
+            this.button_resetpos = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_zoom)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar4)).BeginInit();
@@ -65,9 +66,9 @@
             this.pictureBox_main.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox_main.Location = new System.Drawing.Point(12, 31);
+            this.pictureBox_main.Location = new System.Drawing.Point(12, 37);
             this.pictureBox_main.Name = "pictureBox_main";
-            this.pictureBox_main.Size = new System.Drawing.Size(672, 432);
+            this.pictureBox_main.Size = new System.Drawing.Size(747, 479);
             this.pictureBox_main.TabIndex = 1;
             this.pictureBox_main.TabStop = false;
             this.pictureBox_main.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox_main_Paint);
@@ -75,7 +76,7 @@
             // trackBar_zoom
             // 
             this.trackBar_zoom.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.trackBar_zoom.Location = new System.Drawing.Point(767, 37);
+            this.trackBar_zoom.Location = new System.Drawing.Point(842, 64);
             this.trackBar_zoom.Minimum = -10;
             this.trackBar_zoom.Name = "trackBar_zoom";
             this.trackBar_zoom.Size = new System.Drawing.Size(104, 45);
@@ -85,7 +86,7 @@
             // trackBar4
             // 
             this.trackBar4.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.trackBar4.Location = new System.Drawing.Point(767, 269);
+            this.trackBar4.Location = new System.Drawing.Point(842, 296);
             this.trackBar4.Name = "trackBar4";
             this.trackBar4.Size = new System.Drawing.Size(104, 45);
             this.trackBar4.TabIndex = 5;
@@ -93,7 +94,7 @@
             // trackBar5
             // 
             this.trackBar5.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.trackBar5.Location = new System.Drawing.Point(767, 348);
+            this.trackBar5.Location = new System.Drawing.Point(842, 375);
             this.trackBar5.Name = "trackBar5";
             this.trackBar5.Size = new System.Drawing.Size(104, 45);
             this.trackBar5.TabIndex = 6;
@@ -101,7 +102,7 @@
             // trackBar6
             // 
             this.trackBar6.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.trackBar6.Location = new System.Drawing.Point(767, 424);
+            this.trackBar6.Location = new System.Drawing.Point(842, 451);
             this.trackBar6.Name = "trackBar6";
             this.trackBar6.Size = new System.Drawing.Size(104, 45);
             this.trackBar6.TabIndex = 7;
@@ -109,7 +110,7 @@
             // button_up
             // 
             this.button_up.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_up.Location = new System.Drawing.Point(780, 88);
+            this.button_up.Location = new System.Drawing.Point(855, 115);
             this.button_up.Name = "button_up";
             this.button_up.Size = new System.Drawing.Size(52, 23);
             this.button_up.TabIndex = 9;
@@ -120,7 +121,7 @@
             // button_down
             // 
             this.button_down.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_down.Location = new System.Drawing.Point(780, 144);
+            this.button_down.Location = new System.Drawing.Point(855, 171);
             this.button_down.Name = "button_down";
             this.button_down.Size = new System.Drawing.Size(52, 23);
             this.button_down.TabIndex = 10;
@@ -131,7 +132,7 @@
             // button_left
             // 
             this.button_left.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_left.Location = new System.Drawing.Point(739, 115);
+            this.button_left.Location = new System.Drawing.Point(814, 142);
             this.button_left.Name = "button_left";
             this.button_left.Size = new System.Drawing.Size(52, 23);
             this.button_left.TabIndex = 11;
@@ -142,7 +143,7 @@
             // button_right
             // 
             this.button_right.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_right.Location = new System.Drawing.Point(819, 115);
+            this.button_right.Location = new System.Drawing.Point(894, 142);
             this.button_right.Name = "button_right";
             this.button_right.Size = new System.Drawing.Size(52, 23);
             this.button_right.TabIndex = 12;
@@ -153,7 +154,7 @@
             // textBox_stepsize
             // 
             this.textBox_stepsize.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.textBox_stepsize.Location = new System.Drawing.Point(754, 198);
+            this.textBox_stepsize.Location = new System.Drawing.Point(829, 225);
             this.textBox_stepsize.Name = "textBox_stepsize";
             this.textBox_stepsize.Size = new System.Drawing.Size(117, 20);
             this.textBox_stepsize.TabIndex = 13;
@@ -162,7 +163,7 @@
             // 
             this.label_stepsize.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label_stepsize.AutoSize = true;
-            this.label_stepsize.Location = new System.Drawing.Point(782, 182);
+            this.label_stepsize.Location = new System.Drawing.Point(857, 209);
             this.label_stepsize.Name = "label_stepsize";
             this.label_stepsize.Size = new System.Drawing.Size(50, 13);
             this.label_stepsize.TabIndex = 14;
@@ -171,7 +172,7 @@
             // button_zoom
             // 
             this.button_zoom.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_zoom.Location = new System.Drawing.Point(781, 8);
+            this.button_zoom.Location = new System.Drawing.Point(856, 35);
             this.button_zoom.Name = "button_zoom";
             this.button_zoom.Size = new System.Drawing.Size(90, 23);
             this.button_zoom.TabIndex = 15;
@@ -182,7 +183,7 @@
             // button_resetzoom
             // 
             this.button_resetzoom.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_resetzoom.Location = new System.Drawing.Point(700, 8);
+            this.button_resetzoom.Location = new System.Drawing.Point(775, 35);
             this.button_resetzoom.Name = "button_resetzoom";
             this.button_resetzoom.Size = new System.Drawing.Size(75, 23);
             this.button_resetzoom.TabIndex = 16;
@@ -194,17 +195,29 @@
             // 
             this.label_zoom.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label_zoom.AutoSize = true;
-            this.label_zoom.Location = new System.Drawing.Point(723, 38);
+            this.label_zoom.Location = new System.Drawing.Point(798, 65);
             this.label_zoom.Name = "label_zoom";
             this.label_zoom.Size = new System.Drawing.Size(22, 13);
             this.label_zoom.TabIndex = 17;
             this.label_zoom.Text = "1.0";
             // 
+            // button_resetpos
+            // 
+            this.button_resetpos.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.button_resetpos.Location = new System.Drawing.Point(775, 2);
+            this.button_resetpos.Name = "button_resetpos";
+            this.button_resetpos.Size = new System.Drawing.Size(91, 23);
+            this.button_resetpos.TabIndex = 18;
+            this.button_resetpos.Text = "Reset Position";
+            this.button_resetpos.UseVisualStyleBackColor = true;
+            this.button_resetpos.Click += new System.EventHandler(this.button_resetpos_Click);
+            // 
             // MyForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(883, 475);
+            this.ClientSize = new System.Drawing.Size(958, 528);
+            this.Controls.Add(this.button_resetpos);
             this.Controls.Add(this.label_zoom);
             this.Controls.Add(this.button_resetzoom);
             this.Controls.Add(this.button_zoom);
@@ -250,6 +263,7 @@
         private System.Windows.Forms.Button button_zoom;
         private System.Windows.Forms.Button button_resetzoom;
         private System.Windows.Forms.Label label_zoom;
+        private System.Windows.Forms.Button button_resetpos;
     }
 }
 

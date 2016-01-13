@@ -1,17 +1,17 @@
-﻿using System;
+﻿using Assimp;
+using Assimp.Configs;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using System.IO;
-using System.Reflection;
-using Assimp;
-using Assimp.Configs;
 using System.Windows.Forms;
-using System.Drawing.Drawing2D;
 
 namespace WinFormAnimation2D
 {
@@ -143,21 +143,7 @@ namespace WinFormAnimation2D
 
         private void button_resetzoom_Click(object sender, EventArgs e)
         {
-            var curmat = camera_matrix.Elements;
-
-            // normalise the x and y axis to set scale to 1.0f
-            var x_axis = new Vector2D(curmat[0], curmat[1]);
-            var y_axis = new Vector2D(curmat[2], curmat[3]);
-            x_axis.Normalize();
-            y_axis.Normalize();
-
-            // make new matrix with scale of 1.0f 
-            // Use translation from the current one.
-            var newmat = new Matrix(x_axis[0], x_axis[1]
-                , y_axis[0], y_axis[1]
-                , curmat[4], curmat[5]);
-
-            camera_matrix = newmat.Clone();
+            camera_matrix = camera_matrix.eNormaliseScale();
             Zoom = 1.0f;
             trackBar_zoom.Value = 0;
         }
@@ -166,6 +152,7 @@ namespace WinFormAnimation2D
         {
             float delta = 0;
             int val = trackBar_zoom.Value;
+            // Weird formula to get both zoom in and zoom out.
             // Check when 0 (then we assign 1.0f) 
             // when less than 0 (then we divide) 
             // when more than zero (then we simply assign)
@@ -208,6 +195,17 @@ namespace WinFormAnimation2D
                 default:
                     break;
             }
+        }
+
+        // change the tranbslation part of the matrix to all zeros
+        private void button_resetpos_Click(object sender, EventArgs e)
+        {
+            var curmat = camera_matrix.Elements;
+            var newmat = new Matrix(curmat[0], curmat[1]
+                , curmat[2], curmat[3]
+                , 0.0f, 0.0f);
+            camera_matrix = newmat.Clone();
+            pictureBox_main.Invalidate();
         }
     }
 }

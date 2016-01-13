@@ -88,6 +88,26 @@ namespace WinFormAnimation2D
         {
             return new PointF(v.X, v.Y);
         }
+
+        public static draw2D.Matrix eNormaliseScale(this draw2D.Matrix mat)
+        {
+            var curmat = mat.Elements;
+
+            // normalise the x and y axis to set scale to 1.0f
+            var x_axis = new assimp.Vector2D(curmat[0], curmat[1]);
+            var y_axis = new assimp.Vector2D(curmat[2], curmat[3]);
+            x_axis.Normalize();
+            y_axis.Normalize();
+
+            // make new matrix with scale of 1.0f 
+            // Do not change the translation
+            var newmat = new draw2D.Matrix(x_axis[0], x_axis[1]
+                , y_axis[0], y_axis[1]
+                , curmat[4], curmat[5]
+            );
+
+            return newmat.Clone();
+        }
     }
 }
 /**************************
