@@ -28,6 +28,7 @@ namespace WinFormAnimation2D
         
         /// Currently loaded assimp scene
         private static Scene Current_Scene = null;
+        private Entity ent = null;
 
         public World() {
             if (hasInit == true)
@@ -49,28 +50,8 @@ namespace WinFormAnimation2D
 
             // use format "obj" for bird_plane_5
             // LoadModel(sphere, "obj");
-        }
 
-        /// <summary>
-        /// Get a brush of random color.
-        /// </summary>
-        /// <returns></returns>
-        public Brush GetRandBrush()
-        {
-            rand_brush_count++;
-            switch (rand_brush_count % 4)
-            {
-                case 0:
-                    return Brushes.LawnGreen;
-                case 1:
-                    return Brushes.Green;
-                case 2:
-                    return Brushes.GreenYellow;
-                case 3:
-                    return Brushes.LightSeaGreen;
-                default:
-                    return Brushes.Red;
-            }
+            ent = new Entity(Current_Scene);
         }
 
         public void LoadModel(MemoryStream model_data, string format_hint)
@@ -101,51 +82,13 @@ namespace WinFormAnimation2D
         }
 
         /// <summary>
-        /// Render the model stored in Current_Scene useing the Graphics object.
+        /// Render the model stored in EntityScene useing the Graphics object.
         /// </summary>
         public void RenderModel(Graphics g)
         {
-            RecursiveRender(g, Current_Scene.RootNode);
+            ent.RenderModel(g);
         }
 
-        //-------------------------------------------------------------------------------------------------
-        // Render the scene.
-        // Begin at the root node of the imported data and traverse
-        // the scenegraph by multiplying subsequent local transforms
-        // together on OpenGL matrix stack.
-        private void RecursiveRender(Graphics g, Node nd)
-        {
-            Matrix4x4 mat44 = nd.Transform;
-
-            var tmp = mat44.eTo3x2();
-            g.MultiplyTransform(tmp);
-
-            foreach(int mesh_id in nd.MeshIndices)
-            {
-                Mesh cur_mesh = Current_Scene.Meshes[mesh_id];
-                foreach (Face cur_face in cur_mesh.Faces)
-                {
-                    // list of 3 vertices
-                    var tri_vertices = cur_face.Indices.Select(i => cur_mesh.Vertices[i].eToPointFloat()).ToArray();
-
-                    // choose random brush color for this triangle
-                    var br = GetRandBrush();
-                    g.FillPolygon(br, tri_vertices);
-
-                    // Bad code to draw a single point. Better use DrawEllipse. But too lazy.
-                    foreach(var p in tri_vertices)
-                    {
-                        g.eDrawPoint(p);
-                    }
-                }
-            }
-
-            // draw all children
-            foreach (Node child in nd.Children)
-            {
-                RecursiveRender(g, child);
-            }
-        }
 
     }   // end of class World
 }

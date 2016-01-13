@@ -16,23 +16,9 @@ namespace WinFormAnimation2D
         // Useful for random value generation. 
         // We use only one Random instance in the whole program.
         static Random rand = new Random();
-
                 
-        static IEnumerator<Brush> iter_randbrush = GetRandBrush().GetEnumerator();
-        static Brush NextRandBrush
-        {
-            get
-            {
-                if (iter_randbrush.MoveNext())
-                {
-                    return iter_randbrush.Current;
-                }
-                else
-                {
-                    return Brushes.Red;
-                }
-            }
-        }
+        // Note that this is Unsigned int (so overflow is ok)
+        private static uint _iter_nextbrush = 0;
 
         // Static config fields
         public static float stepsize = 10.0f;
@@ -134,26 +120,21 @@ namespace WinFormAnimation2D
         /// Get a brush of random color.
         /// </summary>
         /// <returns></returns>
-        public static IEnumerable<Brush> GetRandBrush()
+        public static Brush GetNextBrush()
         {
-            // Note that this is Unsigned int (so overflow is ok)
-            uint rand_brush_count = 0;
-            while (true)
+            _iter_nextbrush++;
+            switch (_iter_nextbrush % 4)
             {
-                rand_brush_count++;
-                switch (rand_brush_count % 4)
-                {
-                    case 0:
-                        yield return Brushes.LawnGreen; break;
-                    case 1:
-                        yield return Brushes.Green; break;
-                    case 2:
-                        yield return Brushes.GreenYellow; break;
-                    case 3:
-                        yield return Brushes.LightSeaGreen; break;
-                    default:
-                        yield return Brushes.Red; break;
-                }
+                case 0:
+                    return Brushes.LawnGreen;
+                case 1:
+                    return Brushes.Green;
+                case 2:
+                    return Brushes.GreenYellow;
+                case 3:
+                    return Brushes.LightSeaGreen;
+                default:
+                    return Brushes.Red;
             }
         }
 
