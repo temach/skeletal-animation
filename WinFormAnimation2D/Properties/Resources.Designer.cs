@@ -146,5 +146,25 @@ namespace WinFormAnimation2D.Properties {
                 return ResourceManager.GetString("sphere_3d", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] square_center_1 {
+            get {
+                object obj = ResourceManager.GetObject("square_center_1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] square_center_2 {
+            get {
+                object obj = ResourceManager.GetObject("square_center_2", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

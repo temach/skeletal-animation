@@ -87,6 +87,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Resources\square_center_1.dae" />
+    <None Include="Resources\square_center_2.dae" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
