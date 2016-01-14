@@ -1,4 +1,20 @@
-﻿using System;
+﻿/// @file
+/// 
+/// @mainpage
+/// This program is a demo of skeletal animation in C#.
+/// Feed it collada files with animation and bone data.
+/// 
+/// In blender spread the mesh on X-Y plane (so Z is normal vector)
+/// Also make it in the X>0, Y>0 quadrant.
+/// When importing a collada file remember to modify it by hand. 
+/// You should change Z_UP to Y_UP. (I think this is only necessary 
+/// while we work with Grpahics object, when we go to opengl this should fix itself)
+/// 
+
+
+
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -38,7 +54,7 @@ namespace WinFormAnimation2D
 
             //Filepath to our model
             // byte[] filedata = Encoding.UTF8.GetBytes(Properties.Resources.sphere_3d);
-            byte[] filedata = Properties.Resources.bird_plane_8;
+            byte[] filedata = Properties.Resources.square_center_2;
 
             MemoryStream sphere = new MemoryStream(filedata);
 
