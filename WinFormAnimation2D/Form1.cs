@@ -62,7 +62,7 @@ namespace WinFormAnimation2D
             DoRedraw();
 		}
 
-        private void button1_Click(object sender, EventArgs e)
+        private void button_start_Click(object sender, EventArgs e)
         {
             pictureBox_main.Invalidate();
             // MessageBox.Show("Starting everything");
@@ -201,6 +201,11 @@ namespace WinFormAnimation2D
                 default:
                     break;
             }
+        }
+
+        private void button_stop_colors_Click(object sender, EventArgs e)
+        {
+            tm.Stop();
         }
 
     }

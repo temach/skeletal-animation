@@ -35,6 +35,15 @@ namespace WinFormAnimation2D
             EntityScene = sc;
         }
 
+        /// <summary>
+        /// Change the matrices for each node to 
+        /// match the orientaitons in the keyframe data.
+        /// Then during rendering the mesh will look different.
+        /// </summary>
+        public void NextKeyframe()
+        {
+            return;
+        }
 
         /// <summary>
         /// Render the model stored in EntityScene useing the Graphics object.

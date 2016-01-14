@@ -44,6 +44,7 @@
             this.button_resetzoom = new System.Windows.Forms.Button();
             this.label_zoom = new System.Windows.Forms.Label();
             this.button_resetpos = new System.Windows.Forms.Button();
+            this.button_stop_colors = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_zoom)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar4)).BeginInit();
@@ -57,9 +58,9 @@
             this.button_start.Name = "button_start";
             this.button_start.Size = new System.Drawing.Size(75, 23);
             this.button_start.TabIndex = 0;
-            this.button_start.Text = "start!";
+            this.button_start.Text = "Start colors";
             this.button_start.UseVisualStyleBackColor = true;
-            this.button_start.Click += new System.EventHandler(this.button1_Click);
+            this.button_start.Click += new System.EventHandler(this.button_start_Click);
             // 
             // pictureBox_main
             // 
@@ -212,11 +213,22 @@
             this.button_resetpos.UseVisualStyleBackColor = true;
             this.button_resetpos.Click += new System.EventHandler(this.button_resetpos_Click);
             // 
+            // button_stop_colors
+            // 
+            this.button_stop_colors.Location = new System.Drawing.Point(93, 2);
+            this.button_stop_colors.Name = "button_stop_colors";
+            this.button_stop_colors.Size = new System.Drawing.Size(75, 23);
+            this.button_stop_colors.TabIndex = 19;
+            this.button_stop_colors.Text = "Stop colors";
+            this.button_stop_colors.UseVisualStyleBackColor = true;
+            this.button_stop_colors.Click += new System.EventHandler(this.button_stop_colors_Click);
+            // 
             // MyForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(958, 528);
+            this.Controls.Add(this.button_stop_colors);
             this.Controls.Add(this.button_resetpos);
             this.Controls.Add(this.label_zoom);
             this.Controls.Add(this.button_resetzoom);
@@ -264,6 +276,7 @@
         private System.Windows.Forms.Button button_resetzoom;
         private System.Windows.Forms.Label label_zoom;
         private System.Windows.Forms.Button button_resetpos;
+        private System.Windows.Forms.Button button_stop_colors;
     }
 }
 
