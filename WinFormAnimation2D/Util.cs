@@ -18,7 +18,7 @@ namespace WinFormAnimation2D
         static Random rand = new Random();
                 
         // Note that this is Unsigned int (so overflow is ok)
-        private static uint _iter_nextbrush = 0;
+        public static Func<Brush> GetNextBrush = SetupBrushGen();
 
         // Static config fields
         public static float stepsize = 10.0f;
@@ -174,24 +174,31 @@ namespace WinFormAnimation2D
         /// Get a brush of random color.
         /// </summary>
         /// <returns></returns>
-        public static Brush GetNextBrush()
+        private static Func<Brush> SetupBrushGen()
         {
-            _iter_nextbrush++;
-            switch (_iter_nextbrush % 3)
+            // Note that this is Unsigned int (so overflow is ok)
+            uint _iter_nextbrush = 0;
+
+            return () =>
             {
-                case 0:
-                    return Brushes.GreenYellow;
-                case 1:
-                    return Brushes.SeaGreen;
-                case 2:
-                    return Brushes.Green;
-                case 3:
-                    return Brushes.LightSeaGreen;
-                case 4:
-                    return Brushes.LawnGreen;
-                default:
-                    return Brushes.Red;
-            }
+                // cache this variable
+                _iter_nextbrush++;
+                switch (_iter_nextbrush % 3)
+                {
+                    case 0:
+                        return Brushes.GreenYellow;
+                    case 1:
+                        return Brushes.SeaGreen;
+                    case 2:
+                        return Brushes.Green;
+                    case 3:
+                        return Brushes.LightSeaGreen;
+                    case 4:
+                        return Brushes.LawnGreen;
+                    default:
+                        return Brushes.Red;
+                }
+            };
         }
 
 
