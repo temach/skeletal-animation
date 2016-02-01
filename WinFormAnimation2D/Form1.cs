@@ -22,9 +22,13 @@ namespace WinFormAnimation2D
 
         public Timer tm = new Timer();
         public int cur_count = 1;
+        // should animation be playing. This should really go into GUISettings
         public bool animate = false;
 
+        // State of the camera currently. We can affect this with buttons.
         public Matrix camera_matrix = new Matrix();
+
+        private GUISettings _settings = new GUISettings();
 
         private float _zoom = 1.0f;
         public float Zoom
@@ -77,7 +81,7 @@ namespace WinFormAnimation2D
             g.DrawRectangle(new Pen(Color.Blue, 10.0f), pictureBox_main.DisplayRectangle);
 
             // Draw world elements
-            g.MultiplyTransform(camera_matrix);
+            // g.MultiplyTransform(camera_matrix);
 
             // g.DrawEllipse(Pens.Green, new Rectangle(0, 0, 10, 10));
             // g.DrawPoint(new Point(500, 50));
@@ -87,8 +91,8 @@ namespace WinFormAnimation2D
             // g.DrawRectangle(new Pen(Color.Blue, 10.0f), new Rectangle(500, 200, 40, 70));
 
             // g.ScaleTransform(15.0f, 15.0f);
-            g.ScaleTransform(3.0f, 3.0f);
-            world.RenderWorld(g);
+            // g.ScaleTransform(3.0f, 3.0f);
+            world.RenderWorld(g, camera_matrix,);
 
             /***
             if (animate)

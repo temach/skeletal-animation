@@ -69,7 +69,7 @@ namespace WinFormAnimation2D
             }
 
             // unwind the matrix stack
-            // when we calculate the box for child
+            // when we calculate the box for the next leaf
             cur_mat = prev;
         }
 
@@ -109,6 +109,29 @@ namespace WinFormAnimation2D
         public void NextKeyframe()
         {
             return;
+        }
+
+
+        // setup specific to this scene what other objects do not know about. (wireframe, texture,material,scale...)
+        // this gets the currently active globale settings for the program.
+        // it looks at them and chooses the best settings for itself taking into 
+        // consideration the globals. So it tries to get the scene looking ideal while 
+        // still respecting global user settings (like: draw in wireframe, or without texture)
+        // that are currently turned on in the application. This settings are 
+        // activated back in the DrawToOpenGL class. After their activation we call the 
+        // render method on this particular object that pushes vertices (not settings) to OpenGL.
+        // This object should have some render code.
+
+        public DrawSettings GetRenderSettings(DrawSettings state)
+        {
+            return new DrawSettings
+            {
+                _enableTexture2D = true,
+                _enableDepthTest = true,
+                _enableFaceCounterClockwise = true,
+                _enablePerspectiveCorrectionHint = true,
+                _enablePolygonModeFill = true,
+            };
         }
 
         /// <summary>
@@ -164,6 +187,6 @@ namespace WinFormAnimation2D
             g.Restore(saved);
         }
 
-
     } // end of class
+
 }

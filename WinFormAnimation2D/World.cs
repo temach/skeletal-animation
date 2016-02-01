@@ -74,6 +74,8 @@ namespace WinFormAnimation2D
         private static Scene Current_Scene = null;
         private Entity ent = null;
 
+        public readonly DrawToOpenGL _drawer = new DrawToOpenGL();
+
         public World() {
             if (hasInit == true)
             {
@@ -128,9 +130,30 @@ namespace WinFormAnimation2D
         /// <summary>
         /// Render the model stored in EntityScene useing the Graphics object.
         /// </summary>
-        public void RenderWorld(Graphics g)
+        public void RenderWorld(Graphics g, Matrix camera_matrix, DrawSettings settings)
         {
-            ent.RenderModel(g);
+            // get settings that the scene would like
+            var ent_settings = ent.GetRenderSettings(settings);
+
+            // do some default OpenGL calls
+            _drawer.SetupRender();
+
+            // do lots of opengl calls, but don't put vertex data on GPU yet
+            _drawer.ApplyDrawSettings(ent_settings);
+
+            if (ent == null)
+            {
+                _drawer.DrawEmptyEntitySplash();
+            }
+            else
+            {
+                // Applying camera transform is good here.
+                g.MultiplyTransform(camera_matrix);
+                // this is a debug thing, just make everything bigger.
+                g.ScaleTransform(3.0f, 3.0f);
+                // Now finally put vertices to GPU, because everything else is ready.
+                ent.RenderModel(g);
+            }
         }
 
 
