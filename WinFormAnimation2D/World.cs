@@ -11,6 +11,34 @@
 /// while we work with Grpahics object, when we go to opengl this should fix itself)
 /// 
 
+/// Assimp is row major. 
+/// OpenGL also uses row-major order.
+/// I do not know about OpenTK.
+/// Row-major or column-major determines how the matrices are stored in memory. 
+/// This is important when we want to load them into OpenGL which expects them row-major.
+///
+/// But we also have some differences as to how where the translation of matrix is stored.
+/// Is the translation in right most column? Or is it in the bottom-row?
+/// OpenTK uses the bottom row to store translation.
+/// Assimp uses the righ most column to store translation.
+/// This means that matrices look like this in Assimp:
+///  X1  Y1  Z1  T1
+///  X2  Y2  Z2  T2
+///  X3  Y3  Z3  T3
+///  0   0   0   1
+/// Where vector X = (x1, x2, x3)
+/// Vector Y = (y1, y2, y3)
+/// Vector Z = (y1, y2, y3)
+/// translation T = (T1, T2, T3)
+///
+/// So in memory this looks like: [X1 Y1 Z1 T1] [X2 Y2 Z2 T2] [X3 Y3 Z3 T3] [0  0  0  1]
+/// Which is called row-major. Get it now? ;)
+
+/// Lol, I found out why open3mod always had to use a Transpose on OpenTK matrix in the rendering loop. 
+/// Its because the dude does not convert openTK matrix to assimp matrix properly in AssimpToOpenTK. His
+/// translational part is not correct.
+
+
 
 
 
@@ -73,28 +101,28 @@ namespace WinFormAnimation2D
         public void LoadModel(MemoryStream model_data, string format_hint)
         {
             //Create a new importer
-            AssimpContext importer = new AssimpContext();
+            using (var importer = new AssimpContext())
+            {
+                //This is how we add a configuration (each config is its own class)
+                importer.SetConfig(new NormalSmoothingAngleConfig(66.0f));
 
-            //This is how we add a configuration (each config is its own class)
-            // NormalSmoothingAngleConfig config = new NormalSmoothingAngleConfig(66.0f);
-            // importer.SetConfig(config);
+                //This is how we add a logging callback 
+                LogStream logstream = new LogStream( (msg, userData) => { Console.WriteLine(msg); });
+                logstream.Attach();
 
-            //This is how we add a logging callback 
-            LogStream logstream = new LogStream(delegate (String msg, String userData) {
-                Console.WriteLine(msg);
-            });
-            logstream.Attach();
+                //Import the model. All configs are set. The model
+                //is imported, loaded into managed memory. Then the unmanaged memory is released, and everything is reset.
+                Current_Scene = importer.ImportFileFromStream(model_data
+                    , PostProcessPreset.TargetRealTimeMaximumQuality
+                    , format_hint);
 
-            //Import the model. All configs are set. The model
-            //is imported, loaded into managed memory. Then the unmanaged memory is released, and everything is reset.
-            Current_Scene = importer.ImportFileFromStream(model_data
-                , PostProcessPreset.TargetRealTimeMaximumQuality
-                , format_hint);
+                if (Current_Scene == null || Current_Scene.SceneFlags.HasFlag(SceneFlags.Incomplete))
+                {
+                    importer.Dispose();
+                    throw new Exception("Failed to load scene");
+                }
+            }
 
-            // TODO: load data into your own data structures.
-
-            //Dont need the raw data. We have the Current_Scene reference
-            importer.Dispose();
         }
 
         /// <summary>
