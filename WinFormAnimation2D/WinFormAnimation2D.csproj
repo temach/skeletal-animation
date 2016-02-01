@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DrawSettings.cs" />
     <Compile Include="DrawToOpenGL.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
