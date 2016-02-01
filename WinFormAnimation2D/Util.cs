@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using assimp = Assimp;
+using ai = Assimp;
 using Assimp.Configs;
 using System.Windows.Forms;
 using System.Drawing;
-using draw2D = System.Drawing.Drawing2D;
+using d2d = System.Drawing.Drawing2D;
 
 namespace WinFormAnimation2D
 {
@@ -16,7 +16,7 @@ namespace WinFormAnimation2D
         // Useful for random value generation. 
         // We use only one Random instance in the whole program.
         static Random rand = new Random();
-                
+
         // Note that this is Unsigned int (so overflow is ok)
         public static Func<Brush> GetNextBrush = SetupBrushGen();
 
@@ -43,9 +43,9 @@ namespace WinFormAnimation2D
         /// Convert assimp 4 by 4 matrix into 3 by 2 matrix from System.Drawing.Drawing2D and use it
         /// for drawing with Graphics object.
         /// </summary>
-        public static draw2D.Matrix eTo3x2(this assimp.Matrix4x4 m)
+        public static d2d.Matrix eTo3x2(this ai.Matrix4x4 m)
         {
-            return new draw2D.Matrix(m.A1, m.B1, m.A2, m.B2, m.A4, m.B4);
+            return new d2d.Matrix(m.A1, m.B1, m.A2, m.B2, m.A4, m.B4);
             // return new draw2D.Matrix(m[0, 0], m[1, 0], m[0, 1], m[1, 1], m[0, 3], m[1, 3]);
         }
 
@@ -82,7 +82,7 @@ namespace WinFormAnimation2D
         /// Convert assimp 3D vector to 2D System.Drawing.Point
         /// for drawing with Graphics object.
         /// </summary>
-        public static Point eToPoint(this assimp.Vector3D v)
+        public static Point eToPoint(this ai.Vector3D v)
         {
             return new Point((int)v.X, (int)v.Y);
         }
@@ -91,7 +91,7 @@ namespace WinFormAnimation2D
         /// Convert assimp 3D vector to 2D System.Drawing.PointF (floating point)
         /// for drawing with Graphics object.
         /// </summary>
-        public static PointF eToPointFloat(this assimp.Vector3D v)
+        public static PointF eToPointFloat(this ai.Vector3D v)
         {
             return new PointF(v.X, v.Y);
         }
@@ -100,13 +100,13 @@ namespace WinFormAnimation2D
         /// </summary>
         /// <param name="mat"></param>
         /// <returns></returns>
-        public static draw2D.Matrix eSnapScale(this draw2D.Matrix mat, double scale = 1.0)
+        public static d2d.Matrix eSnapScale(this d2d.Matrix mat, double scale = 1.0)
         {
             var curmat = mat.Elements;
 
             // normalise the x and y axis to set scale to 1.0f
-            var x_axis = new assimp.Vector2D(curmat[0], curmat[1]);
-            var y_axis = new assimp.Vector2D(curmat[2], curmat[3]);
+            var x_axis = new ai.Vector2D(curmat[0], curmat[1]);
+            var y_axis = new ai.Vector2D(curmat[2], curmat[3]);
             x_axis.Normalize();
             y_axis.Normalize();
 
@@ -118,7 +118,7 @@ namespace WinFormAnimation2D
 
             // make new matrix with scale of 1.0f 
             // Do not change the translation
-            var newmat = new draw2D.Matrix(x_axis[0], x_axis[1]
+            var newmat = new d2d.Matrix(x_axis[0], x_axis[1]
                 , y_axis[0], y_axis[1]
                 , curmat[4], curmat[5]
             );
@@ -133,10 +133,10 @@ namespace WinFormAnimation2D
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public static draw2D.Matrix eSnapTranslate(this draw2D.Matrix mat, double x, double y)
+        public static d2d.Matrix eSnapTranslate(this d2d.Matrix mat, double x, double y)
         {
             var curmat = mat.Elements;
-            var newmat = new draw2D.Matrix(curmat[0], curmat[1]
+            var newmat = new d2d.Matrix(curmat[0], curmat[1]
                 , curmat[2], curmat[3]
                 , (float)x, (float)y);
             return newmat.Clone();
@@ -147,19 +147,19 @@ namespace WinFormAnimation2D
         /// </summary>
         /// <param name="mat"></param>
         /// <returns></returns>
-        public static draw2D.Matrix eSnapRotate(this draw2D.Matrix mat, double angle)
+        public static d2d.Matrix eSnapRotate(this d2d.Matrix mat, double angle)
         {
             var curmat = mat.Elements;
 
             // get the vector components.
-            var x_axis = new assimp.Vector2D(curmat[0], curmat[1]);
-            var y_axis = new assimp.Vector2D(curmat[2], curmat[3]);
+            var x_axis = new ai.Vector2D(curmat[0], curmat[1]);
+            var y_axis = new ai.Vector2D(curmat[2], curmat[3]);
 
             // Get the scale of current matrix
             double x_len = x_axis.Length();
             double y_len = y_axis.Length();
 
-            var newmat = new draw2D.Matrix();
+            var newmat = new d2d.Matrix();
             newmat.Rotate((float)angle);
 
             // Preserve scale and translation
@@ -167,6 +167,32 @@ namespace WinFormAnimation2D
             newmat.Translate(curmat[5], curmat[6]);
 
             return newmat.Clone();
+        }
+
+        /// <summary>
+        /// Transform a direction vector by the given Matrix. Note: this is for assimp 
+        /// matrix which is row major.
+        /// </summary>
+        /// <param name="vec">The vector to transform</param>
+        /// <param name="mat">The desired transformation</param>
+        /// <param name="result">The transformed vector</param>
+        public static ai.Vector3D eTransformVector(this ai.Matrix4x4 mat, ai.Vector3D vec)
+        {
+            return new ai.Vector3D
+            {
+                X = vec.X * mat.A1
+                    + vec.Y * mat.B1
+                    + vec.Z * mat.C1
+                    + mat.A4,
+                Y = vec.X * mat.A2
+                    + vec.Y * mat.B2
+                    + vec.Z * mat.C2
+                    + mat.B4,
+                Z = vec.X * mat.A3
+                    + vec.Y * mat.B3
+                    + vec.Z * mat.C3
+                    + mat.C4
+            };
         }
 
 
@@ -200,85 +226,5 @@ namespace WinFormAnimation2D
                 }
             };
         }
-
-
-
-    }
+    } // end of class
 }
-/**************************
-
-    Matrix Assimp2Drawing(Matrix4x4 assimp_matrix)
-    {
-        return new Matrix(assimp_matrix.)
-    }
-
-
-    //-------------------------------------------------------------------------------------------------
-    // Render the scene.
-    // Begin at the root node of the imported data and traverse
-    // the scenegraph by multiplying subsequent local transforms
-    // together on OpenGL matrix stack.
-    void RecursiveRender(Graphics g, Node nd)
-    {
-        int i = 0;
-        int n = 0, t = 0;
-        Matrix4x4 mat44 = nd.Transform;
-
-        mat44.Transpose();
-        GraphicsState st1 = g.Save();
-        Matrix k = null;
-        g.MultiplyTransform()
-        g.MultiplyTransform()
-            g.MultiplyTransform(mat44);
-        glMultMatrixf((float *) &mat44);
-
-        // draw all meshes assigned to this node
-        for (n = 0; n < nd.mNumMeshes; ++n) {
-            const struct aiMesh* mesh = Current_Scene->mMeshes[nd->mMeshes[n]];
-
-            ApplyMaterial(Current_Scene->mMaterials[mesh->mMaterialIndex]);
-
-            if(mesh->mNormals == NULL) {
-                glDisable(GL_LIGHTING);
-            } else {
-                glEnable(GL_LIGHTING);
-            }
-
-            for (t = 0; t < mesh->mNumFaces; ++t)
-            {
-                const struct aiFace* face = &mesh->mFaces[t];
-                GLenum face_mode;
-
-                switch(face->mNumIndices)
-                {
-                    case 1: face_mode = GL_POINTS; break;
-                    case 2: face_mode = GL_LINES; break;
-                    case 3: face_mode = GL_TRIANGLES; break;
-                    default: face_mode = GL_POLYGON; break;
-                }
-
-                glBegin(face_mode);
-
-                for (i = 0; i < face->mNumIndices; i++)
-                {
-                    unsigned int index = face->mIndices[i];
-                    if (mesh->mNormals != NULL) {
-                        glNormal3fv(&mesh->mNormals[index].x);
-                    }
-                    glVertex3fv(&mesh->mVertices[index].x);
-                }
-
-                glEnd();
-            }
-        }
-
-        // draw all children
-        for (n = 0; n < nd->mNumChildren; ++n) {
-            RecursiveRender(nd->mChildren[n]);
-        }
-
-        glPopMatrix();
-    }
-
-
-**************************/
