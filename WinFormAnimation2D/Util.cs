@@ -13,9 +13,12 @@ namespace WinFormAnimation2D
 {
     static class Util
     {
+        // When we get OpenGL we will not have to pass around a Graphics instance.
+        public static Graphics GR = null;
+
         // Useful for random value generation. 
         // We use only one Random instance in the whole program.
-        static Random rand = new Random();
+        private static Random rand = new Random();
 
         // Note that this is Unsigned int (so overflow is ok)
         public static Func<Brush> GetNextBrush = SetupBrushGen();
@@ -69,7 +72,7 @@ namespace WinFormAnimation2D
         }
 
         /// <summary>
-        /// Debug function to quickly draw __floating__ points with Graphics
+        /// Quick debug function to draw _floating_ PointF with Graphics
         /// </summary>
         public static void eDrawPoint(this Graphics g, PointF p)
         {

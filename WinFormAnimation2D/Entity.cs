@@ -84,6 +84,19 @@ namespace WinFormAnimation2D
     /// <summary>
     /// Represents the currently loaded scene. There can only be one Entity loaded at a time.
     /// </summary>
+
+    // TODO: this is piece of text taken from function that no longer exists.
+    // but it is trying to describe my architechture. But it is getting old and useless. 
+    // HERE GOES:
+    // setup specific to this scene what other objects do not know about. (wireframe, texture,material,scale...)
+    // GetRenderSettings gets the currently active globale settings for the program.
+    // it looks at them and chooses the best settings for itself taking into 
+    // consideration the globals. So it tries to get the scene looking ideal while 
+    // still respecting global user settings (like: draw in wireframe, or without texture)
+    // that are currently turned on in the application. This settings are 
+    // activated back in the DrawToOpenGL class. After their activation we call the 
+    // render method on this particular object that pushes vertices (not settings) to OpenGL.
+    // This object should have some render code.
     class Entity
     {
         // MAtrix to track the state of the entity
@@ -93,6 +106,7 @@ namespace WinFormAnimation2D
         public Scene _ent_scene = null;
 
         public BoundingBox _ent_box = null;
+        public DrawSettings _draw_settings = null;
 
         // the only public constructor
         public Entity(Scene sc)
@@ -112,49 +126,40 @@ namespace WinFormAnimation2D
         }
 
 
-        // setup specific to this scene what other objects do not know about. (wireframe, texture,material,scale...)
-        // this gets the currently active globale settings for the program.
-        // it looks at them and chooses the best settings for itself taking into 
-        // consideration the globals. So it tries to get the scene looking ideal while 
-        // still respecting global user settings (like: draw in wireframe, or without texture)
-        // that are currently turned on in the application. This settings are 
-        // activated back in the DrawToOpenGL class. After their activation we call the 
-        // render method on this particular object that pushes vertices (not settings) to OpenGL.
-        // This object should have some render code.
 
-        public DrawSettings GetRenderSettings(DrawSettings state)
-        {
-            return new DrawSettings
-            {
-                _enableTexture2D = true,
-                _enableDepthTest = true,
-                _enableFaceCounterClockwise = true,
-                _enablePerspectiveCorrectionHint = true,
-                _enablePolygonModeFill = true,
-            };
-        }
 
         /// <summary>
         /// Render the model stored in EntityScene useing the Graphics object.
         /// </summary>
-        public void RenderModel(Graphics g)
+        public void RenderModel(DrawSettings settings)
         {
-            g.MultiplyTransform(_ent_mat);
-            RecursiveRender(g, _ent_scene.RootNode);
+            _draw_settings = settings;
+
+            if (_draw_settings.EnablePerspectiveCorrectionHint)
+            {
+                // all are from System.Drawing.Drawing2D.
+                Util.GR.CompositingQuality = CompositingQuality.HighQuality;
+                Util.GR.InterpolationMode = InterpolationMode.HighQualityBilinear;
+                Util.GR.SmoothingMode = SmoothingMode.AntiAlias;
+            }
+
+            Util.GR.MultiplyTransform(_ent_mat);
+            RecursiveRenderSystemDrawing(_ent_scene.RootNode);
         }
 
         //-------------------------------------------------------------------------------------------------
+        // TODO: move all the drawing code elsewhere. This should only show the logic of drawing not the actual OpenGL commands.
         // Render the scene.
         // Begin at the root node of the imported data and traverse
         // the scenegraph by multiplying subsequent local transforms
         // together on OpenGL matrix stack.
-        private void RecursiveRender(Graphics g, Node nd)
+        private void RecursiveRenderSystemDrawing(Node nd)
         {
             Matrix4x4 mat44 = nd.Transform;
 
             var tmp = mat44.eTo3x2();
-            var saved = g.Save();
-            g.MultiplyTransform(tmp);
+            var saved = Util.GR.Save();
+            Util.GR.MultiplyTransform(tmp);
 
             foreach(int mesh_id in nd.MeshIndices)
             {
@@ -164,14 +169,26 @@ namespace WinFormAnimation2D
                     // list of 3 vertices
                     var tri_vertices = cur_face.Indices.Select(i => cur_mesh.Vertices[i].eToPointFloat()).ToArray();
 
-                    // choose random brush color for this triangle
-                    var br = Util.GetNextBrush();
-                    g.FillPolygon(br, tri_vertices);
+                    Brush br;
+                    // Enable random colored light to emit from the render into your eyes
+                    if (_draw_settings.EnableLight) {
+                        // choose random brush color for this triangle
+                        br = Util.GetNextBrush();
+                    } else {
+                        br = _draw_settings.DefaultBrush;
+                    }
+
+                    // Fill or draw wireframe
+                    if (_draw_settings.EnablePolygonModeFill) {
+                        Util.GR.FillPolygon(br, tri_vertices);
+                    } else {
+                        Util.GR.DrawLines(_draw_settings.DefaultPen, tri_vertices);
+                    }
 
                     // Bad code to draw a single point. Better use DrawEllipse. But too lazy.
                     foreach(var p in tri_vertices)
                     {
-                        g.eDrawPoint(p);
+                        Util.GR.eDrawPoint(p);
                     }
                 }
             }
@@ -179,12 +196,12 @@ namespace WinFormAnimation2D
             // draw all children
             foreach (Node child in nd.Children)
             {
-                RecursiveRender(g, child);
+                RecursiveRenderSystemDrawing(child);
             }
 
             // After drawing the left node. unwind the matrix stack.
             // so we don't apply this leaf's transform to the next leaf.
-            g.Restore(saved);
+            Util.GR.Restore(saved);
         }
 
     } // end of class

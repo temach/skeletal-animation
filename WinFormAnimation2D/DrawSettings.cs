@@ -13,14 +13,14 @@ namespace WinFormAnimation2D
         /// Seriously OpenGL settings
         /// here is a template:
         /// public bool _enable = false;
-        public bool _enableTexture2D = false;
-        public bool _enablePerspectiveCorrectionHint = false;
-        public bool _enableDepthTest = false;
-        public bool _enableFaceCounterClockwise = false;
-        public bool _enableDisplayList = false;
-        public bool _enablePolygonModeFill = false;
-        public bool _enablePolygonModeLine = false;
-        public bool _enableLight = false;
+        public bool EnableTexture2D = false;
+        public bool EnablePerspectiveCorrectionHint = false;
+        public bool EnableDepthTest = false;
+        public bool EnableFaceCounterClockwise = false;
+        public bool EnableDisplayList = false;
+        public bool EnablePolygonModeFill = false;
+        public bool EnablePolygonModeLine = false;
+        public bool EnableLight = false;
 
         /// Enum of all supported camera modes.
         public enum CameraMode
@@ -38,7 +38,10 @@ namespace WinFormAnimation2D
 
         public CameraMode CamMode = CameraMode.Orbit;
 
-        public Entity _currentEntity;
+        public Entity CurrentEntity;
+
+        public Pen DefaultPen = Pens.Gold;
+        public Brush DefaultBrush = Brushes.Gold;
 
         /// Font to be used for textual overlays in 3D view (size ~ 12px)
         public readonly Font DefaultFont12;

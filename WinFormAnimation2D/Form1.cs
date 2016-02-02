@@ -17,21 +17,20 @@ namespace WinFormAnimation2D
 {
     public partial class MyForm : Form
     {
-        private World world = new World();
-        private bool drawModel = false;
+        private World world = null;
 
-        public Timer tm = new Timer();
-        public int cur_count = 1;
+        private Timer tm = new Timer();
+        private int cur_count = 1;
         // should animation be playing. This should really go into GUISettings
-        public bool animate = false;
+        private bool animate = false;
 
         // State of the camera currently. We can affect this with buttons.
-        public Matrix camera_matrix = new Matrix();
+        private Matrix camera_matrix = new Matrix();
 
         private GUISettings _settings = new GUISettings();
 
         private float _zoom = 1.0f;
-        public float Zoom
+        private float Zoom
         {
             get {
                 return _zoom;
@@ -51,6 +50,7 @@ namespace WinFormAnimation2D
 
             // Allow to use arrow keys for navigation
             KeyPreview = true;
+            world = new World(this.pictureBox_main);
         }
         
 		protected void DoRedraw()
@@ -76,54 +76,13 @@ namespace WinFormAnimation2D
 
         private void pictureBox_main_Paint(object sender, PaintEventArgs e)
         {
- 			// Draw program elements
-			Graphics g = e.Graphics;
-            g.DrawRectangle(new Pen(Color.Blue, 10.0f), pictureBox_main.DisplayRectangle);
+            // Draw program elements
+            // Set GRPH so we can use Sysem.Drawing2D as if it was like OpenGL
+            Util.GR = e.Graphics;
 
-            // Draw world elements
-            // g.MultiplyTransform(camera_matrix);
+            Util.GR.DrawRectangle(new Pen(Color.Blue, 10.0f), pictureBox_main.DisplayRectangle);
 
-            // g.DrawEllipse(Pens.Green, new Rectangle(0, 0, 10, 10));
-            // g.DrawPoint(new Point(500, 50));
-
-            // g.TranslateTransform(100, 100);
-            // RecursiveRender(Current_Scene.mRootNode);
-            // g.DrawRectangle(new Pen(Color.Blue, 10.0f), new Rectangle(500, 200, 40, 70));
-
-            // g.ScaleTransform(15.0f, 15.0f);
-            // g.ScaleTransform(3.0f, 3.0f);
-            world.RenderWorld(g, camera_matrix,);
-
-            /***
-            if (animate)
-            {
-                Random rand = new Random();
-                g.MultiplyTransform(world.debug_mat);
-                foreach (Point p in world.debug_vertices.Take(cur_count))
-                {
-                    Point p = world.debug_mat.TransformPoints()
-                    g.DrawPoint(p);
-                }
-                cur_count++;
-                if (cur_count >= world.debug_vertices.Count)
-                {
-                    animate = false;
-                    tm.Stop();
-                }
-            }
-            ***/
-
-            // How to draw example
-            /*
-			GraphicsState transState = g.Save();
- 			g.TranslateTransform (1024/2, 740/2);		// center of screen
-			g.TranslateTransform(0, this.tilt_value);		// lower ground by altitude modifications
-			g.RotateTransform (this.roll_value);
-			g.SetClip (tiltrect.Rect);
-			info.TriggerPaint (pea);
-			g.ResetClip ();
-			g.Restore(transState);	
-            */
+            world.RenderWorld(camera_matrix);
         }
 
         // functions to move the world objects left/right/up/down on 2D canvas
