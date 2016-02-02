@@ -106,7 +106,7 @@ namespace WinFormAnimation2D
         public Scene _ent_scene = null;
 
         public BoundingBox _ent_box = null;
-        public DrawSettings _draw_settings = null;
+        public DrawConfig _draw_conf = null;
 
         // the only public constructor
         public Entity(Scene sc)
@@ -124,18 +124,15 @@ namespace WinFormAnimation2D
         {
             return;
         }
-
-
-
-
+        
         /// <summary>
         /// Render the model stored in EntityScene useing the Graphics object.
         /// </summary>
-        public void RenderModel(DrawSettings settings)
+        public void RenderModel(DrawConfig settings)
         {
-            _draw_settings = settings;
+            _draw_conf = settings;
 
-            if (_draw_settings.EnablePerspectiveCorrectionHint)
+            if (_draw_conf.EnablePerspectiveCorrectionHint)
             {
                 // all are from System.Drawing.Drawing2D.
                 Util.GR.CompositingQuality = CompositingQuality.HighQuality;
@@ -171,18 +168,18 @@ namespace WinFormAnimation2D
 
                     Brush br;
                     // Enable random colored light to emit from the render into your eyes
-                    if (_draw_settings.EnableLight) {
+                    if (_draw_conf.EnableLight) {
                         // choose random brush color for this triangle
                         br = Util.GetNextBrush();
                     } else {
-                        br = _draw_settings.DefaultBrush;
+                        br = _draw_conf.DefaultBrush;
                     }
 
                     // Fill or draw wireframe
-                    if (_draw_settings.EnablePolygonModeFill) {
+                    if (_draw_conf.EnablePolygonModeFill) {
                         Util.GR.FillPolygon(br, tri_vertices);
                     } else {
-                        Util.GR.DrawLines(_draw_settings.DefaultPen, tri_vertices);
+                        Util.GR.DrawLines(_draw_conf.DefaultPen, tri_vertices);
                     }
 
                     // Bad code to draw a single point. Better use DrawEllipse. But too lazy.

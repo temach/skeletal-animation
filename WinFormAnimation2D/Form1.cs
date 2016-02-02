@@ -17,7 +17,8 @@ namespace WinFormAnimation2D
 {
     public partial class MyForm : Form
     {
-        private World world = null;
+        // readonly becasue its a singleton
+        private readonly World world;
 
         private Timer tm = new Timer();
         private int cur_count = 1;
@@ -26,8 +27,7 @@ namespace WinFormAnimation2D
 
         // State of the camera currently. We can affect this with buttons.
         private Matrix camera_matrix = new Matrix();
-
-        private GUISettings _settings = new GUISettings();
+        private GUIConfig _gui_conf = new GUIConfig();
 
         private float _zoom = 1.0f;
         private float Zoom

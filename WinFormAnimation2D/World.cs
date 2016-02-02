@@ -38,6 +38,8 @@
 /// Its because the dude does not convert openTK matrix to assimp matrix properly in AssimpToOpenTK. His
 /// translational part is not correct.
 
+/// For singletons instead of constructor throwing an exception we will use readonly fields. 
+/// Maybe this will be cleaner.
 
 
 
@@ -74,37 +76,37 @@ namespace WinFormAnimation2D
         private static Scene Current_Scene = null;
         private Entity ent = null;
 
+        // readonly because this is also singleton
         public readonly Renderer _drawer = null;
 
         public World(PictureBox targetcanvas) {
-            if (hasInit == true)
-            {
-                throw new Exception("Class World is a singleton. Can not create more than one instance.");
-            }
-
             _drawer = new Renderer(targetcanvas);
+            // turn on some config settings
+            _drawer.GlobalDrawConf = new DrawConfig {
+                EnablePolygonModeFill = true,
+                EnableLight = true,
+            };
 
             //Filepath to our model
-            // byte[] filedata = Encoding.UTF8.GetBytes(Properties.Resources.sphere_3d);
             byte[] filedata = Properties.Resources.square_center_2;
-
             MemoryStream sphere = new MemoryStream(filedata);
-
+            
             // use format "nff" for sphere_3d
             // LoadModel(sphere, "nff");
 
             // use format "dae" for bird_plane
-            LoadModel(sphere, "dae");
+            var cur_scene = LoadScene(sphere, "dae");
 
             // use format "obj" for bird_plane_5
             // LoadModel(sphere, "obj");
 
-            ent = new Entity(Current_Scene);
+            ent = new Entity(cur_scene);
         }
 
-        public void LoadModel(MemoryStream model_data, string format_hint)
+        public Scene LoadScene(MemoryStream model_data, string format_hint)
         {
             //Create a new importer
+            Scene cur_scene;
             using (var importer = new AssimpContext())
             {
                 //This is how we add a configuration (each config is its own class)
@@ -116,17 +118,17 @@ namespace WinFormAnimation2D
 
                 //Import the model. All configs are set. The model
                 //is imported, loaded into managed memory. Then the unmanaged memory is released, and everything is reset.
-                Current_Scene = importer.ImportFileFromStream(model_data
+                cur_scene = importer.ImportFileFromStream(model_data
                     , PostProcessPreset.TargetRealTimeMaximumQuality
                     , format_hint);
-
-                if (Current_Scene == null || Current_Scene.SceneFlags.HasFlag(SceneFlags.Incomplete))
-                {
-                    importer.Dispose();
-                    throw new Exception("Failed to load scene");
-                }
             }
 
+            if (cur_scene == null || cur_scene.SceneFlags.HasFlag(SceneFlags.Incomplete))
+            {
+                throw new Exception("Failed to load scene");
+            }
+
+            return cur_scene;
         }
 
         /// <summary>
@@ -148,7 +150,7 @@ namespace WinFormAnimation2D
                 // this is a debug thing, just make everything bigger.
                 Util.GR.ScaleTransform(3.0f, 3.0f);
                 // Now finally put vertices to GPU, because everything else is ready.
-                ent.RenderModel(_drawer.GlobalSettings);
+                ent.RenderModel(_drawer.GlobalDrawConf);
             }
         }
 

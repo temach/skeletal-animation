@@ -18,20 +18,18 @@ namespace WinFormAnimation2D
     {
         // The control to which we are rendering to.
         // Change this to OpenGL control later.
-        private PictureBox _draw_area;
+        private PictureBox _canvas;
 
         // Obtain actual rendering resolution in pixels
         public Size RenderResolution {
-            get { return _draw_area.Size; }
+            get { return _canvas.Size; }
         }
 
-        // currently active graphics. Handle to get the rendering commands.
-        public Graphics _graphics = null;
-        public DrawSettings GlobalSettings = new DrawSettings();
+        public DrawConfig GlobalDrawConf;
 
         public Renderer(PictureBox targetcanvas)
         {
-            _draw_area = targetcanvas;
+            _canvas = targetcanvas;
         }
 
         public void SetupRender(Graphics g)
@@ -47,7 +45,7 @@ namespace WinFormAnimation2D
             string msg = "No file loaded";
             var w = (float)RenderResolution.Width;
             var h = (float)RenderResolution.Height;
-            Util.GR.DrawString(msg, GlobalSettings.DefaultFont16 
+            Util.GR.DrawString(msg, GlobalDrawConf.DefaultFont16 
                 , Brushes.Aquamarine , new PointF(w / 2.0f, h / 2.0f) );
 
         }
