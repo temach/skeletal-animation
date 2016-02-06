@@ -17,40 +17,47 @@ namespace WinFormAnimation2D
 {
     public partial class MyForm : Form
     {
+        // TODO: better use nested namespace than nested class
+        class MouseState
+        {
+            // mimimum motion delta for mouse to be recognised
+            public int _horiz_hysteresis = 4;
+            public int _vert_hysteresis = 4;
+            // mouse position when is was pressed down
+            public int _mouse_x_captured;
+            public int _mouse_y_captured;
+            // is mouse pressed currently
+            public bool _is_mouse_down;
+            // change in mouse position for current frame
+            public int delta_x;
+            public int delta_y;
+        };
+
+        MouseState _m_status = new MouseState();
+
         // readonly becasue its a singleton
-        private readonly World world;
+        private readonly World _world;
 
         private Timer tm = new Timer();
         private int cur_count = 1;
-        // should animation be playing. This should really go into GUISettings
-        private bool animate = false;
 
         // State of the camera currently. We can affect this with buttons.
-        private Matrix camera_matrix = new Matrix();
+        private Drawing2DCamera _camera = new Drawing2DCamera();
         private GUIConfig _gui_conf = new GUIConfig();
-
-        private float _zoom = 1.0f;
-        private float Zoom
-        {
-            get {
-                return _zoom;
-            } set {
-                _zoom = value;
-                label_zoom.Text = _zoom.ToString();
-                pictureBox_main.Invalidate();
-            }
-        }
 
         public MyForm()
         {
             InitializeComponent();
+            // we have to manually register the mousewheel event handler.
+            this.MouseWheel += new MouseEventHandler(this.pictureBox_main_MouseMove);
+
             tm.Interval = 150;
             tm.Tick += delegate { this.pictureBox_main.Invalidate(); };
             // world.RenderModel(this.button_start.CreateGraphics());
 
             // Allow to use arrow keys for navigation
             KeyPreview = true;
-            world = new World(this.pictureBox_main);
+            _world = new World(this.pictureBox_main);
         }
         
 		protected void DoRedraw()
@@ -82,67 +89,45 @@ namespace WinFormAnimation2D
 
             Util.GR.DrawRectangle(new Pen(Color.Blue, 10.0f), pictureBox_main.DisplayRectangle);
 
-            world.RenderWorld(camera_matrix);
+            _world.RenderWorld(_camera.CamMatrix);
         }
 
         // functions to move the world objects left/right/up/down on 2D canvas
         private void button_up_Click(object sender, EventArgs e) {
-            camera_matrix.Translate(0, (-1)*Util.stepsize);
+            _camera.CamMatrix.Translate(0, (-1)*Util.stepsize);
             pictureBox_main.Invalidate();
         }
         private void button_left_Click(object sender, EventArgs e) {
-            camera_matrix.Translate((-1)*Util.stepsize, 0);
+            _camera.CamMatrix.Translate((-1)*Util.stepsize, 0);
             pictureBox_main.Invalidate();
         }
         private void button_right_Click(object sender, EventArgs e) {
-            camera_matrix.Translate(Util.stepsize, 0);
+            _camera.CamMatrix.Translate(Util.stepsize, 0);
             pictureBox_main.Invalidate();
         }
         private void button_down_Click(object sender, EventArgs e) {
-            camera_matrix.Translate(0, Util.stepsize);
+            _camera.CamMatrix.Translate(0, Util.stepsize);
             pictureBox_main.Invalidate();
         }
 
         // change the tranbslation part of the matrix to all zeros
         private void button_resetpos_Click(object sender, EventArgs e)
         {
-            camera_matrix = camera_matrix.eSnapTranslate(0.0, 0.0);
+            _camera.CamMatrix = _camera.CamMatrix.eSnapTranslate(0.0, 0.0);
             pictureBox_main.Invalidate();
         }
 
         private void button_resetzoom_Click(object sender, EventArgs e)
         {
-            camera_matrix = camera_matrix.eSnapScale(1.0);
-            Zoom = 1.0f;
-            trackBar_zoom.Value = 0;
+            _camera.CamMatrix = _camera.CamMatrix.eSnapScale(1.0);
         }
 
         private void button_zoom_Click(object sender, EventArgs e)
         {
-            float delta = 0;
-            int val = trackBar_zoom.Value;
-            // Weird formula to get both zoom in and zoom out.
-            // Check when 0 (then we assign 1.0f) 
-            // when less than 0 (then we divide) 
-            // when more than zero (then we simply assign)
-            delta = (val == 0) ? (1.0f) :
-                (val < 0) ? (-1.0f / val) :         // note the (-1)
-                val;
-            Zoom *= delta;
-            camera_matrix.Scale(delta, delta);
         }
 
         private void trackBar_zoom_ValueChanged(object sender, EventArgs e)
         {
-            float delta = 0;
-            int val = trackBar_zoom.Value;
-            // Check when 0 (then we assign 1.0f) 
-            // when less than 0 (then we divide) 
-            // when more than zero (then we simply assign)
-            delta = (val == 0) ? (1.0f) :
-                (val < 0) ? (-1.0f / val) :         // note the (-1)
-                val;
-            label_zoom.Text = (delta * Zoom).ToString();
         }
 
         private void MyForm_KeyDown(object sender, KeyEventArgs e)
@@ -169,6 +154,53 @@ namespace WinFormAnimation2D
         private void button_stop_colors_Click(object sender, EventArgs e)
         {
             tm.Stop();
+        }
+
+        private void pictureBox_main_MouseDown(object sender, MouseEventArgs e)
+        {
+            // activate frequent polling for mouse position
+            // or
+            // just turn on mouse button down and rely on MouseMove event
+            _m_status._is_mouse_down = true;
+            _m_status._mouse_x_captured = e.X;
+            _m_status._mouse_y_captured = e.Y;
+        }
+
+        private void pictureBox_main_MouseMove(object sender, MouseEventArgs e)
+        {
+            // process scroll wheel
+            // TODO: add some jitter checking
+            if (Math.Abs(e.Delta) >= 1)
+            {
+                _camera.ProcessScroll(e.Delta);
+            }
+
+            // Process mouse motion only if it is pressed
+            if (! _m_status._is_mouse_down) {
+                return;
+            }
+            var delta_x = e.X - _m_status._mouse_x_captured;
+            var delta_y = e.Y - _m_status._mouse_y_captured;
+            // Check if its just mouse jitter. Don't bother updating the screen.
+            if (Math.Abs(delta_x) < _m_status._horiz_hysteresis 
+                && Math.Abs(delta_y)  < _m_status._vert_hysteresis)
+            {
+                return;
+            }
+            else
+            {
+                // time to do some rotation
+                _camera.ProcessMouse(delta_x, delta_y);
+            }
+            pictureBox_main.Invalidate();
+        }
+
+        private void pictureBox_main_MouseUp(object sender, MouseEventArgs e)
+        {
+            // stop timer to poll mouse position
+            // or
+            // just turn off the mouse down bool
+            _m_status._is_mouse_down = false;
         }
 
     }

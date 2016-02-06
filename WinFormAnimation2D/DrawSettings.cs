@@ -44,6 +44,9 @@ namespace WinFormAnimation2D
 
     class GUIConfig
     {
+        // should animation be playing. This should really go into GUISettings
+        private bool Animating = false;
+
         /// Show we render Frames Per Second counter?
         public bool ShowFps = true;
 
