@@ -8,10 +8,11 @@ using Assimp.Configs;
 using System.Windows.Forms;
 using System.Drawing;
 using d2d = System.Drawing.Drawing2D;
+using tk = OpenTK;
 
 namespace WinFormAnimation2D
 {
-    static class Util
+    public static class Util
     {
         // When we get OpenGL we will not have to pass around a Graphics instance.
         public static Graphics GR = null;
@@ -43,6 +44,64 @@ namespace WinFormAnimation2D
         public static Pen pp3 = new Pen(Color.Red, 0.01f);
 
         /// <summary>
+        /// Convert 4x4 OpenTK matrix into Assimp matrix. This should not be used often.
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        public static ai.Matrix4x4 eToAssimp(this tk.Matrix4 m)
+        {
+            return new ai.Matrix4x4
+            {
+               A1 = m.M11,
+               B1 = m.M12,
+               C1 = m.M13,
+               D1 = m.M14,
+               A2 = m.M21,
+               B2 = m.M22,
+               C2 = m.M23,
+               D2 = m.M24,
+               A3 = m.M31,
+               B3 = m.M32,
+               C3 = m.M33,
+               D3 = m.M34,
+               A4 = m.M41,
+               B4 = m.M42,
+               C4 = m.M43,
+               D4 = m.M44
+            };
+        }
+        
+        /// <summary>
+        /// Convert 4x4 Assimp matrix to OpenTK matrix.
+        /// Will be a very useful function becasue Assimp 
+        /// matrices are very limited.
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        public static tk.Matrix4 eToOpenTK(this ai.Matrix4x4 m)
+        {
+            return new tk.Matrix4
+            {
+                M11 = m.A1,
+                M12 = m.B1,
+                M13 = m.C1,
+                M14 = m.D1,
+                M21 = m.A2,
+                M22 = m.B2,
+                M23 = m.C2,
+                M24 = m.D2,
+                M31 = m.A3,
+                M32 = m.B3,
+                M33 = m.C3,
+                M34 = m.D3,
+                M41 = m.A4,
+                M42 = m.B4,
+                M43 = m.C4,
+                M44 = m.D4
+            };
+        }
+
+        /// <summary>
         /// Convert assimp 4 by 4 matrix into 3 by 2 matrix from System.Drawing.Drawing2D and use it
         /// for drawing with Graphics object.
         /// </summary>
@@ -50,6 +109,15 @@ namespace WinFormAnimation2D
         {
             return new d2d.Matrix(m.A1, m.B1, m.A2, m.B2, m.A4, m.B4);
             // return new draw2D.Matrix(m[0, 0], m[1, 0], m[0, 1], m[1, 1], m[0, 3], m[1, 3]);
+        }
+
+        /// <summary>
+        /// Convert _OpenTK_ 4 by 4 matrix into 3 by 2 matrix from System.Drawing.Drawing2D and use it
+        /// for drawing with Graphics object.
+        /// </summary>
+        public static d2d.Matrix eTo3x2(this tk.Matrix4 m)
+        {
+            return m.eToAssimp().eTo3x2();
         }
 
         /// <summary>
@@ -72,13 +140,31 @@ namespace WinFormAnimation2D
         }
 
         /// <summary>
-        /// Quick debug function to draw _floating_ PointF with Graphics
+        /// Quick debug function to draw _FLOATING_ PointF with Graphics
         /// </summary>
         public static void eDrawPoint(this Graphics g, PointF p)
         {
             float rad = 0.03f;        // radius
             var rect = new RectangleF(p.X - rad, p.Y - rad, 2 * rad, 2 * rad);
             g.DrawEllipse(Util.pp3, rect);
+        }
+
+        /// <summary>
+        /// Convert _OpenTK_ 3D vector to 2D System.Drawing.Point
+        /// for drawing with Graphics object.
+        /// </summary>
+        public static Point eToPoint(this tk.Vector3 v)
+        {
+            return new Point((int)v.X, (int)v.Y);
+        }
+
+        /// <summary>
+        /// Convert _OpenTK_ 3D vector to 2D System.Drawing.PointF (floating point)
+        /// for drawing with Graphics object.
+        /// </summary>
+        public static PointF eToPointFloat(this tk.Vector3 v)
+        {
+            return new PointF(v.X, v.Y);
         }
 
         /// <summary>
@@ -198,9 +284,8 @@ namespace WinFormAnimation2D
             };
         }
 
-
         /// <summary>
-        /// Get a brush of random color.
+        /// Get a brush of next color. (to distingush rendered polygons)
         /// </summary>
         /// <returns></returns>
         private static Func<Brush> SetupBrushGen()
