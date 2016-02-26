@@ -46,6 +46,7 @@
 /// Maybe this will be cleaner.
 
 /// TODO: Get rid of assimp matrices and vectors.
+/// TODO: Mouse scrolling add a recapture of initial captured mouse position when motion changes from left to right.
 
 
 

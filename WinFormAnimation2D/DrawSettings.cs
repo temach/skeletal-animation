@@ -10,7 +10,7 @@ namespace WinFormAnimation2D
     /// This class will be passed to the Entity's GetSettings() so it make the scene look best.
     class DrawConfig
     {
-        /// Seriously OpenGL settings
+        /// OpenGL settings
         /// here is a template:
         /// public bool _enable = false;
         public bool EnableTexture2D = false;

@@ -179,6 +179,7 @@ namespace WinFormAnimation2D
             if (! _m_status._is_mouse_down) {
                 return;
             }
+            // this.Text = _m_status._mouse_x_captured.ToString();
             var delta_x = e.X - _m_status._mouse_x_captured;
             var delta_y = e.Y - _m_status._mouse_y_captured;
             // Check if its just mouse jitter. Don't bother updating the screen.
