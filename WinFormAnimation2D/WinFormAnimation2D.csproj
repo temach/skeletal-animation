@@ -57,8 +57,14 @@
   <ItemGroup>
     <Compile Include="Animator.cs" />
     <Compile Include="AnimEval.cs" />
+    <Compile Include="AssimpMatrixExtensions.cs" />
+    <Compile Include="AssimpVectorExtensions.cs" />
     <Compile Include="Camera.cs" />
+    <Compile Include="Drawing2dMatrixExtensions.cs" />
+    <Compile Include="Drawing2dGraphicsExtensions.cs" />
     <Compile Include="DrawSettings.cs" />
+    <Compile Include="OpentkMatrixExtensions.cs" />
+    <Compile Include="OpentkVectorExtensions.cs" />
     <Compile Include="Renderer.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
