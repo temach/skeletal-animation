@@ -34,16 +34,37 @@ namespace WinFormAnimation2D
             InitializeComponent();
             // we have to manually register the mousewheel event handler.
             this.MouseWheel += new MouseEventHandler(this.pictureBox_main_MouseMove);
-
             tm.Interval = 150;
             tm.Tick += delegate { this.pictureBox_main.Invalidate(); };
             // world.RenderModel(this.button_start.CreateGraphics());
-
             // Allow to use arrow keys for navigation
             KeyPreview = true;
             _world = new World(this.pictureBox_main);
+            this.Focus();
         }
-        
+
+        /// <summary>
+        /// Intercept arrow keys to send input to the picture box.
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="keyData"></param>
+        /// <returns></returns>
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            //for the active control to see the keypress, return false
+            switch (keyData)
+            {
+                case Keys.Left:
+                case Keys.Right:
+                case Keys.Down:
+                case Keys.Up:
+                    this.MyForm_KeyDown(this, new KeyEventArgs(keyData));
+                    return true; // hide this key event from others
+                default:
+                    return base.ProcessCmdKey(ref msg, keyData);
+            }
+        }
+
         private void button_start_Click(object sender, EventArgs e)
         {
             pictureBox_main.Invalidate();

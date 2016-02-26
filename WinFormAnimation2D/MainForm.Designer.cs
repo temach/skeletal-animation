@@ -152,7 +152,7 @@
             this.label_zoom.TabIndex = 17;
             this.label_zoom.Text = "1.0";
             // 
-            // MyForm
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -167,7 +167,7 @@
             this.Controls.Add(this.button_up);
             this.Controls.Add(this.pictureBox_main);
             this.Controls.Add(this.button_start);
-            this.Name = "MyForm";
+            this.Name = "MainForm";
             this.Text = "Form1";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MyForm_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).EndInit();
