@@ -1,6 +1,6 @@
 ﻿namespace WinFormAnimation2D
 {
-    partial class MyForm
+    partial class MainForm
     {
         /// <summary>
         /// Required designer variable.

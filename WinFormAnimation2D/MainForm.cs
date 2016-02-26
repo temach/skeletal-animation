@@ -15,28 +15,12 @@ using System.Windows.Forms;
 
 namespace WinFormAnimation2D
 {
-    public partial class MyForm : Form
+    public partial class MainForm : Form
     {
-        // TODO: better use nested namespace than nested class
-        class MouseState
-        {
-            // mimimum motion delta for mouse to be recognised
-            public int _horiz_hysteresis = 4;
-            public int _vert_hysteresis = 4;
-            // mouse position when is was pressed down
-            public int _mouse_x_captured;
-            public int _mouse_y_captured;
-            // is mouse pressed currently
-            public bool _is_mouse_down;
-            // change in mouse position for current frame
-            public int delta_x;
-            public int delta_y;
-        };
-
         MouseState _m_status = new MouseState();
 
-        // readonly becasue its a singleton
-        private readonly World _world;
+        // make this readonly becasue its a singleton
+        private World _world;
 
         private Timer tm = new Timer();
         private int cur_count = 1;
@@ -45,7 +29,7 @@ namespace WinFormAnimation2D
         private Drawing2DCamera _camera = new Drawing2DCamera();
         private GUIConfig _gui_conf = new GUIConfig();
 
-        public MyForm()
+        public MainForm()
         {
             InitializeComponent();
             // we have to manually register the mousewheel event handler.
