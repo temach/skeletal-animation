@@ -140,12 +140,7 @@ namespace WinFormAnimation2D
 
         private void pictureBox_main_MouseDown(object sender, MouseEventArgs e)
         {
-            // activate frequent polling for mouse position
-            // or
-            // just turn on mouse button down and rely on MouseMove event
-            _m_status._is_mouse_down = true;
-            _m_status._mouse_x_captured = e.X;
-            _m_status._mouse_y_captured = e.Y;
+            _m_status.RecordMouseClick(e);
         }
 
         private void pictureBox_main_MouseMove(object sender, MouseEventArgs e)
@@ -158,15 +153,15 @@ namespace WinFormAnimation2D
             }
 
             // Process mouse motion only if it is pressed
-            if (! _m_status._is_mouse_down) {
+            if (! _m_status.IsPressed) {
                 return;
             }
             // this.Text = _m_status._mouse_x_captured.ToString();
-            var delta_x = e.X - _m_status._mouse_x_captured;
-            var delta_y = e.Y - _m_status._mouse_y_captured;
+            var delta_x = e.X - _m_status.ClickX;
+            var delta_y = e.Y - _m_status.ClickY;
             // Check if its just mouse jitter. Don't bother updating the screen.
-            if (Math.Abs(delta_x) < _m_status._horiz_hysteresis 
-                && Math.Abs(delta_y)  < _m_status._vert_hysteresis)
+            if (Math.Abs(delta_x) < _m_status.HorizHysteresis 
+                && Math.Abs(delta_y)  < _m_status.VertHysteresis)
             {
                 return;
             }
@@ -183,7 +178,7 @@ namespace WinFormAnimation2D
             // stop timer to poll mouse position
             // or
             // just turn off the mouse down bool
-            _m_status._is_mouse_down = false;
+            _m_status.IsPressed = false;
         }
 
     }
