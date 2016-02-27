@@ -44,19 +44,6 @@ namespace WinFormAnimation2D
             _world = new World(this.pictureBox_main);
         }
         
-		protected void DoRedraw()
-		{
-			Invalidate ();
-			foreach (Control ctrl in Controls)
-				ctrl.Invalidate();
-		}
-
-		protected override void OnMove (EventArgs ea)
-		{
-			base.OnMove(ea);
-            DoRedraw();
-		}
-
         private void button_start_Click(object sender, EventArgs e)
         {
             pictureBox_main.Invalidate();
