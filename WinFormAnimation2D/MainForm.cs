@@ -38,9 +38,7 @@ namespace WinFormAnimation2D
             tm.Tick += delegate { this.pictureBox_main.Invalidate(); };
             // world.RenderModel(this.button_start.CreateGraphics());
             // Allow to use arrow keys for navigation
-            KeyPreview = true;
             _world = new World(this.pictureBox_main);
-            this.Focus();
         }
 
         /// <summary>
@@ -112,14 +110,6 @@ namespace WinFormAnimation2D
         private void button_resetzoom_Click(object sender, EventArgs e)
         {
             _camera.CamMatrix = _camera.CamMatrix.eSnapScale(1.0);
-        }
-
-        private void button_zoom_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void trackBar_zoom_ValueChanged(object sender, EventArgs e)
-        {
         }
 
         private void MyForm_KeyDown(object sender, KeyEventArgs e)
