@@ -103,7 +103,7 @@ namespace WinFormAnimation2D
         // change the tranbslation part of the matrix to all zeros
         private void button_resetpos_Click(object sender, EventArgs e)
         {
-            _camera.CamMatrix = _camera.CamMatrix.eSnapTranslate(0.0, 0.0);
+            _camera.CamMatrix = _camera.CamMatrix.eSnapTranslate(400.0f, 400.0f);
             pictureBox_main.Invalidate();
         }
 

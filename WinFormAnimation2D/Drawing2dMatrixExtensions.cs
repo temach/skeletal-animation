@@ -66,9 +66,13 @@ namespace WinFormAnimation2D
         /// Snap rotate to some angle. Preserve scale and translation.
         /// </summary>
         /// <param name="mat"></param>
+        /// <param name="angle">__ANGLE IS IN DEGREES__</param>
         /// <returns></returns>
         public static d2d.Matrix eSnapRotate(this d2d.Matrix mat, double angle)
         {
+            // lets's try that draing2d works like openGL
+            // PRE - multiply for global
+            // post -multiply for local
             var curmat = mat.Elements;
             // get the vector components.
             var x_axis = new ai.Vector2D(curmat[0], curmat[1]);
@@ -77,10 +81,12 @@ namespace WinFormAnimation2D
             double x_len = x_axis.Length();
             double y_len = y_axis.Length();
             var newmat = new d2d.Matrix();
-            newmat.Rotate((float)angle);
             // Preserve scale and translation
-            newmat.Scale((float)x_len, (float)y_len);
-            newmat.Translate(curmat[5], curmat[6]);
+            // This means: M*v = (R * S * T)*v
+            // so T will be applied first
+            newmat.Rotate((float)angle, d2d.MatrixOrder.Append);
+            newmat.Scale((float)x_len, (float)y_len, d2d.MatrixOrder.Append);
+            newmat.Translate(curmat[4], curmat[5], d2d.MatrixOrder.Append);
             return newmat.Clone();
         }
 

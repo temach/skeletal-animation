@@ -11,12 +11,17 @@
 /// while we work with Grpahics object, when we go to opengl this should fix itself)
 /// 
 
-/// Assimp is row major. 
-/// OpenGL also uses row-major order.
+/// Assimp is row major (the first 4 elemtns of array are elemtns of the first row)
+/// OpenGL user column-major (the first four elemnts of array are elements of the first column)
 /// I do not know about OpenTK.
 /// Row-major or column-major is about how the matrices are stored in memory. 
 /// This is important when we want to load them into OpenGL which expects them row-major.
 ///
+/// or a OpenGL matrix (the transpose of the above one)
+/// [  0  4  8 12 ]
+/// [  1  5  9 13 ]
+/// [  2  6 10 14 ]
+/// [  3  7 11 15 ]
 /// But we also have some differences as to how where the translation of matrix is stored.
 /// Is the translation in right most column? Or is it in the bottom-row?
 /// OpenTK uses the column major format (bottom row stores translation):
@@ -48,6 +53,8 @@
 /// TODO: Get rid of assimp matrices and vectors.
 /// TODO: Mouse scrolling add a recapture of initial captured mouse position when motion changes from left to right.
 
+/// See good explanation: http://web.cse.ohio-state.edu/~whmin/courses/cse5542-2013-spring/6-Transformation_II.pdf
+/// also: https://www.sjbaker.org/steve/omniv/matrices_can_be_your_friends.html
 
 
 using System;

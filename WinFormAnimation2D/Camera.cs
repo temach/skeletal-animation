@@ -40,7 +40,7 @@ namespace WinFormAnimation2D
         private readonly float InitZoom = 0.5f;
 
         // Rotation parameters
-        private readonly float RotationSpeed = 0.5f;
+        private readonly float RotationSpeed = 1.5f;
 
         // we use matrix 4 even thougth MAtrix3 would also be ok.
         private Matrix _cam_mat = new Matrix();
@@ -56,13 +56,20 @@ namespace WinFormAnimation2D
             _cam_mat.Scale(InitZoom, InitZoom);
         }
 
+        /// <summary>
+        /// Respond to mouse motion event by snapping the rotation 
+        /// of the object to the specified delta.
+        /// </summary>
+        /// <param name="x">The absolute delta between mouse click and current mouse position</param>
+        /// <param name="y">The absolute delta between mouse click and current mouse position</param>
         public override void ProcessMouse(int x, int y)
         {
             // when user pulls mouse to the right x > 0 so we perform a clockwise rotation.
             // along the global y axis
             if (x != 0)
             {
-                _cam_mat.Rotate((float)(x * RotationSpeed * Math.PI / 180.0f));
+                _cam_mat = _cam_mat.eSnapRotate((float)(x * RotationSpeed));
+                //_cam_mat.Rotate((float)(x * RotationSpeed * Math.PI / 180.0f));
             }
         }
 
