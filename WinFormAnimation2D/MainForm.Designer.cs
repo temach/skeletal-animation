@@ -38,6 +38,8 @@
             this.button_resetpos = new System.Windows.Forms.Button();
             this.button_stop_colors = new System.Windows.Forms.Button();
             this.label_zoom = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label_CurrentRotoAngle = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).BeginInit();
             this.SuspendLayout();
             // 
@@ -152,11 +154,31 @@
             this.label_zoom.TabIndex = 17;
             this.label_zoom.Text = "1.0";
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(765, 343);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(111, 13);
+            this.label1.TabIndex = 20;
+            this.label1.Text = "Current rotation angle:";
+            // 
+            // label_CurrentRotoAngle
+            // 
+            this.label_CurrentRotoAngle.AutoSize = true;
+            this.label_CurrentRotoAngle.Location = new System.Drawing.Point(879, 343);
+            this.label_CurrentRotoAngle.Name = "label_CurrentRotoAngle";
+            this.label_CurrentRotoAngle.Size = new System.Drawing.Size(25, 13);
+            this.label_CurrentRotoAngle.TabIndex = 21;
+            this.label_CurrentRotoAngle.Text = "___";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(958, 528);
+            this.Controls.Add(this.label_CurrentRotoAngle);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.label_zoom);
             this.Controls.Add(this.button_stop_colors);
             this.Controls.Add(this.button_resetpos);
@@ -188,6 +210,8 @@
         private System.Windows.Forms.Button button_resetpos;
         private System.Windows.Forms.Button button_stop_colors;
         private System.Windows.Forms.Label label_zoom;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label_CurrentRotoAngle;
     }
 }
 

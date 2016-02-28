@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using d2d = System.Drawing.Drawing2D;
 using tk = OpenTK;
+using System.Reflection;
 
 namespace WinFormAnimation2D
 {
@@ -52,6 +53,7 @@ namespace WinFormAnimation2D
             var rect = new RectangleF(p.X - rad, p.Y - rad, 2 * rad, 2 * rad);
             g.DrawEllipse(Util.pp3, rect);
         }
+
 
         /// <summary>
         /// Get a brush of next color. (to distingush rendered polygons)

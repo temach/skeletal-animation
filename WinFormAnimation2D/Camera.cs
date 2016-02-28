@@ -5,11 +5,50 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
 using System.Drawing.Drawing2D;
+using System.ComponentModel;
 
 namespace WinFormAnimation2D
 {
-    abstract class AbsCamera
+    /// <summary>
+    /// The Inotify interface is very useful because we can bind camera details to user to the GUI
+    /// </summary>
+    abstract class AbsCamera : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Newly created Binding object will automatically 
+        /// subscribe to this event when you do this.someControl.Add(newbinding).
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Check if a certain camera property has changed by comparing 
+        /// new and old values.
+        /// </summary>
+        protected bool CheckPropertyChanged<T>(string propertyName, ref T oldValue, ref T newValue)
+        {
+            if (oldValue == null && newValue == null)
+            {
+                return false;
+            }
+            if ((oldValue == null && newValue != null) || !oldValue.Equals((T)newValue))
+            {
+                oldValue = newValue;
+                FirePropertyChanged(propertyName);              
+                return true;                
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Fire the event that certain camera value has changed
+        /// </summary>
+        protected void FirePropertyChanged(string propertyName)
+        {
+            if (this.PropertyChanged != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
 
         /// <summary>
         /// Motion in X-Y plane.
@@ -45,6 +84,11 @@ namespace WinFormAnimation2D
         // we use matrix 4 even thougth MAtrix3 would also be ok.
         private Matrix _cam_mat = new Matrix();
 
+        public double GetRotationAngleDeg
+        {
+            get { return _cam_mat.eGetRotationAngle(); }
+        }
+
         // Since Matrix is a class this get/set crap does not protect anything.
         public Matrix CamMatrix {
             get { return _cam_mat; }
@@ -68,10 +112,12 @@ namespace WinFormAnimation2D
             // along the global y axis
             if (x != 0)
             {
-                _cam_mat = _cam_mat.eSnapRotate((float)(x * RotationSpeed));
+                _cam_mat.Rotate((float)(x * RotationSpeed), MatrixOrder.Append);
                 //_cam_mat.Rotate((float)(x * RotationSpeed * Math.PI / 180.0f));
             }
+            FirePropertyChanged("GetRotationAngleDeg");
         }
+
 
         /// <summary>
         /// Scrolls along the camera z axis. In and out of the scene.

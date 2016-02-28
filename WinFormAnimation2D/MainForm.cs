@@ -39,6 +39,11 @@ namespace WinFormAnimation2D
             // world.RenderModel(this.button_start.CreateGraphics());
             // Allow to use arrow keys for navigation
             _world = new World(this.pictureBox_main);
+            // Bind rotation to text field
+            var rotobind = new Binding("Text", _camera, "GetRotationAngleDeg");
+            rotobind.ControlUpdateMode = ControlUpdateMode.OnPropertyChanged;
+            rotobind.DataSourceUpdateMode = DataSourceUpdateMode.Never;
+            this.label_CurrentRotoAngle.DataBindings.Add(rotobind);
         }
 
         /// <summary>
