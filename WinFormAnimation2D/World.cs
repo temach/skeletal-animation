@@ -11,37 +11,66 @@
 /// while we work with Grpahics object, when we go to opengl this should fix itself)
 /// 
 
+/// row/column major applies to a few different things.
+/// First it applies to _notation_
+/// let's say matrix A and vector v and after applying matrix A on vector v we get v' as result.
+
+/// This is column major: (This is the prefered notation for coding and writing OpenGL)
+/// (projection x view x model x vector) 
+/// So: v' = A * v
+///      [ x.x x.y x.z 0 ]     [ v.x ]
+/// v' = | y.x y.y y.z 0 |  *  [ v.y ]
+///      | z.x z.y z.z 0 |     [ v.z ]
+///      [ p.x p.y p.z 1 ]     [  1  ]
+
+/// Now some row major notation: 
+/// (and you multiply in shader: gl_Position = vec4(v_xy, 0.0, 1.0) * v_ViewMatrix * v_ProjectionMatrix )
+/// (vector x model x view x projection)
+/// v' = v * A
+///                              [ x.x y.x z.x p.x ]  
+/// v' = [ v.x, v.y, v.z, 1  ] * | x.y y.y z.y p.y |  
+///                              | x.z y.z z.z p.z |  
+///           					 [  0   0   0   1  ]  
+/// You can see that the v' vector will be the same in both cases.
+/// That's why this stuff does not matter. Just document which way you use.
+/// see http://stackoverflow.com/questions/17717600/confusion-between-c-and-opengl-matrix-order-row-major-vs-column-major
+
+
+/// About matrices in memory:
 /// Assimp is row major (the first 4 elemtns of array are elemtns of the first row)
 /// OpenGL user column-major (the first four elemnts of array are elements of the first column)
 /// I do not know about OpenTK.
-/// Row-major or column-major is about how the matrices are stored in memory. 
-/// This is important when we want to load them into OpenGL which expects them row-major.
-///
+
+/// For programming purposes, OpenGL matrices are 16-value arrays 
+/// with base vectors laid out contiguously in memory. The translation components 
+/// occupy the 13th, 14th, and 15th elements of the 16-element matrix, where 
+/// indices are numbered from 1 to 16
 /// or a OpenGL matrix (the transpose of the above one)
 /// [  0  4  8 12 ]
 /// [  1  5  9 13 ]
 /// [  2  6 10 14 ]
 /// [  3  7 11 15 ]
-/// But we also have some differences as to how where the translation of matrix is stored.
-/// Is the translation in right most column? Or is it in the bottom-row?
+
+/// Now consider:
+/// Vector X = (x1, x2, x3)
+/// Vector Y = (y1, y2, y3)
+/// Vector Z = (y1, y2, y3)
+/// translation T = (T1, T2, T3)
+
 /// OpenTK uses the column major format (bottom row stores translation):
 ///  X1  X2  X3   0
 ///  Y1  Y2  Y3   0
 ///  Z1  Z2  Z3   0
 ///  T1  T2  T3   1
-/// So OpenTK matrix in memory: [X1 X2 X3 0][Y1 Y2 Y3 0][Z1 Z2 Z3 0][T1 T2 T3 1]
-/// Where vector X = (x1, x2, x3)
-/// Vector Y = (y1, y2, y3)
-/// Vector Z = (y1, y2, y3)
-/// translation T = (T1, T2, T3)
-/// Assimp uses the righ most column to store translation.
-/// This means that matrices look like this in Assimp:
+/// So OpenTK matrix in memory (column-major): [X1 X2 X3 0][Y1 Y2 Y3 0][Z1 Z2 Z3 0][T1 T2 T3 1]
+
+/// Assimp uses the righ most column to store translation. Assimp:
 ///  X1  Y1  Z1  T1
 ///  X2  Y2  Z2  T2
 ///  X3  Y3  Z3  T3
 ///  0   0   0   1
 /// So in memory Assimp matrix looks like: [X1 Y1 Z1 T1] [X2 Y2 Z2 T2] [X3 Y3 Z3 T3] [0  0  0  1]
-/// Which is called row-major. Get it now? ;)
+/// Which is called row-major.
 
 /// Lol, I found out why open3mod always had to use a Transpose on OpenTK matrix in the rendering loop. 
 /// Its because the dude does not convert openTK matrix to assimp matrix properly in AssimpToOpenTK. His
@@ -53,6 +82,7 @@
 /// TODO: Get rid of assimp matrices and vectors.
 /// TODO: Mouse scrolling add a recapture of initial captured mouse position when motion changes from left to right.
 
+/// Understand matrix:
 /// See good explanation: http://web.cse.ohio-state.edu/~whmin/courses/cse5542-2013-spring/6-Transformation_II.pdf
 /// also: https://www.sjbaker.org/steve/omniv/matrices_can_be_your_friends.html
 
