@@ -10,6 +10,7 @@ namespace WinFormAnimation2D
 {
     /// <summary>
     /// Simple class to store mouse status data.
+    /// Monitor mouse status (delta, position, click_position, etc.) 
     /// </summary>
     class MouseState
     {

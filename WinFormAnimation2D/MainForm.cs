@@ -17,13 +17,12 @@ namespace WinFormAnimation2D
 {
     public partial class MainForm : Form
     {
+
         MouseState _m_status = new MouseState();
 
-        // make this readonly becasue its a singleton
+        // make this readonly because its a singleton
         private World _world;
-
         private Timer tm = new Timer();
-        private int cur_count = 1;
 
         // State of the camera currently. We can affect this with buttons.
         private Drawing2DCamera _camera = new Drawing2DCamera();
