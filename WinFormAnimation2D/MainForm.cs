@@ -51,6 +51,12 @@ namespace WinFormAnimation2D
             //for the active control to see the keypress, return false
             switch (keyData)
             {
+
+                case Keys.I:
+                case Keys.O:
+                    _camera.RotateByKey(new KeyEventArgs(keyData));
+                    this.pictureBox_main.Invalidate();
+                    return true;
                 case Keys.Left:
                 case Keys.Right:
                 case Keys.Down:
@@ -84,7 +90,6 @@ namespace WinFormAnimation2D
         // change the tranbslation part of the matrix to all zeros
         private void button_resetpos_Click(object sender, EventArgs e)
         {
-            _camera.CamMatrix = _camera.CamMatrix.eSnapTranslate(400.0f, 400.0f);
             pictureBox_main.Invalidate();
         }
         private void button_resetzoom_Click(object sender, EventArgs e)
@@ -139,7 +144,6 @@ namespace WinFormAnimation2D
             // Draw program elements
             // Set GRPH so we can use Sysem.Drawing2D as if it was like OpenGL
             Util.GR = e.Graphics;
-            Util.GR.DrawRectangle(new Pen(Color.Blue, 10.0f), pictureBox_main.DisplayRectangle);
             _world.RenderWorld(_camera.CamMatrix);
         }
 

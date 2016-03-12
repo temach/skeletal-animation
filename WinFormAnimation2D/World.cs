@@ -166,7 +166,6 @@ namespace WinFormAnimation2D
             _renderer.SetupRender(Util.GR);
             // Applying camera transform is good here.
             Util.GR.MultiplyTransform(camera_matrix);
-            Util.GR.ScaleTransform(3.0f, 3.0f);
             ent.RenderModel(_renderer.GlobalDrawConf);
         }
 
