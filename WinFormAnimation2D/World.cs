@@ -98,7 +98,8 @@ using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.Drawing;
 using System.IO;        // for MemoryStream
-using System.Reflection;
+using d2d = System.Drawing.Drawing2D;
+using OpenTK;
 
 
 namespace WinFormAnimation2D
@@ -113,11 +114,15 @@ namespace WinFormAnimation2D
         public int rand_brush_count = 0;
 
         public Logger _logger = new Logger("skeletal_animation.txt");
-        
-        private static Scene Current_Scene = null;
-        private Entity ent = null;
-
+        private Entity _enttity_one = null;
         public Renderer _renderer = null;
+
+        private Entity _currently_selected;
+        public Entity CurrentlySelected
+        {
+            get { return _currently_selected; }
+            private set { _currently_selected = value; }
+        }
 
         public World(PictureBox targetcanvas)
         {
@@ -135,7 +140,7 @@ namespace WinFormAnimation2D
             var cur_scene = LoadScene(sphere, "dae");
             // use format "obj" for bird_plane_5
             // LoadModel(sphere, "obj");
-            ent = new Entity(cur_scene);
+            _enttity_one = new Entity(cur_scene);
         }
 
         public Scene LoadScene(MemoryStream model_data, string format_hint)
@@ -165,8 +170,20 @@ namespace WinFormAnimation2D
         {
             _renderer.SetupRender(Util.GR);
             // Applying camera transform is good here.
+            _enttity_one.RenderModel(_renderer.GlobalDrawConf);
             Util.GR.MultiplyTransform(camera_matrix);
-            ent.RenderModel(_renderer.GlobalDrawConf);
+            _enttity_one.RenderModel(_renderer.GlobalDrawConf);
+        }
+
+        public bool CheckMouseEntitySelect(MouseState mouse_state)
+        {
+            var vec = new Vector2(mouse_state.ClickX, mouse_state.ClickY);
+            if (_enttity_one.ContainsPoint(vec))
+            {
+                CurrentlySelected = _enttity_one;
+                return true;
+            }
+            return false;
         }
 
     }

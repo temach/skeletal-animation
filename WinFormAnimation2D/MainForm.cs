@@ -24,8 +24,19 @@ namespace WinFormAnimation2D
         private Timer tm = new Timer();
 
         // State of the camera currently. We can affect this with buttons.
-        private Drawing2DCamera _camera = new Drawing2DCamera();
+        public Drawing2DCamera _camera = new Drawing2DCamera();
         private GUIConfig _gui_conf = new GUIConfig();
+        private Entity _currently_selected;
+
+        public Drawing2DCamera Cam
+        {
+            get { return _camera; }
+        }
+
+        public double CamRotation
+        {
+            get { return _camera.GetRotationAngleDeg; }
+        }
 
         public MainForm()
         {
@@ -37,7 +48,7 @@ namespace WinFormAnimation2D
             // world.RenderModel(this.button_start.CreateGraphics());
             _world = new World(this.pictureBox_main);
             // Bind rotation to text field
-            var rotobind = new Binding("Text", _camera, "GetRotationAngleDeg");
+             var rotobind = new Binding("Text", _camera, "GetRotationAngleDeg");
             rotobind.ControlUpdateMode = ControlUpdateMode.OnPropertyChanged;
             rotobind.DataSourceUpdateMode = DataSourceUpdateMode.Never;
             this.label_CurrentRotoAngle.DataBindings.Add(rotobind);
@@ -114,6 +125,19 @@ namespace WinFormAnimation2D
         private void pictureBox_main_MouseDown(object sender, MouseEventArgs e)
         {
             _m_status.RecordMouseClick(e);
+            if (_world.CheckMouseEntitySelect(_m_status))
+            {
+                _currently_selected = _world.CurrentlySelected;
+                this.Text = "HAS ENTITY";
+               // this.dataGridView_EntityInfo.DataSource 
+               //     = _currently_selected.GetExposedProperties();
+               // this.dataGridView_EntityInfo.Invalidate();
+            }
+            else
+            {
+                _currently_selected = null;
+                this.Text = "_____ empty ____";
+            }
         }
 
         private void pictureBox_main_MouseMove(object sender, MouseEventArgs e)
@@ -142,7 +166,7 @@ namespace WinFormAnimation2D
         private void pictureBox_main_Paint(object sender, PaintEventArgs e)
         {
             // Draw program elements
-            // Set GRPH so we can use Sysem.Drawing2D as if it was like OpenGL
+            // Set GR field so that we can use Sysem.Drawing2D as if it was like OpenGL
             Util.GR = e.Graphics;
             _world.RenderWorld(_camera.CamMatrix);
         }

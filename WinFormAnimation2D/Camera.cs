@@ -13,7 +13,6 @@ using System.Diagnostics;
 
 namespace WinFormAnimation2D
 {
-
     class Drawing2DCamera : INotifyPropertyChanged
     {
         // boiler-plate INotifyPropertyChanged

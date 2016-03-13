@@ -22,6 +22,20 @@ namespace WinFormAnimation2D
     {
 
         /// <summary>
+        /// Applies the geometric transform represented by this System.Drawing.Drawing2D.Matrix
+        /// to a specified array of Opentk.Vector2
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <param name="vecs"></param>
+        public static tk.Vector2[] eTransformVector2(this d2d.Matrix mat, tk.Vector2[] vecs)
+        {
+            var tmp = vecs.Select(vec => new PointF(vec.X, vec.Y)).ToArray();
+            mat.TransformPoints(tmp);
+            return tmp.Select(p => new tk.Vector2(p.X, p.Y)).ToArray();
+        }
+
+
+        /// <summary>
         /// Rescale the matrix. Preserve rotation and translation.
         /// </summary>
         /// <param name="mat"></param>

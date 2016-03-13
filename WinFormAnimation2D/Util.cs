@@ -44,6 +44,11 @@ namespace WinFormAnimation2D
         public static Pen pp3 = new Pen(Color.Red, 0.01f);
 
         /// <summary>
+        /// Small + Red pen to render points on screen
+        /// </summary>
+        public static Pen pp4 = new Pen(Color.SkyBlue, 2.5f);
+
+        /// <summary>
         /// Quick debug function to draw _FLOATING_ PointF with Graphics
         /// </summary>
         public static void eDrawPoint(this Graphics g, PointF p)

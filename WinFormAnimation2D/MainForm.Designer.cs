@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.button_start = new System.Windows.Forms.Button();
             this.pictureBox_main = new System.Windows.Forms.PictureBox();
             this.button_up = new System.Windows.Forms.Button();
@@ -40,12 +41,15 @@
             this.label_zoom = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label_CurrentRotoAngle = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.dataGridView_EntityInfo = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_EntityInfo)).BeginInit();
             this.SuspendLayout();
             // 
             // button_start
             // 
-            this.button_start.Location = new System.Drawing.Point(845, 238);
+            this.button_start.Location = new System.Drawing.Point(832, 172);
             this.button_start.Name = "button_start";
             this.button_start.Size = new System.Drawing.Size(75, 23);
             this.button_start.TabIndex = 0;
@@ -60,7 +64,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox_main.Location = new System.Drawing.Point(12, 37);
             this.pictureBox_main.Name = "pictureBox_main";
-            this.pictureBox_main.Size = new System.Drawing.Size(747, 479);
+            this.pictureBox_main.Size = new System.Drawing.Size(721, 479);
             this.pictureBox_main.TabIndex = 1;
             this.pictureBox_main.TabStop = false;
             this.pictureBox_main.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox_main_Paint);
@@ -71,7 +75,7 @@
             // button_up
             // 
             this.button_up.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_up.Location = new System.Drawing.Point(855, 105);
+            this.button_up.Location = new System.Drawing.Point(845, 85);
             this.button_up.Name = "button_up";
             this.button_up.Size = new System.Drawing.Size(52, 23);
             this.button_up.TabIndex = 9;
@@ -82,7 +86,7 @@
             // button_down
             // 
             this.button_down.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_down.Location = new System.Drawing.Point(855, 161);
+            this.button_down.Location = new System.Drawing.Point(845, 141);
             this.button_down.Name = "button_down";
             this.button_down.Size = new System.Drawing.Size(52, 23);
             this.button_down.TabIndex = 10;
@@ -93,7 +97,7 @@
             // button_left
             // 
             this.button_left.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_left.Location = new System.Drawing.Point(814, 132);
+            this.button_left.Location = new System.Drawing.Point(804, 112);
             this.button_left.Name = "button_left";
             this.button_left.Size = new System.Drawing.Size(52, 23);
             this.button_left.TabIndex = 11;
@@ -104,7 +108,7 @@
             // button_right
             // 
             this.button_right.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_right.Location = new System.Drawing.Point(894, 132);
+            this.button_right.Location = new System.Drawing.Point(884, 112);
             this.button_right.Name = "button_right";
             this.button_right.Size = new System.Drawing.Size(52, 23);
             this.button_right.TabIndex = 12;
@@ -136,7 +140,7 @@
             // 
             // button_stop_colors
             // 
-            this.button_stop_colors.Location = new System.Drawing.Point(845, 267);
+            this.button_stop_colors.Location = new System.Drawing.Point(832, 201);
             this.button_stop_colors.Name = "button_stop_colors";
             this.button_stop_colors.Size = new System.Drawing.Size(75, 23);
             this.button_stop_colors.TabIndex = 19;
@@ -157,26 +161,53 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(765, 343);
+            this.label1.Location = new System.Drawing.Point(739, 240);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(111, 13);
+            this.label1.Size = new System.Drawing.Size(152, 13);
             this.label1.TabIndex = 20;
-            this.label1.Text = "Current rotation angle:";
+            this.label1.Text = "Current camera  rotation angle:";
             // 
             // label_CurrentRotoAngle
             // 
             this.label_CurrentRotoAngle.AutoSize = true;
-            this.label_CurrentRotoAngle.Location = new System.Drawing.Point(879, 343);
+            this.label_CurrentRotoAngle.Location = new System.Drawing.Point(895, 240);
             this.label_CurrentRotoAngle.Name = "label_CurrentRotoAngle";
             this.label_CurrentRotoAngle.Size = new System.Drawing.Size(25, 13);
             this.label_CurrentRotoAngle.TabIndex = 21;
             this.label_CurrentRotoAngle.Text = "___";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(739, 269);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(122, 13);
+            this.label2.TabIndex = 22;
+            this.label2.Text = "Currently selected entity:";
+            // 
+            // dataGridView_EntityInfo
+            // 
+            this.dataGridView_EntityInfo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView_EntityInfo.Location = new System.Drawing.Point(739, 285);
+            this.dataGridView_EntityInfo.Name = "dataGridView_EntityInfo";
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView_EntityInfo.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.dataGridView_EntityInfo.Size = new System.Drawing.Size(207, 231);
+            this.dataGridView_EntityInfo.TabIndex = 23;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(958, 528);
+            this.Controls.Add(this.dataGridView_EntityInfo);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.label_CurrentRotoAngle);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.label_zoom);
@@ -192,6 +223,7 @@
             this.Name = "MainForm";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_EntityInfo)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -211,6 +243,8 @@
         private System.Windows.Forms.Label label_zoom;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label_CurrentRotoAngle;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.DataGridView dataGridView_EntityInfo;
     }
 }
 
