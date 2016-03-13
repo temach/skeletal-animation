@@ -48,16 +48,6 @@ namespace WinFormAnimation2D
         /// </summary>
         public static Pen pp4 = new Pen(Color.SkyBlue, 2.5f);
 
-        /// <summary>
-        /// Quick debug function to draw _FLOATING_ PointF with Graphics
-        /// </summary>
-        public static void eDrawPoint(this Graphics g, PointF p)
-        {
-            float rad = 0.03f;        // radius
-            var rect = new RectangleF(p.X - rad, p.Y - rad, 2 * rad, 2 * rad);
-            g.DrawEllipse(Util.pp3, rect);
-        }
-
 
         /// <summary>
         /// Get a brush of next color. (to distingush rendered polygons)

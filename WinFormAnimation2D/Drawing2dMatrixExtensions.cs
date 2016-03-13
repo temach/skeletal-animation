@@ -22,6 +22,19 @@ namespace WinFormAnimation2D
     {
 
         /// <summary>
+        /// Transform a single point and return the result.
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public static PointF eTransformPoint(this d2d.Matrix mat, PointF p)
+        {
+            var tmp = new PointF[] { p };
+            mat.TransformPoints(tmp);
+            return tmp[0];
+        }
+
+        /// <summary>
         /// Applies the geometric transform represented by this System.Drawing.Drawing2D.Matrix
         /// to a specified array of Opentk.Vector2
         /// </summary>
@@ -98,7 +111,7 @@ namespace WinFormAnimation2D
             double y_len = y_axis.Length();
             var newmat = new d2d.Matrix();
             // Preserve scale and translation
-            // This means: M*v = (T * R * S)*v
+            // This means: v*M = v*(S * R * T)
             newmat.Scale((float)x_len, (float)y_len);
             newmat.Rotate((float)angle);
             newmat.Translate(curmat[4], curmat[5]);

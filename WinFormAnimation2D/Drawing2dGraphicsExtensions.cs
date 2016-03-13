@@ -34,5 +34,25 @@ namespace WinFormAnimation2D
             g.DrawEllipse(Util.pp3, rect);
         }
 
+        /// <summary>
+        /// Quick debug function to draw _FLOATING_ PointF with Graphics
+        /// </summary>
+        public static void eDrawPoint(this Graphics g, PointF p)
+        {
+            float rad = 0.03f;        // radius
+            var rect = new RectangleF(p.X - rad, p.Y - rad, 2 * rad, 2 * rad);
+            g.DrawEllipse(Util.pp3, rect);
+        }
+
+        /// <summary>
+        /// Debug function to quickly draw _FLOATING_ points with Graphics
+        /// </summary>
+        public static void eDrawBigPoint(this Graphics g, PointF p)
+        {
+            float rad = 10.0f;        // radius
+            var rect = new RectangleF(p.X - rad, p.Y - rad, 2 * rad, 2 * rad);
+            g.DrawEllipse(Util.pp1, rect);
+        }
+
     }
 }
