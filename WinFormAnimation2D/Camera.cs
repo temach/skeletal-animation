@@ -49,6 +49,19 @@ namespace WinFormAnimation2D
             get { return _cam_mat.eGetRotationAngle(); }
         }
 
+        /// <summary>
+        /// Get the mouse position and calculate the world coordinates based on the screen coordinates.
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        public PointF ConvertScreen2WorldCoordinates(PointF screen_coords)
+        {
+            Debug.Assert(_cam_mat.IsInvertible == true, "can not change into world coordinates.");
+            var tmp = _cam_mat.Clone();
+            tmp.Invert();
+            return tmp.eTransformPoint(screen_coords);
+        }
+
         public Matrix CamMatrix {
             get { return _cam_mat; }
             set { _cam_mat = value; }

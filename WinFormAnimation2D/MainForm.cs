@@ -71,7 +71,6 @@ namespace WinFormAnimation2D
             //for the active control to see the keypress, return false
             switch (keyData)
             {
-
                 case Keys.I:
                 case Keys.O:
                     _camera.RotateByKey(new KeyEventArgs(keyData));
@@ -131,13 +130,17 @@ namespace WinFormAnimation2D
         {
             _m_status.IsPressed = false;
         }
+
+        public PointF PointFromMouseEvent(MouseEventArgs e)
+        {
+            return new PointF(e.X, e.Y);
+        }
+
         private void pictureBox_main_MouseDown(object sender, MouseEventArgs e)
         {
-            var tmp = _camera.CamMatrix.Clone();
-            Debug.Assert(tmp.IsInvertible == true, "will not be able to put mouse position into world coordinates.");
-            tmp.Invert();
-            var mouse_point = new PointF(e.X, e.Y);
-            _m_status.RecordMouseClick(e, tmp.eTransformPoint(mouse_point));
+            var mouse_world_pos = PointFromMouseEvent(e);
+            mouse_world_pos = _camera.ConvertScreen2WorldCoordinates(mouse_world_pos);
+            _m_status.RecordMouseClick(e, mouse_world_pos);
             if (_world.CheckMouseEntitySelect(_m_status))
             {
                 _currently_selected = _world.CurrentlySelected;
@@ -155,24 +158,15 @@ namespace WinFormAnimation2D
 
         private void pictureBox_main_MouseMove(object sender, MouseEventArgs e)
         {
-            var tmp = _camera.CamMatrix.Clone();
-            Debug.Assert(tmp.IsInvertible == true, "will not be able to put mouse position into world coordinates.");
-            tmp.Invert();
-            var mouse_point = new PointF(e.X, e.Y);
-            mouse_world_pos = tmp.eTransformPoint(mouse_point);
-
+            var mouse_world_pos = PointFromMouseEvent(e);
+            mouse_world_pos = _camera.ConvertScreen2WorldCoordinates(mouse_world_pos);
             _m_status.RecordMouseClick(e, mouse_world_pos);
             if (_world.CheckMouseEntitySelect(_m_status))
             {
-                _currently_selected = _world.CurrentlySelected;
                 this.textBox_current_entity.Text = "HAS ENTITY";
-               // this.dataGridView_EntityInfo.DataSource 
-               //     = _currently_selected.GetExposedProperties();
-               // this.dataGridView_EntityInfo.Invalidate();
             }
             else
             {
-                _currently_selected = null;
                 this.textBox_current_entity.Text = "___empty___";
             }
 
