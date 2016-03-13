@@ -86,6 +86,10 @@
 /// See good explanation: http://web.cse.ohio-state.edu/~whmin/courses/cse5542-2013-spring/6-Transformation_II.pdf
 /// also: https://www.sjbaker.org/steve/omniv/matrices_can_be_your_friends.html
 
+/// As for system graphics:
+/// see: https://msdn.microsoft.com/en-us/library/system.drawing.drawing2d.matrix%28v=vs.110%29.aspx
+/// they use:
+/// v*M = v * R*S*T
 
 using System;
 using System.Collections.Generic;
