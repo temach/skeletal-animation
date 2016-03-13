@@ -44,8 +44,12 @@
             this.label2 = new System.Windows.Forms.Label();
             this.dataGridView_EntityInfo = new System.Windows.Forms.DataGridView();
             this.textBox_current_entity = new System.Windows.Forms.TextBox();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel_is_selected = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_mouse_coords = new System.Windows.Forms.ToolStripStatusLabel();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_EntityInfo)).BeginInit();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // button_start
@@ -65,7 +69,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox_main.Location = new System.Drawing.Point(12, 37);
             this.pictureBox_main.Name = "pictureBox_main";
-            this.pictureBox_main.Size = new System.Drawing.Size(721, 479);
+            this.pictureBox_main.Size = new System.Drawing.Size(721, 466);
             this.pictureBox_main.TabIndex = 1;
             this.pictureBox_main.TabStop = false;
             this.pictureBox_main.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox_main_Paint);
@@ -189,7 +193,7 @@
             // dataGridView_EntityInfo
             // 
             this.dataGridView_EntityInfo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView_EntityInfo.Location = new System.Drawing.Point(739, 431);
+            this.dataGridView_EntityInfo.Location = new System.Drawing.Point(739, 418);
             this.dataGridView_EntityInfo.Name = "dataGridView_EntityInfo";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
@@ -209,11 +213,35 @@
             this.textBox_current_entity.Size = new System.Drawing.Size(204, 20);
             this.textBox_current_entity.TabIndex = 24;
             // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel_is_selected,
+            this.toolStripStatusLabel_mouse_coords});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 506);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(958, 22);
+            this.statusStrip1.TabIndex = 25;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel_is_selected
+            // 
+            this.toolStripStatusLabel_is_selected.Name = "toolStripStatusLabel_is_selected";
+            this.toolStripStatusLabel_is_selected.Size = new System.Drawing.Size(118, 17);
+            this.toolStripStatusLabel_is_selected.Text = "toolStripStatusLabel1";
+            // 
+            // toolStripStatusLabel_mouse_coords
+            // 
+            this.toolStripStatusLabel_mouse_coords.Name = "toolStripStatusLabel_mouse_coords";
+            this.toolStripStatusLabel_mouse_coords.Size = new System.Drawing.Size(118, 17);
+            this.toolStripStatusLabel_mouse_coords.Text = "toolStripStatusLabel2";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(958, 528);
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.textBox_current_entity);
             this.Controls.Add(this.dataGridView_EntityInfo);
             this.Controls.Add(this.label2);
@@ -233,6 +261,8 @@
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_EntityInfo)).EndInit();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -255,6 +285,9 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.DataGridView dataGridView_EntityInfo;
         private System.Windows.Forms.TextBox textBox_current_entity;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_is_selected;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_mouse_coords;
     }
 }
 
