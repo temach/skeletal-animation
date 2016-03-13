@@ -12,31 +12,40 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace WinFormAnimation2D
 {
-    public partial class MainForm : Form
+    public partial class MainForm : Form, INotifyPropertyChanged
     {
 
+        // boiler-plate INotifyPropertyChanged
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+        protected bool UpdateField<T>(ref T field, T value, [CallerMemberName] string propertyName = "")
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+        // end boiler-plate
+
         MouseState _m_status = new MouseState();
+        private PointF mouse_world_pos;
 
         private World _world;
         private Timer tm = new Timer();
 
         // State of the camera currently. We can affect this with buttons.
-        public Drawing2DCamera _camera = new Drawing2DCamera();
+        private Drawing2DCamera _camera = new Drawing2DCamera();
         private GUIConfig _gui_conf = new GUIConfig();
         private Entity _currently_selected;
-
-        public Drawing2DCamera Cam
-        {
-            get { return _camera; }
-        }
-
-        public double CamRotation
-        {
-            get { return _camera.GetRotationAngleDeg; }
-        }
 
         public MainForm()
         {
@@ -124,11 +133,15 @@ namespace WinFormAnimation2D
         }
         private void pictureBox_main_MouseDown(object sender, MouseEventArgs e)
         {
-            _m_status.RecordMouseClick(e);
+            var tmp = _camera.CamMatrix.Clone();
+            Debug.Assert(tmp.IsInvertible == true, "will not be able to put mouse position into world coordinates.");
+            tmp.Invert();
+            var mouse_point = new PointF(e.X, e.Y);
+            _m_status.RecordMouseClick(e, tmp.eTransformPoint(mouse_point));
             if (_world.CheckMouseEntitySelect(_m_status))
             {
                 _currently_selected = _world.CurrentlySelected;
-                this.Text = "HAS ENTITY";
+                this.textBox_current_entity.Text = "HAS ENTITY";
                // this.dataGridView_EntityInfo.DataSource 
                //     = _currently_selected.GetExposedProperties();
                // this.dataGridView_EntityInfo.Invalidate();
@@ -136,12 +149,33 @@ namespace WinFormAnimation2D
             else
             {
                 _currently_selected = null;
-                this.Text = "_____ empty ____";
+                this.textBox_current_entity.Text = "___empty___";
             }
         }
 
         private void pictureBox_main_MouseMove(object sender, MouseEventArgs e)
         {
+            var tmp = _camera.CamMatrix.Clone();
+            Debug.Assert(tmp.IsInvertible == true, "will not be able to put mouse position into world coordinates.");
+            tmp.Invert();
+            var mouse_point = new PointF(e.X, e.Y);
+            mouse_world_pos = tmp.eTransformPoint(mouse_point);
+
+            _m_status.RecordMouseClick(e, mouse_world_pos);
+            if (_world.CheckMouseEntitySelect(_m_status))
+            {
+                _currently_selected = _world.CurrentlySelected;
+                this.textBox_current_entity.Text = "HAS ENTITY";
+               // this.dataGridView_EntityInfo.DataSource 
+               //     = _currently_selected.GetExposedProperties();
+               // this.dataGridView_EntityInfo.Invalidate();
+            }
+            else
+            {
+                _currently_selected = null;
+                this.textBox_current_entity.Text = "___empty___";
+            }
+
             if (Math.Abs(e.Delta) >= 1)
             {
                 _camera.ProcessScroll(e.Delta);
@@ -159,7 +193,7 @@ namespace WinFormAnimation2D
                 return;
             }
             // time to do some rotation
-            _camera.ProcessMouse(delta_x, delta_y);
+            //_camera.ProcessMouse(delta_x, delta_y);
             pictureBox_main.Invalidate();
         }
 
@@ -168,7 +202,13 @@ namespace WinFormAnimation2D
             // Draw program elements
             // Set GR field so that we can use Sysem.Drawing2D as if it was like OpenGL
             Util.GR = e.Graphics;
+            _world._renderer.SetupRender(Util.GR);
+            // draw before everything in real coordinate
+            Util.GR.eDrawBigPoint(mouse_world_pos);
             _world.RenderWorld(_camera.CamMatrix);
+            // draw after everything in camera coordinates
+            Util.GR.eDrawBigPoint(mouse_world_pos);
+            this.Text = mouse_world_pos.ToString();
         }
 
     }

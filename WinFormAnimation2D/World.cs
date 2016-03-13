@@ -172,7 +172,6 @@ namespace WinFormAnimation2D
         /// </summary>
         public void RenderWorld(Matrix camera_matrix)
         {
-            _renderer.SetupRender(Util.GR);
             // Applying camera transform is good here.
             _enttity_one.RenderModel(_renderer.GlobalDrawConf);
             Util.GR.MultiplyTransform(camera_matrix);
@@ -181,7 +180,7 @@ namespace WinFormAnimation2D
 
         public bool CheckMouseEntitySelect(MouseState mouse_state)
         {
-            var vec = new Vector2(mouse_state.ClickX, mouse_state.ClickY);
+            var vec = new Vector2(mouse_state.InnerWorldPos.X, mouse_state.InnerWorldPos.Y);
             if (_enttity_one.ContainsPoint(vec))
             {
                 CurrentlySelected = _enttity_one;

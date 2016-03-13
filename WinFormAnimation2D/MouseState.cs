@@ -15,8 +15,19 @@ namespace WinFormAnimation2D
     class MouseState
     {
 
+        // Is the mouse being pressed down currently.
+        public bool IsPressed;
         /// Current mouse position, this is updated by you.
         public Point CurPos;
+
+        /// Position of where the user is pointing inside the game world
+        public PointF InnerWorldPos;
+        public double InnerWorldX {
+            get { return InnerWorldPos.X; }
+        }
+        public double InnerWorldY {
+            get { return InnerWorldPos.Y; }
+        }
 
         /// Captured mouse position when it was clicked.
         public Point ClickPos;
@@ -28,13 +39,8 @@ namespace WinFormAnimation2D
         }
 
         /// Mimimum motion delta for mouse to be recognised
-        public Size Hysteresis = new Size(4, 4);
-        public int HorizHysteresis {
-            get { return Hysteresis.Height; }
-        }
-        public int VertHysteresis {
-            get { return Hysteresis.Width; }
-        }
+        public readonly int HorizHysteresis = 4;
+        public readonly int VertHysteresis = 4;
 
         /// Coordinate to store as current mouse position
         public Point CurrentPos;
@@ -45,9 +51,6 @@ namespace WinFormAnimation2D
             get { return CurrentPos.Y; }
         }
 
-        // Is the mouse being pressed down currently.
-        public bool IsPressed;
-
         // Delta between current mouse position and its click position
         public int DeltaClickX {
             get { return CurrentX - ClickX; }
@@ -56,21 +59,21 @@ namespace WinFormAnimation2D
             get { return CurrentY - ClickY; }
         }
 
-        /// <summary>
+        public void RecordMouseClick(MouseEventArgs e, PointF inner_world)
+        {
+            this.InnerWorldPos = inner_world;
+            this.RecordMouseClick(e);
+        }
+
         /// Record that a mouse click has happened.
-        /// </summary>
-        /// <param name="e"></param>
         public void RecordMouseClick(MouseEventArgs e)
         {
             this.ClickPos = new Point(e.X, e.Y);
             this.IsPressed = true;
         }
 
-        /// <summary>
         /// Updates current mouse position. Then we can caluclate delta better.
-        /// </summary>
-        /// <param name="e"></param>
-        public void UpdateCurrentPos(MouseEventArgs e)
+        public void RecordCurrentPos(MouseEventArgs e)
         {
             this.CurPos = new Point(e.X, e.Y);
         }

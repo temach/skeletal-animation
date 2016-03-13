@@ -43,6 +43,7 @@
             this.label_CurrentRotoAngle = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.dataGridView_EntityInfo = new System.Windows.Forms.DataGridView();
+            this.textBox_current_entity = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_EntityInfo)).BeginInit();
             this.SuspendLayout();
@@ -188,7 +189,7 @@
             // dataGridView_EntityInfo
             // 
             this.dataGridView_EntityInfo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView_EntityInfo.Location = new System.Drawing.Point(739, 285);
+            this.dataGridView_EntityInfo.Location = new System.Drawing.Point(739, 431);
             this.dataGridView_EntityInfo.Name = "dataGridView_EntityInfo";
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
@@ -198,14 +199,22 @@
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dataGridView_EntityInfo.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.dataGridView_EntityInfo.Size = new System.Drawing.Size(207, 231);
+            this.dataGridView_EntityInfo.Size = new System.Drawing.Size(207, 85);
             this.dataGridView_EntityInfo.TabIndex = 23;
+            // 
+            // textBox_current_entity
+            // 
+            this.textBox_current_entity.Location = new System.Drawing.Point(742, 286);
+            this.textBox_current_entity.Name = "textBox_current_entity";
+            this.textBox_current_entity.Size = new System.Drawing.Size(204, 20);
+            this.textBox_current_entity.TabIndex = 24;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(958, 528);
+            this.Controls.Add(this.textBox_current_entity);
             this.Controls.Add(this.dataGridView_EntityInfo);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label_CurrentRotoAngle);
@@ -245,6 +254,7 @@
         private System.Windows.Forms.Label label_CurrentRotoAngle;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.DataGridView dataGridView_EntityInfo;
+        private System.Windows.Forms.TextBox textBox_current_entity;
     }
 }
 
