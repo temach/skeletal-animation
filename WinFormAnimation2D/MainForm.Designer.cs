@@ -191,7 +191,6 @@
             this.Controls.Add(this.button_start);
             this.Name = "MainForm";
             this.Text = "Form1";
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MyForm_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

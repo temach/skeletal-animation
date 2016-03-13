@@ -26,7 +26,6 @@ namespace WinFormAnimation2D
         public static Func<Brush> GetNextBrush = SetupBrushGen();
 
         // Static config fields
-        public static float stepsize = 10.0f;
         public static double epsilon = 1E-8;
 
         /// <summary>

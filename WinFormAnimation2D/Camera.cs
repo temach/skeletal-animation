@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using OpenTK;
 using System.Drawing.Drawing2D;
 using System.ComponentModel;
+using System.Windows.Forms;
+using System.Drawing;
 
 namespace WinFormAnimation2D
 {
@@ -67,21 +69,17 @@ namespace WinFormAnimation2D
 
     class Drawing2DCamera : AbsCamera
     {
-        // Zoom parameters
-        private readonly float ZoomSpeed = 1.00105f;
+        private readonly float _zoom_speed = 1.00105f;
         // TODO: currently this limits do not work. They just affect the step size.
-        private readonly float ZoomCloseLimit = 0.9f;
-        private readonly float ZoomFarLimit = 10.0f;
+        private readonly float _zoom_close_limit = 0.9f;
+        private readonly float _zoom_far_limit = 10.0f;
         // this is like an initial zoom factor. In OpenGL zoom is
         // done by moving objects closer/further
         // in Drawing2D it is done by scaling. 
         // Actually in OpenGL we can use scaling as well. No? interesting idea....
-        private readonly float InitZoom = 0.5f;
-
-        // Rotation parameters
-        private readonly float RotationSpeed = 1.5f;
-
-        // we use matrix 4 even thougth MAtrix3 would also be ok.
+        private readonly float _init_zoom = 0.5f;
+        private readonly float _rotation_speed = 1.5f;
+        private readonly float _motion_speed = 10.0f;
         private Matrix _cam_mat = new Matrix();
 
         public double GetRotationAngleDeg
@@ -89,7 +87,6 @@ namespace WinFormAnimation2D
             get { return _cam_mat.eGetRotationAngle(); }
         }
 
-        // Since Matrix is a class this get/set crap does not protect anything.
         public Matrix CamMatrix {
             get { return _cam_mat; }
             set { _cam_mat = value; }
@@ -97,13 +94,11 @@ namespace WinFormAnimation2D
 
         public Drawing2DCamera()
         {
-            _cam_mat.Scale(InitZoom, InitZoom);
+            _cam_mat.Scale(_init_zoom, _init_zoom);
         }
 
-        /// <summary>
         /// Respond to mouse motion event by snapping the rotation 
         /// of the object to the specified delta.
-        /// </summary>
         /// <param name="x">The absolute delta between mouse click and current mouse position</param>
         /// <param name="y">The absolute delta between mouse click and current mouse position</param>
         public override void ProcessMouse(int x, int y)
@@ -112,12 +107,39 @@ namespace WinFormAnimation2D
             // along the global y axis
             if (x != 0)
             {
-                _cam_mat.Rotate((float)(x * RotationSpeed), MatrixOrder.Append);
+                _cam_mat.Rotate((float)(x * _rotation_speed), MatrixOrder.Append);
                 //_cam_mat.Rotate((float)(x * RotationSpeed * Math.PI / 180.0f));
             }
             FirePropertyChanged("GetRotationAngleDeg");
         }
 
+        // x,y are direction parameters one of {-1, 0, 1}
+        public void MoveBy(int x, int y)
+        {
+            this.CamMatrix.Translate( _motion_speed * x
+                , _motion_speed * y);
+        }
+
+        public void MoveByKey(KeyEventArgs e)
+        {
+            switch (e.KeyData)
+            {
+                case Keys.Left:
+                    MoveBy(-1, 0);
+                    break;
+                case Keys.Up:
+                    MoveBy(0, -1);
+                    break;
+                case Keys.Right:
+                    MoveBy(1, 0);
+                    break;
+                case Keys.Down:
+                    MoveBy(0, 1);
+                    break;
+                default:
+                    break;
+            }
+        }
 
         /// <summary>
         /// Scrolls along the camera z axis. In and out of the scene.
@@ -125,7 +147,7 @@ namespace WinFormAnimation2D
         /// <param name="z">Scroll factor.</param>
         public override void ProcessScroll(int z)
         {
-            float factor = Math.Max((float)Math.Pow(ZoomSpeed, z), ZoomCloseLimit);
+            float factor = Math.Max((float)Math.Pow(_zoom_speed, z), _zoom_close_limit);
             _cam_mat.Scale(factor, factor);
         }
     }

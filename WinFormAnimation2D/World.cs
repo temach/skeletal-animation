@@ -111,66 +111,50 @@ namespace WinFormAnimation2D
         public Point[] debug_points = null;
         public Random rand = new Random();
         public int rand_brush_count = 0;
+
+        public Logger _logger = new Logger("skeletal_animation.txt");
         
-        /// This is a singleton
-        private static bool hasInit = false;
-        
-        /// Currently loaded assimp scene
         private static Scene Current_Scene = null;
         private Entity ent = null;
 
-        // readonly because this is also singleton
-        public readonly Renderer _drawer = null;
+        public Renderer _renderer = null;
 
-        public World(PictureBox targetcanvas) {
-            _drawer = new Renderer(targetcanvas);
-            // turn on some config settings
-            _drawer.GlobalDrawConf = new DrawConfig {
+        public World(PictureBox targetcanvas)
+        {
+            _renderer = new Renderer(targetcanvas);
+            _renderer.GlobalDrawConf = new DrawConfig
+            {
                 EnablePolygonModeFill = true,
                 EnableLight = true,
             };
-
-            //Filepath to our model
             byte[] filedata = Properties.Resources.square_center_2;
             MemoryStream sphere = new MemoryStream(filedata);
-            
             // use format "nff" for sphere_3d
             // LoadModel(sphere, "nff");
-
             // use format "dae" for bird_plane
             var cur_scene = LoadScene(sphere, "dae");
-
             // use format "obj" for bird_plane_5
             // LoadModel(sphere, "obj");
-
             ent = new Entity(cur_scene);
         }
 
         public Scene LoadScene(MemoryStream model_data, string format_hint)
         {
-            //Create a new importer
             Scene cur_scene;
             using (var importer = new AssimpContext())
             {
-                //This is how we add a configuration (each config is its own class)
                 importer.SetConfig(new NormalSmoothingAngleConfig(66.0f));
-
-                //This is how we add a logging callback 
-                LogStream logstream = new LogStream( (msg, userData) => { Console.WriteLine(msg); });
+                LogStream logstream = new LogStream((msg, userData) => _logger.Log(msg));
                 logstream.Attach();
-
-                //Import the model. All configs are set. The model
-                //is imported, loaded into managed memory. Then the unmanaged memory is released, and everything is reset.
                 cur_scene = importer.ImportFileFromStream(model_data
-                    , PostProcessPreset.TargetRealTimeMaximumQuality
+                    , PostProcessPreset.TargetRealTimeFast
                     , format_hint);
+                // we could load the model into our own data structures here
             }
-
             if (cur_scene == null || cur_scene.SceneFlags.HasFlag(SceneFlags.Incomplete))
             {
                 throw new Exception("Failed to load scene");
             }
-
             return cur_scene;
         }
 
@@ -179,26 +163,13 @@ namespace WinFormAnimation2D
         /// </summary>
         public void RenderWorld(Matrix camera_matrix)
         {
-            // do some default OpenGL calls
-            _drawer.SetupRender(Util.GR);
-
-            if (ent == null)
-            {
-                _drawer.DrawEmptyEntitySplash();
-            }
-            else
-            {
-                // Applying camera transform is good here.
-                Util.GR.MultiplyTransform(camera_matrix);
-                // this is a debug thing, just make everything bigger.
-                Util.GR.ScaleTransform(3.0f, 3.0f);
-                // Now finally put vertices to GPU, because everything else is ready.
-                ent.RenderModel(_drawer.GlobalDrawConf);
-            }
+            _renderer.SetupRender(Util.GR);
+            // Applying camera transform is good here.
+            Util.GR.MultiplyTransform(camera_matrix);
+            Util.GR.ScaleTransform(3.0f, 3.0f);
+            ent.RenderModel(_renderer.GlobalDrawConf);
         }
 
-
-
-    }   // end of class World
+    }
 }
 
