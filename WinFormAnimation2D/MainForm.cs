@@ -160,11 +160,11 @@ namespace WinFormAnimation2D
             _m_status.RecordMouseMove(e, mouse_world_pos);
             if (_world.CheckMouseEntitySelect(_m_status))
             {
-                this.textBox_current_entity.Text = "HAS ENTITY";
+                this.toolStripStatusLabel_is_selected.Text = "HAS ENTITY";
             }
             else
             {
-                this.textBox_current_entity.Text = "___empty___";
+                this.toolStripStatusLabel_is_selected.Text = "___empty___";
             }
 
             if (Math.Abs(e.Delta) >= 1)
@@ -199,7 +199,7 @@ namespace WinFormAnimation2D
             _world.RenderWorld(_camera.CamMatrix);
             // draw after everything in camera coordinates
             Util.GR.eDrawBigPoint(_m_status.InnerWorldPos);
-            this.Text = _m_status.InnerWorldPos.ToString();
+            this.toolStripStatusLabel_mouse_coords.Text = _m_status.InnerWorldPos.ToString();
         }
 
     }
