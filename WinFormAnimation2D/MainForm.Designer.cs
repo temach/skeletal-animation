@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             this.button_start = new System.Windows.Forms.Button();
             this.pictureBox_main = new System.Windows.Forms.PictureBox();
             this.button_up = new System.Windows.Forms.Button();
@@ -43,10 +43,17 @@
             this.label_CurrentRotoAngle = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.dataGridView_EntityInfo = new System.Windows.Forms.DataGridView();
-            this.textBox_current_entity = new System.Windows.Forms.TextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel_is_selected = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_mouse_coords = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_camera_rotation = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_camera_position = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_entity_position = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_entity_rotation = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.textBox_current_entity = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_EntityInfo)).BeginInit();
             this.statusStrip1.SuspendLayout();
@@ -195,16 +202,98 @@
             this.dataGridView_EntityInfo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView_EntityInfo.Location = new System.Drawing.Point(739, 418);
             this.dataGridView_EntityInfo.Name = "dataGridView_EntityInfo";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.MenuText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView_EntityInfo.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.MenuText;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView_EntityInfo.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
             this.dataGridView_EntityInfo.Size = new System.Drawing.Size(207, 85);
             this.dataGridView_EntityInfo.TabIndex = 23;
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1,
+            this.toolStripStatusLabel_is_selected,
+            this.toolStripStatusLabel_mouse_coords,
+            this.toolStripStatusLabel2,
+            this.toolStripStatusLabel_camera_rotation,
+            this.toolStripStatusLabel_camera_position,
+            this.toolStripStatusLabel3,
+            this.toolStripStatusLabel_entity_rotation,
+            this.toolStripStatusLabel_entity_position});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 504);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(958, 24);
+            this.statusStrip1.TabIndex = 25;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel_is_selected
+            // 
+            this.toolStripStatusLabel_is_selected.AutoSize = false;
+            this.toolStripStatusLabel_is_selected.Name = "toolStripStatusLabel_is_selected";
+            this.toolStripStatusLabel_is_selected.Size = new System.Drawing.Size(122, 19);
+            this.toolStripStatusLabel_is_selected.Text = "toolStripStatusLabel1";
+            // 
+            // toolStripStatusLabel_mouse_coords
+            // 
+            this.toolStripStatusLabel_mouse_coords.AutoSize = false;
+            this.toolStripStatusLabel_mouse_coords.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+            this.toolStripStatusLabel_mouse_coords.Name = "toolStripStatusLabel_mouse_coords";
+            this.toolStripStatusLabel_mouse_coords.Size = new System.Drawing.Size(140, 19);
+            this.toolStripStatusLabel_mouse_coords.Text = "toolStripStatusLabel2";
+            // 
+            // toolStripStatusLabel_camera_rotation
+            // 
+            this.toolStripStatusLabel_camera_rotation.AutoSize = false;
+            this.toolStripStatusLabel_camera_rotation.Name = "toolStripStatusLabel_camera_rotation";
+            this.toolStripStatusLabel_camera_rotation.Size = new System.Drawing.Size(122, 19);
+            this.toolStripStatusLabel_camera_rotation.Text = "toolStripStatusLabel1";
+            // 
+            // toolStripStatusLabel_camera_position
+            // 
+            this.toolStripStatusLabel_camera_position.AutoSize = false;
+            this.toolStripStatusLabel_camera_position.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+            this.toolStripStatusLabel_camera_position.Name = "toolStripStatusLabel_camera_position";
+            this.toolStripStatusLabel_camera_position.Size = new System.Drawing.Size(118, 19);
+            this.toolStripStatusLabel_camera_position.Text = "toolStripStatusLabel1";
+            // 
+            // toolStripStatusLabel_entity_position
+            // 
+            this.toolStripStatusLabel_entity_position.AutoSize = false;
+            this.toolStripStatusLabel_entity_position.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+            this.toolStripStatusLabel_entity_position.Name = "toolStripStatusLabel_entity_position";
+            this.toolStripStatusLabel_entity_position.Size = new System.Drawing.Size(118, 19);
+            this.toolStripStatusLabel_entity_position.Text = "toolStripStatusLabel1";
+            // 
+            // toolStripStatusLabel_entity_rotation
+            // 
+            this.toolStripStatusLabel_entity_rotation.AutoSize = false;
+            this.toolStripStatusLabel_entity_rotation.Name = "toolStripStatusLabel_entity_rotation";
+            this.toolStripStatusLabel_entity_rotation.Size = new System.Drawing.Size(118, 19);
+            this.toolStripStatusLabel_entity_rotation.Text = "toolStripStatusLabel1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.AutoSize = false;
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(46, 19);
+            this.toolStripStatusLabel1.Text = "mouse:";
+            // 
+            // toolStripStatusLabel2
+            // 
+            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(49, 19);
+            this.toolStripStatusLabel2.Text = "camera:";
+            // 
+            // toolStripStatusLabel3
+            // 
+            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(40, 19);
+            this.toolStripStatusLabel3.Text = "entity:";
             // 
             // textBox_current_entity
             // 
@@ -212,29 +301,6 @@
             this.textBox_current_entity.Name = "textBox_current_entity";
             this.textBox_current_entity.Size = new System.Drawing.Size(204, 20);
             this.textBox_current_entity.TabIndex = 24;
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel_is_selected,
-            this.toolStripStatusLabel_mouse_coords});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 506);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(958, 22);
-            this.statusStrip1.TabIndex = 25;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // toolStripStatusLabel_is_selected
-            // 
-            this.toolStripStatusLabel_is_selected.Name = "toolStripStatusLabel_is_selected";
-            this.toolStripStatusLabel_is_selected.Size = new System.Drawing.Size(118, 17);
-            this.toolStripStatusLabel_is_selected.Text = "toolStripStatusLabel1";
-            // 
-            // toolStripStatusLabel_mouse_coords
-            // 
-            this.toolStripStatusLabel_mouse_coords.Name = "toolStripStatusLabel_mouse_coords";
-            this.toolStripStatusLabel_mouse_coords.Size = new System.Drawing.Size(118, 17);
-            this.toolStripStatusLabel_mouse_coords.Text = "toolStripStatusLabel2";
             // 
             // MainForm
             // 
@@ -284,10 +350,17 @@
         private System.Windows.Forms.Label label_CurrentRotoAngle;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.DataGridView dataGridView_EntityInfo;
-        private System.Windows.Forms.TextBox textBox_current_entity;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_is_selected;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_mouse_coords;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_camera_rotation;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_camera_position;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_entity_position;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_entity_rotation;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
+        private System.Windows.Forms.TextBox textBox_current_entity;
     }
 }
 

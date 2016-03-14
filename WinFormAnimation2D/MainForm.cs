@@ -17,7 +17,7 @@ using System.Runtime.CompilerServices;
 
 namespace WinFormAnimation2D
 {
-    public partial class MainForm : Form, INotifyPropertyChanged
+    public partial class MainForm : Form
     {
 
         // boiler-plate INotifyPropertyChanged
@@ -56,7 +56,7 @@ namespace WinFormAnimation2D
             // world.RenderModel(this.button_start.CreateGraphics());
             _world = new World(this.pictureBox_main);
             // Bind rotation to text field
-             var rotobind = new Binding("Text", _camera, "GetRotationAngleDeg");
+            var rotobind = new Binding("Text", _camera, "GetRotationAngleDeg");
             rotobind.ControlUpdateMode = ControlUpdateMode.OnPropertyChanged;
             rotobind.DataSourceUpdateMode = DataSourceUpdateMode.Never;
             this.label_CurrentRotoAngle.DataBindings.Add(rotobind);
@@ -73,6 +73,7 @@ namespace WinFormAnimation2D
                 case Keys.I:
                 case Keys.O:
                     _camera.RotateByKey(new KeyEventArgs(keyData));
+                    this.toolStripStatusLabel_camera_rotation.Text = _camera.GetRotationAngleDeg.ToString();
                     this.pictureBox_main.Invalidate();
                     return true;
                 case Keys.Left:
@@ -80,6 +81,7 @@ namespace WinFormAnimation2D
                 case Keys.Down:
                 case Keys.Up:
                     _camera.MoveByKey(new KeyEventArgs(keyData));
+                    this.toolStripStatusLabel_camera_position.Text = _camera.GetTranslation.ToString();
                     this.pictureBox_main.Invalidate();
                     return true; // hide this key event from other controls
                 default:
@@ -143,6 +145,8 @@ namespace WinFormAnimation2D
             if (_world.CheckMouseEntitySelect(_m_status))
             {
                 _currently_selected = _world.CurrentlySelected;
+                this.toolStripStatusLabel_entity_position.Text = _currently_selected.GetTranslation.ToString();
+                this.toolStripStatusLabel_entity_rotation.Text = _currently_selected.GetRotationAngleDeg.ToString();
                // this.dataGridView_EntityInfo.DataSource 
                //     = _currently_selected.GetExposedProperties();
                // this.dataGridView_EntityInfo.Invalidate();
@@ -150,6 +154,8 @@ namespace WinFormAnimation2D
             else
             {
                 _currently_selected = null;
+                this.toolStripStatusLabel_entity_position.Text = "none";
+                this.toolStripStatusLabel_entity_rotation.Text = "none";
             }
         }
 

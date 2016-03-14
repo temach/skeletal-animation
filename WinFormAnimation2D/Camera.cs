@@ -48,6 +48,10 @@ namespace WinFormAnimation2D
         {
             get { return _cam_mat.eGetRotationAngle(); }
         }
+        public Point GetTranslation
+        {
+            get { return Point.Round(_cam_mat.eGetTranslationPoint()); }
+        }
 
         /// <summary>
         /// Get the mouse position and calculate the world coordinates based on the screen coordinates.

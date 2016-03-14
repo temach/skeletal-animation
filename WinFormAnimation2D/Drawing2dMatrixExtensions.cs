@@ -134,5 +134,16 @@ namespace WinFormAnimation2D
             var scale_factor = Math.Sqrt((curmat[0]*curmat[3] - curmat[1]*curmat[2]));
             return Math.Acos(curmat[0]/scale_factor) * 180 / Math.PI; // For degrees
         }
+
+
+        /// <summary>
+        /// Returns the translation component of matrix as a Point
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <returns></returns>
+        static public PointF eGetTranslationPoint(this d2d.Matrix mat)
+        {
+            return new PointF(mat.Elements[4], mat.Elements[5]);
+        }
     }
 }

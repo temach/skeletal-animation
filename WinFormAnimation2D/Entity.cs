@@ -240,6 +240,16 @@ namespace WinFormAnimation2D
         public Geometry _extra_geometry;
         public DrawConfig _draw_conf;
 
+        public double GetRotationAngleDeg
+        {
+            get { return _matrix.eGetRotationAngle(); }
+        }
+        public Point GetTranslation
+        {
+            get { return Point.Round(_matrix.eGetTranslationPoint()); }
+        }
+
+
         // the only public constructor
         public Entity(Scene sc)
         {
