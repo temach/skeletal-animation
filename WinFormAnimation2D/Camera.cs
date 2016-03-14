@@ -13,23 +13,8 @@ using System.Diagnostics;
 
 namespace WinFormAnimation2D
 {
-    class Drawing2DCamera : INotifyPropertyChanged
+    class Drawing2DCamera
     {
-        // boiler-plate INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
-        }
-        protected bool UpdateField<T>(ref T field, T value, [CallerMemberName] string propertyName = "")
-        {
-            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
-            field = value;
-            OnPropertyChanged(propertyName);
-            return true;
-        }
-        // end boiler-plate
 
         private readonly float _zoom_speed = 1.00105f;
         // TODO: currently this limits do not work. They just affect the step size.
@@ -79,7 +64,6 @@ namespace WinFormAnimation2D
         public void RotateBy(double angle_degrees)
         {
             _cam_mat.Rotate((float)angle_degrees);
-            OnPropertyChanged("GetRotationAngleDeg");
         }
 
         public void RotateByKey(KeyEventArgs e)

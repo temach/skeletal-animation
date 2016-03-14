@@ -20,22 +20,6 @@ namespace WinFormAnimation2D
     public partial class MainForm : Form
     {
 
-        // boiler-plate INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
-        }
-        protected bool UpdateField<T>(ref T field, T value, [CallerMemberName] string propertyName = "")
-        {
-            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
-            field = value;
-            OnPropertyChanged(propertyName);
-            return true;
-        }
-        // end boiler-plate
-
         MouseState _m_status = new MouseState();
 
         private World _world;
@@ -55,11 +39,6 @@ namespace WinFormAnimation2D
             tm.Tick += delegate { this.pictureBox_main.Invalidate(); };
             // world.RenderModel(this.button_start.CreateGraphics());
             _world = new World(this.pictureBox_main);
-            // Bind rotation to text field
-            var rotobind = new Binding("Text", _camera, "GetRotationAngleDeg");
-            rotobind.ControlUpdateMode = ControlUpdateMode.OnPropertyChanged;
-            rotobind.DataSourceUpdateMode = DataSourceUpdateMode.Never;
-            this.label_CurrentRotoAngle.DataBindings.Add(rotobind);
         }
 
         /// <summary>
@@ -147,9 +126,6 @@ namespace WinFormAnimation2D
                 _currently_selected = _world.CurrentlySelected;
                 this.toolStripStatusLabel_entity_position.Text = _currently_selected.GetTranslation.ToString();
                 this.toolStripStatusLabel_entity_rotation.Text = _currently_selected.GetRotationAngleDeg.ToString();
-               // this.dataGridView_EntityInfo.DataSource 
-               //     = _currently_selected.GetExposedProperties();
-               // this.dataGridView_EntityInfo.Invalidate();
             }
             else
             {
