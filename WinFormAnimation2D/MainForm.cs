@@ -37,7 +37,6 @@ namespace WinFormAnimation2D
         // end boiler-plate
 
         MouseState _m_status = new MouseState();
-        private PointF mouse_world_pos;
 
         private World _world;
         private Timer tm = new Timer();
@@ -144,7 +143,6 @@ namespace WinFormAnimation2D
             if (_world.CheckMouseEntitySelect(_m_status))
             {
                 _currently_selected = _world.CurrentlySelected;
-                this.textBox_current_entity.Text = "HAS ENTITY";
                // this.dataGridView_EntityInfo.DataSource 
                //     = _currently_selected.GetExposedProperties();
                // this.dataGridView_EntityInfo.Invalidate();
@@ -152,15 +150,14 @@ namespace WinFormAnimation2D
             else
             {
                 _currently_selected = null;
-                this.textBox_current_entity.Text = "___empty___";
             }
         }
 
         private void pictureBox_main_MouseMove(object sender, MouseEventArgs e)
         {
-            var mouse_world_pos = PointFromMouseEvent(e);
+            PointF mouse_world_pos = PointFromMouseEvent(e);
             mouse_world_pos = _camera.ConvertScreen2WorldCoordinates(mouse_world_pos);
-            _m_status.RecordMouseClick(e, mouse_world_pos);
+            _m_status.RecordMouseMove(e, mouse_world_pos);
             if (_world.CheckMouseEntitySelect(_m_status))
             {
                 this.textBox_current_entity.Text = "HAS ENTITY";
@@ -179,8 +176,8 @@ namespace WinFormAnimation2D
                 return;
             }
             // this.Text = _m_status._mouse_x_captured.ToString();
-            var delta_x = e.X - _m_status.ClickX;
-            var delta_y = e.Y - _m_status.ClickY;
+            var delta_x = e.X - _m_status.ClickPos.X;
+            var delta_y = e.Y - _m_status.ClickPos.Y;
             if (Math.Abs(delta_x) < _m_status.HorizHysteresis 
                 && Math.Abs(delta_y)  < _m_status.VertHysteresis)
             {
@@ -198,11 +195,11 @@ namespace WinFormAnimation2D
             Util.GR = e.Graphics;
             _world._renderer.SetupRender(Util.GR);
             // draw before everything in real coordinate
-            Util.GR.eDrawBigPoint(mouse_world_pos);
+            Util.GR.eDrawBigPoint(_m_status.InnerWorldPos);
             _world.RenderWorld(_camera.CamMatrix);
             // draw after everything in camera coordinates
-            Util.GR.eDrawBigPoint(mouse_world_pos);
-            this.Text = mouse_world_pos.ToString();
+            Util.GR.eDrawBigPoint(_m_status.InnerWorldPos);
+            this.Text = _m_status.InnerWorldPos.ToString();
         }
 
     }
