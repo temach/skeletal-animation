@@ -116,7 +116,7 @@ namespace WinFormAnimation2D
         // apply transform to this bounding box
         public void Transform(Matrix mat)
         {
-            this._vertices = mat.eTransformVector2(this._vertices);
+            mat.eTransformVector2(this._vertices);
             CalculateProjectionAxis();
         }
 
@@ -240,6 +240,7 @@ namespace WinFormAnimation2D
         public Geometry _extra_geometry;
         public DrawConfig _draw_conf;
         public string Name;
+        private readonly float _motion_speed = 10.0f;
 
         public double GetRotationAngleDeg
         {
@@ -258,12 +259,53 @@ namespace WinFormAnimation2D
             _extra_geometry = new Geometry(sc);
         }
 
-        public List<object> GetExposedProperties()
+        public void RotateBy(double angle_degrees)
         {
-            return new List<object> {
-                _matrix
-                , _extra_geometry._bounding_rect
-            };
+            _matrix.Rotate((float)angle_degrees);
+        }
+
+        public void RotateByKey(KeyEventArgs e)
+        {
+            switch (e.KeyData)
+            {
+                case Keys.I:
+                    RotateBy(17);
+                    break;
+                case Keys.O:
+                    RotateBy(-17);
+                    break;
+                default:
+                    Debug.Assert(false);
+                    break;
+            }
+        }
+
+        // x,y are direction parameters one of {-1, 0, 1}
+        public void MoveBy(int x, int y)
+        {
+            this._matrix.Translate((_motion_speed * x), (_motion_speed * y));
+        }
+
+        public void MoveByKey(KeyEventArgs e)
+        {
+            switch (e.KeyData)
+            {
+                case Keys.Left:
+                    MoveBy(-1, 0);
+                    break;
+                case Keys.Up:
+                    MoveBy(0, -1);
+                    break;
+                case Keys.Right:
+                    MoveBy(1, 0);
+                    break;
+                case Keys.Down:
+                    MoveBy(0, 1);
+                    break;
+                default:
+                    Debug.Assert(false);
+                    break;
+            }
         }
 
         /// <summary>
@@ -278,7 +320,14 @@ namespace WinFormAnimation2D
 
         public bool ContainsPoint(Vector2 p)
         {
-            return _extra_geometry.ContainsPoint(p);
+            // modify the point so it is in entity space
+            // why? because instead of modifying the vertices we modify the entity matrix.
+            // this means that every time we want to interact with the entity, we must send
+            // all interaction througth the filter of entity's matrix
+            var tmp = _matrix.Clone();
+            tmp.Invert();
+            var entity_coord_space_point = tmp.eTransformSingleVector2(p);
+            return _extra_geometry.ContainsPoint(entity_coord_space_point);
         }
         
         /// Render the model stored in EntityScene useing the Graphics object.

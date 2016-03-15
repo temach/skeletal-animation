@@ -118,7 +118,7 @@ namespace WinFormAnimation2D
         public int rand_brush_count = 0;
 
         public Logger _logger = new Logger("skeletal_animation.txt");
-        private Entity _enttity_one = null;
+        public Entity _enttity_one = null;
         public Renderer _renderer = null;
 
         private Entity _currently_selected;
@@ -172,9 +172,6 @@ namespace WinFormAnimation2D
         /// </summary>
         public void RenderWorld(Matrix camera_matrix)
         {
-            // Applying camera transform is good here.
-            _enttity_one.RenderModel(_renderer.GlobalDrawConf);
-            Util.GR.MultiplyTransform(camera_matrix);
             _enttity_one.RenderModel(_renderer.GlobalDrawConf);
         }
 

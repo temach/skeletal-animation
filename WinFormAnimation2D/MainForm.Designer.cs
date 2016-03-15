@@ -50,6 +50,7 @@
             this.toolStripStatusLabel_entity_rotation = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_entity_position = new System.Windows.Forms.ToolStripStatusLabel();
             this.treeView_entity_info = new System.Windows.Forms.TreeView();
+            this.checkBox_breakpoints_on = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).BeginInit();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -263,11 +264,23 @@
             this.treeView_entity_info.Size = new System.Drawing.Size(194, 216);
             this.treeView_entity_info.TabIndex = 26;
             // 
+            // checkBox_breakpoints_on
+            // 
+            this.checkBox_breakpoints_on.AutoSize = true;
+            this.checkBox_breakpoints_on.Location = new System.Drawing.Point(804, 230);
+            this.checkBox_breakpoints_on.Name = "checkBox_breakpoints_on";
+            this.checkBox_breakpoints_on.Size = new System.Drawing.Size(118, 17);
+            this.checkBox_breakpoints_on.TabIndex = 27;
+            this.checkBox_breakpoints_on.Text = "Breakpoints On/Off";
+            this.checkBox_breakpoints_on.UseVisualStyleBackColor = true;
+            this.checkBox_breakpoints_on.CheckedChanged += new System.EventHandler(this.checkBox_breakpoints_on_CheckedChanged);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(958, 528);
+            this.Controls.Add(this.checkBox_breakpoints_on);
             this.Controls.Add(this.treeView_entity_info);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.label2);
@@ -315,6 +328,7 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
         private System.Windows.Forms.TreeView treeView_entity_info;
+        private System.Windows.Forms.CheckBox checkBox_breakpoints_on;
     }
 }
 

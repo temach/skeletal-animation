@@ -51,16 +51,30 @@ namespace WinFormAnimation2D
             {
                 case Keys.I:
                 case Keys.O:
-                    _camera.RotateByKey(new KeyEventArgs(keyData));
-                    this.toolStripStatusLabel_camera_rotation.Text = _camera.GetRotationAngleDeg.ToString();
+                    if (_currently_selected == null)
+                    {
+                        _camera.RotateByKey(new KeyEventArgs(keyData));
+                        this.toolStripStatusLabel_camera_rotation.Text = _camera.GetRotationAngleDeg.ToString();
+                    }
+                    else
+                    { 
+                        _currently_selected.RotateByKey(new KeyEventArgs(keyData));
+                    }
                     this.pictureBox_main.Invalidate();
                     return true;
                 case Keys.Left:
                 case Keys.Right:
                 case Keys.Down:
                 case Keys.Up:
-                    _camera.MoveByKey(new KeyEventArgs(keyData));
-                    this.toolStripStatusLabel_camera_position.Text = _camera.GetTranslation.ToString();
+                    if (_currently_selected == null)
+                    {
+                        _camera.MoveByKey(new KeyEventArgs(keyData));
+                        this.toolStripStatusLabel_camera_position.Text = _camera.GetTranslation.ToString();
+                    }
+                    else
+                    {
+                        _currently_selected.MoveByKey(new KeyEventArgs(keyData));
+                    }
                     this.pictureBox_main.Invalidate();
                     return true; // hide this key event from other controls
                 default:
@@ -232,17 +246,26 @@ namespace WinFormAnimation2D
 
         private void pictureBox_main_Paint(object sender, PaintEventArgs e)
         {
-            // Draw program elements
             // Set GR field so that we can use Sysem.Drawing2D as if it was like OpenGL
             Util.GR = e.Graphics;
             _world._renderer.SetupRender(Util.GR);
-            // draw before everything in real coordinate
+            // Render the mouse and model (unaffected by transforms)
             Util.GR.eDrawBigPoint(_m_status.InnerWorldPos);
-            _world.RenderWorld(_camera.CamMatrix);
-            // draw after everything in camera coordinates
+            GraphicsState gs = Util.GR.Save();
+            _world._enttity_one.RenderModel(_world._renderer.GlobalDrawConf);
+            Util.GR.Restore(gs);
+            // Applying camera transform is good here.
+            Util.GR.MultiplyTransform(_camera.CamMatrix);
+            // draw in camera coordinates
             Util.GR.eDrawBigPoint(_m_status.InnerWorldPos);
             this.toolStripStatusLabel_mouse_coords.Text = _m_status.InnerWorldPos.ToString();
+            // apply entity specific matrix on top of camera matrix and render the entity
+            _world.RenderWorld(_camera.CamMatrix);
         }
 
+        private void checkBox_breakpoints_on_CheckedChanged(object sender, EventArgs e)
+        {
+            Breakpoints.Allow = this.checkBox_breakpoints_on.Checked;
+        }
     }
 }

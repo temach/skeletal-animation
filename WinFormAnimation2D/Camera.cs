@@ -48,7 +48,7 @@ namespace WinFormAnimation2D
             Debug.Assert(_cam_mat.IsInvertible == true, "can not change into world coordinates.");
             var tmp = _cam_mat.Clone();
             tmp.Invert();
-            return tmp.eTransformPoint(screen_coords);
+            return tmp.eTransformSinglePointF(screen_coords);
         }
 
         public Matrix CamMatrix {

@@ -22,15 +22,28 @@ namespace WinFormAnimation2D
     {
 
         /// <summary>
-        /// Transform a single point and return the result.
+        /// Transform a single PointF object and return the result.
         /// </summary>
         /// <param name="mat"></param>
         /// <param name="p"></param>
         /// <returns></returns>
-        public static PointF eTransformPoint(this d2d.Matrix mat, PointF p)
+        public static PointF eTransformSinglePointF(this d2d.Matrix mat, PointF p)
         {
             var tmp = new PointF[] { p };
             mat.TransformPoints(tmp);
+            return tmp[0];
+        }
+
+        /// <summary>
+        /// Transform a single Vector2 object and return the result.
+        /// </summary>
+        /// <param name="mat"></param>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public static tk.Vector2 eTransformSingleVector2(this d2d.Matrix mat, tk.Vector2 p)
+        {
+            var tmp = new tk.Vector2[] { p };
+            mat.eTransformVector2(tmp);
             return tmp[0];
         }
 
@@ -40,13 +53,18 @@ namespace WinFormAnimation2D
         /// </summary>
         /// <param name="mat"></param>
         /// <param name="vecs"></param>
-        public static tk.Vector2[] eTransformVector2(this d2d.Matrix mat, tk.Vector2[] vecs)
+        public static void eTransformVector2(this d2d.Matrix mat, tk.Vector2[] vecs)
         {
-            var tmp = vecs.Select(vec => new PointF(vec.X, vec.Y)).ToArray();
+            PointF[] tmp = vecs.Select(vec => new PointF(vec.X, vec.Y)).ToArray();
             mat.TransformPoints(tmp);
-            return tmp.Select(p => new tk.Vector2(p.X, p.Y)).ToArray();
+            // set them equal this way we dont mess up if other 
+            // objects kept pointers to some vector and we just override it
+            for (int i = 0; i < vecs.Length; i++)
+            {
+                vecs[i].X = tmp[i].X;
+                vecs[i].Y = tmp[i].Y;
+            }
         }
-
 
         /// <summary>
         /// Rescale the matrix. Preserve rotation and translation.

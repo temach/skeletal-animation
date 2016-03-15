@@ -13,8 +13,15 @@ using System.Reflection;
 
 namespace WinFormAnimation2D
 {
+
+    public static class Breakpoints
+    {
+        public static bool Allow = false;
+    }
+
     public static class Util
     {
+
         // When we get OpenGL we will not have to pass around a Graphics instance.
         public static Graphics GR = null;
 
