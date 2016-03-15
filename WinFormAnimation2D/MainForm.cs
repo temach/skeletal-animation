@@ -126,12 +126,14 @@ namespace WinFormAnimation2D
                 _currently_selected = _world.CurrentlySelected;
                 this.toolStripStatusLabel_entity_position.Text = _currently_selected.GetTranslation.ToString();
                 this.toolStripStatusLabel_entity_rotation.Text = _currently_selected.GetRotationAngleDeg.ToString();
+                FillTreeFromCurrentEntity();
             }
             else
             {
                 _currently_selected = null;
                 this.toolStripStatusLabel_entity_position.Text = "none";
                 this.toolStripStatusLabel_entity_rotation.Text = "none";
+                this.treeView_entity_info.Nodes.Clear();
             }
         }
 
@@ -169,6 +171,64 @@ namespace WinFormAnimation2D
             //_camera.ProcessMouse(delta_x, delta_y);
             pictureBox_main.Invalidate();
         }
+
+        private void FillTreeFromCurrentEntity()
+        {
+            this.treeView_entity_info.Nodes.Clear();
+            // make root node and build whole tree
+            var root_nd = new TreeNode();
+            root_nd.Text = "scene";
+            var ent_tree = FillTreeeRecur(_currently_selected);
+            root_nd.Nodes.Add(ent_tree);
+            // expand nodes until you find one with at least two children
+            var cur_nd = root_nd;
+            while (cur_nd.Nodes.Count == 1)
+            {
+                cur_nd.Toggle();
+                cur_nd = cur_nd.Nodes[0];
+            }
+            // attach and refresh
+            this.treeView_entity_info.Nodes.Add(root_nd);
+            this.treeView_entity_info.Invalidate();
+        }
+
+        /// Render the model stored in EntityScene useing the Graphics object.
+        private TreeNode FillTreeeRecur(Entity ent)
+        {
+            var papa = new TreeNode();
+            papa.Text = ent.Name;
+            RecursiveRenderSystemDrawing(papa, ent._scene, ent._scene.RootNode);
+            return papa;
+        }
+
+        //-------------------------------------------------------------------------------------------------
+        // TODO: move all the drawing code elsewhere. This should only show the logic of drawing not the actual OpenGL commands.
+        // Render the scene.
+        // Begin at the root node of the imported data and traverse
+        // the scenegraph by multiplying subsequent local transforms
+        // together on OpenGL matrix stack.
+        private void RecursiveRenderSystemDrawing(TreeNode view_nd, Scene sc, Node nd)
+        {
+            string fmt = "face {0}: ";
+            foreach(int mesh_id in nd.MeshIndices)
+            {
+                var mesh_view_nd = new TreeNode();
+                view_nd.Nodes.Add(mesh_view_nd);
+                mesh_view_nd.Text = nd.Name;
+                Mesh cur_mesh = sc.Meshes[mesh_id];
+                for (int i = 0; i < cur_mesh.FaceCount; i++)
+                {
+                    var cur_view_nd = new TreeNode();
+                    cur_view_nd.Text = string.Format(fmt, i) + cur_mesh.Faces[i].ToString();
+                    mesh_view_nd.Nodes.Add(cur_view_nd);
+                }
+            }
+            foreach (Node child in nd.Children)
+            {
+                RecursiveRenderSystemDrawing(view_nd, sc, child);
+            }
+        }
+
 
         private void pictureBox_main_Paint(object sender, PaintEventArgs e)
         {

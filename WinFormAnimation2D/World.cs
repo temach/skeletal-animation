@@ -144,7 +144,7 @@ namespace WinFormAnimation2D
             var cur_scene = LoadScene(sphere, "dae");
             // use format "obj" for bird_plane_5
             // LoadModel(sphere, "obj");
-            _enttity_one = new Entity(cur_scene);
+            _enttity_one = new Entity(cur_scene, "square_center");
         }
 
         public Scene LoadScene(MemoryStream model_data, string format_hint)
