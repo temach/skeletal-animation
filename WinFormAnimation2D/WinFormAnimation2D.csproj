@@ -74,6 +74,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="TreeViewCustomNodes.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>

@@ -39,6 +39,7 @@ namespace WinFormAnimation2D
             tm.Tick += delegate { this.pictureBox_main.Invalidate(); };
             // world.RenderModel(this.button_start.CreateGraphics());
             _world = new World(this.pictureBox_main);
+            InitFillTreeFromWorldSingleEntity();
         }
 
         /// <summary>
@@ -140,14 +141,14 @@ namespace WinFormAnimation2D
                 _currently_selected = _world.CurrentlySelected;
                 this.toolStripStatusLabel_entity_position.Text = _currently_selected.GetTranslation.ToString();
                 this.toolStripStatusLabel_entity_rotation.Text = _currently_selected.GetRotationAngleDeg.ToString();
-                FillTreeFromCurrentEntity();
+                this.treeView_entity_info.SelectedNode = this.treeView_entity_info.Nodes[_currently_selected.Name];
             }
             else
             {
                 _currently_selected = null;
                 this.toolStripStatusLabel_entity_position.Text = "none";
                 this.toolStripStatusLabel_entity_rotation.Text = "none";
-                this.treeView_entity_info.Nodes.Clear();
+                this.treeView_entity_info.SelectedNode = null;
             }
         }
 
@@ -186,16 +187,19 @@ namespace WinFormAnimation2D
             pictureBox_main.Invalidate();
         }
 
-        private void FillTreeFromCurrentEntity()
+        /// <summary>
+        /// Initialise the side tree view to show the scene.
+        /// </summary>
+        private void InitFillTreeFromWorldSingleEntity()
         {
             this.treeView_entity_info.Nodes.Clear();
             // make root node and build whole tree
-            var root_nd = new TreeNode();
+            var root_nd = new CustomTreeNode(NodeType.Other);
             root_nd.Text = "scene";
-            var ent_tree = FillTreeeRecur(_currently_selected);
+            var ent_tree = FillTreeRecur(_world._enttity_one);
             root_nd.Nodes.Add(ent_tree);
             // expand nodes until you find one with at least two children
-            var cur_nd = root_nd;
+            TreeNode cur_nd = root_nd;
             while (cur_nd.Nodes.Count == 1)
             {
                 cur_nd.Toggle();
@@ -206,11 +210,14 @@ namespace WinFormAnimation2D
             this.treeView_entity_info.Invalidate();
         }
 
+
         /// Render the model stored in EntityScene useing the Graphics object.
-        private TreeNode FillTreeeRecur(Entity ent)
+        private TreeNode FillTreeRecur(Entity ent)
         {
-            var papa = new TreeNode();
+            var papa = new CustomTreeNode(NodeType.Entity);
+            papa.Name = ent.Name;
             papa.Text = ent.Name;
+            papa.DrawData = Rectangle.Round(ent._extra_geometry._bounding_rect._rect);
             RecursiveRenderSystemDrawing(papa, ent._scene, ent._scene.RootNode);
             return papa;
         }
@@ -226,16 +233,22 @@ namespace WinFormAnimation2D
             string fmt = "face {0}: ";
             foreach(int mesh_id in nd.MeshIndices)
             {
-                var mesh_view_nd = new TreeNode();
+                var mesh_view_nd = new CustomTreeNode(NodeType.Mesh);
                 view_nd.Nodes.Add(mesh_view_nd);
                 mesh_view_nd.Text = nd.Name;
+                List<Point> tri_faces = new List<Point>();
                 Mesh cur_mesh = sc.Meshes[mesh_id];
                 for (int i = 0; i < cur_mesh.FaceCount; i++)
                 {
-                    var cur_view_nd = new TreeNode();
+                    var cur_view_nd = new CustomTreeNode(NodeType.TriangleFace);
                     cur_view_nd.Text = string.Format(fmt, i) + cur_mesh.Faces[i].ToString();
+                    // list of 3 vertices as PointF
+                    var array_tri_face = cur_mesh.Faces[i].Indices.Select(index => cur_mesh.Vertices[index].eToPoint()).ToArray();
+                    cur_view_nd.DrawData = array_tri_face;
+                    tri_faces.AddRange(array_tri_face);
                     mesh_view_nd.Nodes.Add(cur_view_nd);
                 }
+                mesh_view_nd.DrawData = tri_faces.ToArray();
             }
             foreach (Node child in nd.Children)
             {
@@ -243,6 +256,75 @@ namespace WinFormAnimation2D
             }
         }
 
+        public Point GetCenterOfPoints(IEnumerable<Point> input)
+        {
+            var res = new Point();
+            foreach (var p in input)
+            {
+                res.X += p.X;
+                res.Y += p.Y;
+            }
+            res.X /= input.Count();
+            res.Y /= input.Count();
+            return res;
+        }
+
+        public Point ShiftOutwardFrom(Point p, Point from)
+        {
+            // p + (p - midpoint).Normalise() * 5
+            Point unit = p.Minus(from);
+            double len = Math.Sqrt(unit.X * unit.X + unit.Y * unit.Y);
+            unit.X = (int)(100 * unit.X);
+            unit.Y = (int)(100 * unit.Y);
+            //unit.X = (int)(40 * unit.X / len);
+            //unit.Y = (int)(40 * unit.Y / len);
+            return p.Add(unit);
+        }
+
+        private void HighlightSlectedNode()
+        {
+            var view_nd = (CustomTreeNode)this.treeView_entity_info.SelectedNode;
+            if (view_nd != null)
+            {
+                if (view_nd.NodeType == NodeType.Entity)
+                {
+                    // we must draw every mesh inside the entity
+                    Rectangle draw_data = (Rectangle)view_nd.DrawData;
+                    // inflate by 5 pixels
+                    draw_data.Inflate(10, 10);
+                    var coords = new Point[]
+                    {
+                        new Point(draw_data.Left, draw_data.Top),
+                        new Point(draw_data.Right, draw_data.Top),
+                        new Point(draw_data.Right, draw_data.Bottom),
+                        new Point(draw_data.Left, draw_data.Bottom),
+                    };
+                    Util.GR.DrawClosedCurve(Pens.Black, coords);
+                }
+                else if (view_nd.NodeType == NodeType.Mesh)
+                {
+                    // we must draw every triangle inside the mesh
+                    Point[] draw_data = (Point[])view_nd.DrawData;
+                    // draw in triplets (each face is  vertices
+                    for (int i = 0; i < draw_data.Length; )
+                    {
+                        var tri_face = draw_data.Skip(i).Take(3);
+                        Point mid_point = GetCenterOfPoints(tri_face);
+                        tri_face = tri_face.Select(p => ShiftOutwardFrom(p, mid_point));
+                        Util.GR.DrawClosedCurve(Pens.Black, tri_face.ToArray());
+                        i += 3;     // Note the +3
+                    }
+                }
+                else if (view_nd.NodeType == NodeType.TriangleFace)
+                {
+                    // we must draw every vertex in the triangle (and join them)
+                    Point[] draw_data = (Point[]) view_nd.DrawData;
+                    Point mid_point = GetCenterOfPoints(draw_data);
+                    var tri_face = draw_data.Select(p => ShiftOutwardFrom(p, mid_point));
+                    Util.GR.DrawClosedCurve(Pens.Black, tri_face.ToArray());
+                }
+            }
+        }
 
         private void pictureBox_main_Paint(object sender, PaintEventArgs e)
         {
@@ -254,6 +336,8 @@ namespace WinFormAnimation2D
             GraphicsState gs = Util.GR.Save();
             _world._enttity_one.RenderModel(_world._renderer.GlobalDrawConf);
             Util.GR.Restore(gs);
+            // show what is currently selected in tree view
+            HighlightSlectedNode();
             // Applying camera transform is good here.
             Util.GR.MultiplyTransform(_camera.CamMatrix);
             // draw in camera coordinates
@@ -261,11 +345,19 @@ namespace WinFormAnimation2D
             this.toolStripStatusLabel_mouse_coords.Text = _m_status.InnerWorldPos.ToString();
             // apply entity specific matrix on top of camera matrix and render the entity
             _world.RenderWorld(_camera.CamMatrix);
+            // show what is currently selected in tree view, but in world coords now
+            HighlightSlectedNode();
         }
 
         private void checkBox_breakpoints_on_CheckedChanged(object sender, EventArgs e)
         {
             Breakpoints.Allow = this.checkBox_breakpoints_on.Checked;
         }
+
+        // when the selected item has been changed
+        private void treeView_entity_info_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+        }
+
     }
 }

@@ -263,6 +263,7 @@
             this.treeView_entity_info.Name = "treeView_entity_info";
             this.treeView_entity_info.Size = new System.Drawing.Size(194, 216);
             this.treeView_entity_info.TabIndex = 26;
+            this.treeView_entity_info.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView_entity_info_AfterSelect);
             // 
             // checkBox_breakpoints_on
             // 

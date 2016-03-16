@@ -86,5 +86,17 @@ namespace WinFormAnimation2D
                 }
             };
         }
+
+        // subtract one point from another
+        public static Point Minus(this Point a, Point b)
+        {
+            return new Point(a.X - b.X, a.Y - b.Y);
+        }
+        // add one point to another
+        public static Point Add(this Point a, Point b)
+        {
+            return new Point(a.X + b.X, a.Y + b.Y);
+        }
+
     } // end of class
 }
