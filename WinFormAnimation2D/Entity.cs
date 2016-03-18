@@ -122,6 +122,12 @@ namespace WinFormAnimation2D
 
     }
 
+    struct BoundingVectors
+    {
+        public Vector3D ZeroNear;
+        public Vector3D ZeroFar;
+    }
+
     class AxiAlignedBoundingBox
     {
         public RectangleF _rect;
@@ -139,51 +145,22 @@ namespace WinFormAnimation2D
             get { return new Vector2(_rect.Right, _rect.Bottom); }
         }
 
-        public AxiAlignedBoundingBox(Scene sc)
+        public AxiAlignedBoundingBox(BoundingVectors bounds)
         {
-            Matrix4x4 id = Matrix4x4.Identity;
-            Vector3D zero_near = new Vector3D(1e10f, 1e10f, 1e10f);
-        	Vector3D zero_far = new Vector3D(-1e10f, -1e10f, -1e10f);
-            CalcBoundingRect(sc, sc.RootNode, ref zero_near, ref zero_far, ref id);
-            // change from the 3d model into 2d program space
+            // change from the 3d model into 2d program space just discard Z coordinate
+            _rect = new RectangleF(bounds.ZeroNear.X, bounds.ZeroNear.Y
+                , bounds.ZeroFar.X - bounds.ZeroNear.X
+                , bounds.ZeroFar.Y - bounds.ZeroNear.Y
+            );
+        }
+
+        public AxiAlignedBoundingBox(Vector3D zero_near, Vector3D zero_far)
+        {
+            // change from the 3d model into 2d program space just discard Z coordinate
             _rect = new RectangleF(zero_near.X, zero_near.Y
                 , zero_far.X - zero_near.X
                 , zero_far.Y - zero_near.Y
             );
-        }
-
-        /// <summary>
-        /// For each node calculate the bounding box.
-        /// This is used to align the viewport nicely when the scene is imported.
-        /// </summary>
-        private void CalcBoundingRect(Scene sc, Node node, ref Vector3D min, ref Vector3D max, ref Matrix4x4 cur_mat)
-        {
-            Matrix4x4 prev = cur_mat;
-            cur_mat = prev * node.Transform;
-            if (node.HasMeshes)
-            {
-                foreach (int index in node.MeshIndices)
-                {
-                    Mesh mesh = sc.Meshes[index];
-                    for (int i = 0; i < mesh.VertexCount; i++)
-                    {
-                        Vector3D cur_vertex = mesh.Vertices[i];
-                        cur_vertex = cur_mat.eTransformVector(cur_vertex);
-                        // find min
-                        min.X = Math.Min(min.X, cur_vertex.X);
-                        min.Y = Math.Min(min.Y, cur_vertex.Y);
-                        // find max
-                        max.X = Math.Max(max.X, cur_vertex.X);
-                        max.Y = Math.Max(max.Y, cur_vertex.Y);
-                    }
-                }
-            }
-            for (int i = 0; i < node.ChildCount; i++)
-            {
-                CalcBoundingRect(sc, node.Children[i], ref min, ref max, ref cur_mat);
-            }
-            // unwind the matrix stack before we calculate the box for the next leaf
-            cur_mat = prev;
         }
 
         public bool CheckContainsPoint(Vector2 p)
@@ -209,21 +186,109 @@ namespace WinFormAnimation2D
     class Geometry
     {
 
-        public AxiAlignedBoundingBox _bounding_rect = null;
+        // public List<TriangularFace> _face_borders = new List<TriangularFace>();
+        public List<AxiAlignedBoundingBox> _mesh_borders = new List<AxiAlignedBoundingBox>();
+        public AxiAlignedBoundingBox _entity_border = null;
 
-        public Geometry(Scene sc)
+        /// <summary>
+        /// Build geometry data for node (usually use only for one of the children of scene.RootNode)
+        /// </summary>
+        public Geometry(Scene sc, Node nd)
         {
-            _bounding_rect = new AxiAlignedBoundingBox(sc);
+            Matrix4x4 id = Matrix4x4.Identity;
+            Vector3D zero_near = new Vector3D(1e10f, 1e10f, 1e10f);
+        	Vector3D zero_far = new Vector3D(-1e10f, -1e10f, -1e10f);
+            CalcBoundingRect(sc, nd, ref zero_near, ref zero_far, ref id);
+            // change from the 3d model into 2d program space
+            _entity_border = new AxiAlignedBoundingBox(zero_near, zero_far);
+        }
+
+        /// <summary>
+        /// For each node calculate the bounding box.
+        /// This is used to align the viewport nicely when the scene is imported.
+        /// </summary>
+        private void CalcBoundingRect(Scene sc, Node node, ref Vector3D scene_min, ref Vector3D scene_max, ref Matrix4x4 cur_mat)
+        {
+            Matrix4x4 prev = cur_mat;
+            cur_mat = prev * node.Transform;
+            if (node.HasMeshes)
+            {
+                foreach (int index in node.MeshIndices)
+                {
+                    Mesh mesh = sc.Meshes[index];
+                    var bounds = GetMinMaxForMesh(mesh, cur_mat);
+                    // build mesh bounding box
+                    _mesh_borders.Add(new AxiAlignedBoundingBox(bounds));
+                    // check for new min/max with respect to whole scene
+                    // find min
+                    scene_min.X = Math.Min(scene_min.X, bounds.ZeroNear.X);
+                    scene_min.Y = Math.Min(scene_min.Y, bounds.ZeroNear.Y);
+                    // find max
+                    scene_max.X = Math.Max(scene_max.X, bounds.ZeroFar.X);
+                    scene_max.Y = Math.Max(scene_max.Y, bounds.ZeroFar.Y);
+                }
+            }
+            for (int i = 0; i < node.ChildCount; i++)
+            {
+                CalcBoundingRect(sc, node.Children[i], ref scene_min, ref scene_max, ref cur_mat);
+            }
+            // unwind the matrix stack before we calculate the box for the next leaf
+            cur_mat = prev;
+        }
+
+        /// <summary>
+        /// Get minimum and maximum vectors from the mesh after trasnformation by matrix.
+        /// </summary>
+        public BoundingVectors GetMinMaxForMesh(Mesh mesh, Matrix4x4 mat)
+        {
+            Vector3D zero_near = new Vector3D(1e10f, 1e10f, 1e10f);
+            Vector3D zero_far = new Vector3D(-1e10f, -1e10f, -1e10f);
+            for (int i = 0; i < mesh.VertexCount; i++)
+            {
+                Vector3D vertex = mesh.Vertices[i];
+                vertex = mat.eTransformVector(vertex);
+                // find min
+                zero_near.X = Math.Min(zero_near.X, vertex.X);
+                zero_near.Y = Math.Min(zero_near.Y, vertex.Y);
+                // find max
+                zero_far.X = Math.Max(zero_far.X, vertex.X);
+                zero_far.Y = Math.Max(zero_far.Y, vertex.Y);
+            }
+            return new BoundingVectors { ZeroNear = zero_near , ZeroFar = zero_far };
+        }
+
+        public AxiAlignedBoundingBox IntersectWithMesh(Vector2 point)
+        {
+            foreach (AxiAlignedBoundingBox border in _mesh_borders)
+            {
+                if (border.CheckContainsPoint(point))
+                {
+                    return border;
+                }
+            }
+            return null;
+        }
+
+        public bool MeshBorderContainsPoint(Vector2 point)
+        {
+            foreach (AxiAlignedBoundingBox border in _mesh_borders)
+            {
+                if (border.CheckContainsPoint(point))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
         
-        public bool ContainsPoint(Vector2 point)
+        public bool EntityBorderContainsPoint(Vector2 point)
         {
-            return _bounding_rect.CheckContainsPoint(point);
+            return _entity_border.CheckContainsPoint(point);
         }
 
-        public void Render()
+        public void RenderEntityBorder()
         {
-            _bounding_rect.Render();
+            _entity_border.Render();
         }
 
     }
@@ -252,11 +317,11 @@ namespace WinFormAnimation2D
         }
 
         // the only public constructor
-        public Entity(Scene sc, string entity_name)
+        public Entity(Scene sc, Node nd, string entity_name)
         {
             Name = entity_name;
             _scene = sc;
-            _extra_geometry = new Geometry(sc);
+            _extra_geometry = new Geometry(sc, nd);
         }
 
         public void RotateBy(double angle_degrees)
@@ -327,7 +392,7 @@ namespace WinFormAnimation2D
             var tmp = _matrix.Clone();
             tmp.Invert();
             var entity_coord_space_point = tmp.eTransformSingleVector2(p);
-            return _extra_geometry.ContainsPoint(entity_coord_space_point);
+            return _extra_geometry.EntityBorderContainsPoint(entity_coord_space_point);
         }
         
         /// Render the model stored in EntityScene useing the Graphics object.
@@ -342,7 +407,7 @@ namespace WinFormAnimation2D
                 Util.GR.SmoothingMode = SmoothingMode.AntiAlias;
             }
             Util.GR.MultiplyTransform(_matrix);
-            _extra_geometry.Render();
+            _extra_geometry.RenderEntityBorder();
             RecursiveRenderSystemDrawing(_scene.RootNode);
         }
 

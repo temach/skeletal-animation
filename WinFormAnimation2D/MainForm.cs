@@ -217,7 +217,7 @@ namespace WinFormAnimation2D
             var papa = new CustomTreeNode(NodeType.Entity);
             papa.Name = ent.Name;
             papa.Text = ent.Name;
-            papa.DrawData = Rectangle.Round(ent._extra_geometry._bounding_rect._rect);
+            papa.DrawData = Rectangle.Round(ent._extra_geometry._entity_border._rect);
             RecursiveRenderSystemDrawing(papa, ent._scene, ent._scene.RootNode);
             return papa;
         }
