@@ -136,15 +136,20 @@ namespace WinFormAnimation2D
                 EnablePolygonModeFill = true,
                 EnableLight = true,
             };
-            byte[] filedata = Properties.Resources.square_center_2;
-            MemoryStream sphere = new MemoryStream(filedata);
+            //byte[] filedata = Properties.Resources.square_center_2;
+            //MemoryStream sphere = new MemoryStream(filedata);
+            // var rect_scene = LoadScene(sphere, "dae");
+            // _enttity_one = new Entity(rect_scene, rect_scene.RootNode, "square_center");
+
             // use format "nff" for sphere_3d
             // LoadModel(sphere, "nff");
-            // use format "dae" for bird_plane
-            var cur_scene = LoadScene(sphere, "dae");
             // use format "obj" for bird_plane_5
             // LoadModel(sphere, "obj");
-            _enttity_one = new Entity(cur_scene, cur_scene.RootNode, "square_center");
+            // use format "dae" for bird_planes
+            byte[] filedata = Properties.Resources.wave_to_me_3;
+            MemoryStream sphere = new MemoryStream(filedata);
+            var wave_scene = LoadScene(sphere, "dae");
+            _enttity_one = new Entity(wave_scene, wave_scene.RootNode, "wave_root");
         }
         
         /// <summary>
