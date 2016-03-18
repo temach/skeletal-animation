@@ -196,7 +196,7 @@ namespace WinFormAnimation2D
             // make root node and build whole tree
             var root_nd = new CustomTreeNode(NodeType.Other);
             root_nd.Text = "scene";
-            var ent_tree = FillTreeRecur(_world._enttity_one);
+            var ent_tree = FillTree(_world._enttity_one);
             root_nd.Nodes.Add(ent_tree);
             // expand nodes until you find one with at least two children
             TreeNode cur_nd = root_nd;
@@ -212,73 +212,20 @@ namespace WinFormAnimation2D
 
 
         /// Render the model stored in EntityScene useing the Graphics object.
-        private TreeNode FillTreeRecur(Entity ent)
+        private TreeNode FillTree(Entity ent)
         {
             var papa = new CustomTreeNode(NodeType.Entity);
             papa.Name = ent.Name;
             papa.Text = ent.Name;
             papa.DrawData = Rectangle.Round(ent._extra_geometry._entity_border._rect);
-            RecursiveRenderSystemDrawing(papa, ent._scene, ent._scene.RootNode);
-            return papa;
-        }
-
-        //-------------------------------------------------------------------------------------------------
-        // TODO: move all the drawing code elsewhere. This should only show the logic of drawing not the actual OpenGL commands.
-        // Render the scene.
-        // Begin at the root node of the imported data and traverse
-        // the scenegraph by multiplying subsequent local transforms
-        // together on OpenGL matrix stack.
-        private void RecursiveRenderSystemDrawing(TreeNode view_nd, Scene sc, Node nd)
-        {
-            string fmt = "face {0}: ";
-            foreach(int mesh_id in nd.MeshIndices)
+            foreach (AxiAlignedBoundingBox border in ent._extra_geometry._mesh_borders)
             {
                 var mesh_view_nd = new CustomTreeNode(NodeType.Mesh);
-                view_nd.Nodes.Add(mesh_view_nd);
-                mesh_view_nd.Text = nd.Name;
-                List<Point> tri_faces = new List<Point>();
-                Mesh cur_mesh = sc.Meshes[mesh_id];
-                for (int i = 0; i < cur_mesh.FaceCount; i++)
-                {
-                    var cur_view_nd = new CustomTreeNode(NodeType.TriangleFace);
-                    cur_view_nd.Text = string.Format(fmt, i) + cur_mesh.Faces[i].ToString();
-                    // list of 3 vertices as PointF
-                    var array_tri_face = cur_mesh.Faces[i].Indices.Select(index => cur_mesh.Vertices[index].eToPoint()).ToArray();
-                    cur_view_nd.DrawData = array_tri_face;
-                    tri_faces.AddRange(array_tri_face);
-                    mesh_view_nd.Nodes.Add(cur_view_nd);
-                }
-                mesh_view_nd.DrawData = tri_faces.ToArray();
+                papa.Nodes.Add(mesh_view_nd);
+                mesh_view_nd.Text = ((Mesh)border.Source).Name;
+                mesh_view_nd.DrawData = Rectangle.Round(border._rect);
             }
-            foreach (Node child in nd.Children)
-            {
-                RecursiveRenderSystemDrawing(view_nd, sc, child);
-            }
-        }
-
-        public Point GetCenterOfPoints(IEnumerable<Point> input)
-        {
-            var res = new Point();
-            foreach (var p in input)
-            {
-                res.X += p.X;
-                res.Y += p.Y;
-            }
-            res.X /= input.Count();
-            res.Y /= input.Count();
-            return res;
-        }
-
-        public Point ShiftOutwardFrom(Point p, Point from)
-        {
-            // p + (p - midpoint).Normalise() * 5
-            Point unit = p.Minus(from);
-            double len = Math.Sqrt(unit.X * unit.X + unit.Y * unit.Y);
-            unit.X = (int)(100 * unit.X);
-            unit.Y = (int)(100 * unit.Y);
-            //unit.X = (int)(40 * unit.X / len);
-            //unit.Y = (int)(40 * unit.Y / len);
-            return p.Add(unit);
+            return papa;
         }
 
         private void HighlightSlectedNode()
@@ -286,11 +233,10 @@ namespace WinFormAnimation2D
             var view_nd = (CustomTreeNode)this.treeView_entity_info.SelectedNode;
             if (view_nd != null)
             {
-                if (view_nd.NodeType == NodeType.Entity)
+                if (view_nd.NodeType == NodeType.Entity || view_nd.NodeType == NodeType.Mesh)
                 {
                     // we must draw every mesh inside the entity
                     Rectangle draw_data = (Rectangle)view_nd.DrawData;
-                    // inflate by 5 pixels
                     draw_data.Inflate(10, 10);
                     var coords = new Point[]
                     {
@@ -300,28 +246,6 @@ namespace WinFormAnimation2D
                         new Point(draw_data.Left, draw_data.Bottom),
                     };
                     Util.GR.DrawClosedCurve(Pens.Black, coords);
-                }
-                else if (view_nd.NodeType == NodeType.Mesh)
-                {
-                    // we must draw every triangle inside the mesh
-                    Point[] draw_data = (Point[])view_nd.DrawData;
-                    // draw in triplets (each face is  vertices
-                    for (int i = 0; i < draw_data.Length; )
-                    {
-                        var tri_face = draw_data.Skip(i).Take(3);
-                        Point mid_point = GetCenterOfPoints(tri_face);
-                        tri_face = tri_face.Select(p => ShiftOutwardFrom(p, mid_point));
-                        Util.GR.DrawClosedCurve(Pens.Black, tri_face.ToArray());
-                        i += 3;     // Note the +3
-                    }
-                }
-                else if (view_nd.NodeType == NodeType.TriangleFace)
-                {
-                    // we must draw every vertex in the triangle (and join them)
-                    Point[] draw_data = (Point[]) view_nd.DrawData;
-                    Point mid_point = GetCenterOfPoints(draw_data);
-                    var tri_face = draw_data.Select(p => ShiftOutwardFrom(p, mid_point));
-                    Util.GR.DrawClosedCurve(Pens.Black, tri_face.ToArray());
                 }
             }
         }

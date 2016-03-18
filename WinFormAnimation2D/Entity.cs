@@ -38,6 +38,7 @@ namespace WinFormAnimation2D
     class AxiAlignedBoundingBox
     {
         public RectangleF _rect;
+        public object Source;
 
         public Vector2 Center
         {
@@ -52,8 +53,9 @@ namespace WinFormAnimation2D
             get { return new Vector2(_rect.Right, _rect.Bottom); }
         }
 
-        public AxiAlignedBoundingBox(BoundingVectors bounds)
+        public AxiAlignedBoundingBox(object source, BoundingVectors bounds)
         {
+            this.Source = source;
             // change from the 3d model into 2d program space just discard Z coordinate
             _rect = new RectangleF(bounds.ZeroNear.X, bounds.ZeroNear.Y
                 , bounds.ZeroFar.X - bounds.ZeroNear.X
@@ -61,8 +63,9 @@ namespace WinFormAnimation2D
             );
         }
 
-        public AxiAlignedBoundingBox(Vector3D zero_near, Vector3D zero_far)
+        public AxiAlignedBoundingBox(object source, Vector3D zero_near, Vector3D zero_far)
         {
+            this.Source = source;
             // change from the 3d model into 2d program space just discard Z coordinate
             _rect = new RectangleF(zero_near.X, zero_near.Y
                 , zero_far.X - zero_near.X
@@ -107,7 +110,7 @@ namespace WinFormAnimation2D
         	Vector3D zero_far = new Vector3D(-1e10f, -1e10f, -1e10f);
             CalcBoundingRect(sc, nd, ref zero_near, ref zero_far, ref id);
             // change from the 3d model into 2d program space
-            _entity_border = new AxiAlignedBoundingBox(zero_near, zero_far);
+            _entity_border = new AxiAlignedBoundingBox(nd, zero_near, zero_far);
         }
 
         /// <summary>
@@ -125,7 +128,7 @@ namespace WinFormAnimation2D
                     Mesh mesh = sc.Meshes[index];
                     var bounds = GetMinMaxForMesh(mesh, cur_mat);
                     // build mesh bounding box
-                    _mesh_borders.Add(new AxiAlignedBoundingBox(bounds));
+                    _mesh_borders.Add(new AxiAlignedBoundingBox(mesh, bounds));
                     // check for new min/max with respect to whole scene
                     // find min
                     scene_min.X = Math.Min(scene_min.X, bounds.ZeroNear.X);

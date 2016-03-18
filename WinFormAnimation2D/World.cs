@@ -146,6 +146,21 @@ namespace WinFormAnimation2D
             // LoadModel(sphere, "obj");
             _enttity_one = new Entity(cur_scene, cur_scene.RootNode, "square_center");
         }
+        
+        /// <summary>
+        /// Make sure that all meshes are named.
+        /// </summary>
+        public void PreProcessScene(Scene sc)
+        {
+            for (int i = 0; i < sc.MeshCount; i++)
+            {
+                Mesh mesh = sc.Meshes[i];
+                if (mesh.Name.Length == 0)
+                {
+                    mesh.Name = i.ToString();
+                }
+            }
+        }
 
         public Scene LoadScene(MemoryStream model_data, string format_hint)
         {
@@ -164,6 +179,7 @@ namespace WinFormAnimation2D
             {
                 throw new Exception("Failed to load scene");
             }
+            PreProcessScene(cur_scene);
             return cur_scene;
         }
 
