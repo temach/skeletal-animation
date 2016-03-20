@@ -55,6 +55,19 @@ namespace WinFormAnimation2D
         /// </summary>
         public static Pen pp4 = new Pen(Color.SkyBlue, 2.5f);
 
+        /// <summary>
+        /// Internal matrix stack. Like OpenGL's one.
+        /// </summary>
+        public static Stack<d2d.GraphicsState> matrix_stack = new Stack<d2d.GraphicsState>();
+        public static void PushMatrix()
+        {
+            matrix_stack.Push(Util.GR.Save());
+        }
+        public static void PopMatrix()
+        {
+            Util.GR.Restore(matrix_stack.Pop());
+        }
+
 
         /// <summary>
         /// Get a brush of next color. (to distingush rendered polygons)
