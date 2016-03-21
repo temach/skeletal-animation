@@ -57,7 +57,9 @@
   <ItemGroup>
     <Compile Include="Animator.cs" />
     <Compile Include="AnimEval.cs" />
+    <Compile Include="Armature.cs" />
     <Compile Include="AssimpMatrixExtensions.cs" />
+    <Compile Include="AssimpQuaternionExtensions.cs" />
     <Compile Include="AssimpVectorExtensions.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="Drawing2dMatrixExtensions.cs" />

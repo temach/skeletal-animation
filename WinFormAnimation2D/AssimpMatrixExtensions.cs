@@ -81,5 +81,10 @@ namespace WinFormAnimation2D
             // return new draw2D.Matrix(m[0, 0], m[1, 0], m[0, 1], m[1, 1], m[0, 3], m[1, 3]);
         }
 
+        public static ai.Matrix4x4 eSnapTranslation(this ai.Matrix4x4 m, ai.Vector3D vec)
+        {
+            throw new NotImplementedException("Either make this method for assimp use, or change to OpenTK matrices!");
+        }
+
     }
 }
