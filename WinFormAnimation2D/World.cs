@@ -104,6 +104,7 @@ using System.Drawing;
 using System.IO;        // for MemoryStream
 using d2d = System.Drawing.Drawing2D;
 using OpenTK;
+using System.Diagnostics;
 
 
 namespace WinFormAnimation2D
@@ -120,6 +121,8 @@ namespace WinFormAnimation2D
         public Logger _logger = new Logger("skeletal_animation.txt");
         public Entity _enttity_one = null;
         public Renderer _renderer = null;
+
+        public Scene _cur_scene;
 
         private Entity _currently_selected;
         public Entity CurrentlySelected
@@ -146,10 +149,55 @@ namespace WinFormAnimation2D
             // use format "obj" for bird_plane_5
             // LoadModel(sphere, "obj");
             // use format "dae" for bird_planes
-            byte[] filedata = Properties.Resources.wave_to_me_3;
+            byte[] filedata = Properties.Resources.funky_hat_2;
             MemoryStream sphere = new MemoryStream(filedata);
             var wave_scene = LoadScene(sphere, "dae");
-            _enttity_one = new Entity(wave_scene, wave_scene.RootNode, "wave_root");
+            _cur_scene = wave_scene;
+
+            var all_entities = new List<Entity>();
+            SpawnEntities(all_entities, wave_scene, wave_scene.RootNode);
+            Debug.Assert(all_entities.Count == 1, "Expecting only one entity to be made.");
+            _enttity_one = all_entities[0];
+        }
+
+        /// <summary>
+        /// Recursively search the node tree for the node with name
+        /// </summary>
+        /// <param name="cur_node"></param>
+        /// <param name="node_name"></param>
+        /// <returns></returns>
+        public Node FindNodeInScene(string node_name)
+        {
+            return InnerRecurFindNodeInScene(_cur_scene.RootNode, node_name);
+        }
+        private Node InnerRecurFindNodeInScene(Node cur_node, string node_name)
+        {
+            if (cur_node.Name == node_name)
+            {
+                return cur_node;
+            }
+            foreach (var child in cur_node.Children)
+            {
+                var tmp =  InnerRecurFindNodeInScene(child, node_name);
+                if (tmp != null)
+                {
+                    return tmp;
+                }
+            }
+            return null;
+        }
+
+        public void SpawnEntities(List<Entity> all, Scene sc, Node nd)
+        {
+            if (nd.HasMeshes)
+            {
+                var entity = new Entity(sc, nd);
+                all.Add(entity);
+            }
+            foreach (var child in nd.Children)
+            {
+                SpawnEntities(all, sc, child);
+            }
         }
         
         /// <summary>

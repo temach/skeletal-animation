@@ -210,13 +210,19 @@ namespace WinFormAnimation2D
     /// </summary>
     class Entity
     {
-        public Matrix _matrix = new Matrix();
+        public Node _armature;
+        public Node _node;
         public Scene _scene;
         public Geometry _extra_geometry;
         public DrawConfig _draw_conf;
-        public string Name;
+        public Matrix _matrix = new Matrix();
         private readonly float _motion_speed = 10.0f;
 
+        public string Name
+        {
+            get { return _node.Name; }
+            set { _node.Name = value; }
+        }
         public double GetRotationAngleDeg
         {
             get { return _matrix.eGetRotationAngle(); }
@@ -227,10 +233,10 @@ namespace WinFormAnimation2D
         }
 
         // the only public constructor
-        public Entity(Scene sc, Node nd, string entity_name)
+        public Entity(Scene sc, Node nd)
         {
-            Name = entity_name;
             _scene = sc;
+            _node = nd;
             _extra_geometry = new Geometry(sc, nd);
         }
 
@@ -296,9 +302,6 @@ namespace WinFormAnimation2D
         public bool ContainsPoint(Vector2 p)
         {
             // modify the point so it is in entity space
-            // why? because instead of modifying the vertices we modify the entity matrix.
-            // this means that every time we want to interact with the entity, we must send
-            // all interaction througth the filter of entity's matrix
             var tmp = _matrix.Clone();
             tmp.Invert();
             var entity_coord_space_point = tmp.eTransformSingleVector2(p);
@@ -318,57 +321,103 @@ namespace WinFormAnimation2D
             }
             Util.GR.MultiplyTransform(_matrix);
             _extra_geometry.RenderEntityBorder();
-            RecursiveRenderSystemDrawing(_scene.RootNode);
+            RecursiveRenderSystemDrawing(_node);
+        }
+
+        public List<Bone> GetBonesAffectingVertex(int vertex_id, Mesh mesh)
+        {
+            var ret = new List<Bone>();
+            foreach (var bone in mesh.Bones)
+            {
+                foreach (var vw in bone.VertexWeights)
+                {
+                    if (vw.VertexID == vertex_id)
+                    {
+                        ret.Add(bone);
+                    }
+                }
+            }
+            return ret;
+        }
+
+        private Node InnerRecurFindNodeInScene(Node cur_node, string node_name)
+        {
+            if (cur_node.Name == node_name)
+            {
+                return cur_node;
+            }
+            foreach (var child in cur_node.Children)
+            {
+                var tmp =  InnerRecurFindNodeInScene(child, node_name);
+                if (tmp != null)
+                {
+                    return tmp;
+                }
+            }
+            return null;
+        }
+
+
+        public void RenderTriangle(List<Vector2> vertices)
+        {
+            Brush br = Util.GetNextBrush();
+            var to_draw = vertices.Select(vec => vec.eToPointFloat()).ToArray();
+            Util.GR.FillPolygon(br, to_draw);
+            // Bad code to draw a single point
+            foreach (var p in to_draw)
+            {
+                Util.GR.eDrawPoint(p);
+            }
+        }
+        public List<Vector2> cur_triangle = new List<Vector2>();
+        public void RenderVertex(Vector2 vec)
+        {
+            cur_triangle.Add(vec);
+            if (cur_triangle.Count() == 3)
+            {
+                RenderTriangle(cur_triangle);
+                cur_triangle.Clear();
+            }
+        }
+
+        public void RenderMesh(Mesh mesh)
+        {
+            foreach (Face cur_face in mesh.Faces)
+            {
+                foreach (var vert_id in cur_face.Indices)
+                {
+                    Vector2 pos = mesh.Vertices[vert_id].eToOpenTK();
+                    RenderVertex(pos);
+                }
+            }
         }
 
         //-------------------------------------------------------------------------------------------------
-        // TODO: move all the drawing code elsewhere. This should only show the logic of drawing not the actual OpenGL commands.
         // Render the scene.
         // Begin at the root node of the imported data and traverse
         // the scenegraph by multiplying subsequent local transforms
         // together on OpenGL matrix stack.
+        // one mesh, one bone policy
         private void RecursiveRenderSystemDrawing(Node nd)
         {
+            Util.PushMatrix();
             Matrix4x4 mat44 = nd.Transform;
-            var tmp = mat44.eTo3x2();
-            var saved = Util.GR.Save();
-            Util.GR.MultiplyTransform(tmp);
+            Util.GR.MultiplyTransform(mat44.eTo3x2());
             foreach(int mesh_id in nd.MeshIndices)
             {
                 Mesh cur_mesh = _scene.Meshes[mesh_id];
-                foreach (Face cur_face in cur_mesh.Faces)
-                {
-                    // list of 3 vertices
-                    var tri_vertices = cur_face.Indices.Select(i => cur_mesh.Vertices[i].eToPointFloat()).ToArray();
-                    Brush br;
-                    // Enable random colored light to emit from the render into your eyes
-                    if (_draw_conf.EnableLight) {
-                        // choose random brush color for this triangle
-                        br = Util.GetNextBrush();
-                    } else {
-                        br = _draw_conf.DefaultBrush;
-                    }
-                    // Fill or draw wireframe
-                    if (_draw_conf.EnablePolygonModeFill) {
-                        Util.GR.FillPolygon(br, tri_vertices);
-                    } else {
-                        Util.GR.DrawLines(_draw_conf.DefaultPen, tri_vertices);
-                    }
-                    // Bad code to draw a single point. Better use DrawEllipse. But too lazy.
-                    foreach(var p in tri_vertices)
-                    {
-                        Util.GR.eDrawPoint(p);
-                    }
-                }
+                Util.PushMatrix();
+                Matrix4x4 bone_mat = cur_mesh.Bones[0].OffsetMatrix;
+                Util.GR.MultiplyTransform(bone_mat.eTo3x2());
+                RenderMesh(cur_mesh);
+                Util.PopMatrix();
             }
-            // draw all children
             foreach (Node child in nd.Children)
             {
                 RecursiveRenderSystemDrawing(child);
             }
-            // After drawing the left node. unwind the matrix stack.
-            // so we don't apply this leaf's transform to the next leaf.
-            Util.GR.Restore(saved);
+            // we don't want to apply this branch transform to the next branch
+            Util.PopMatrix();
         }
 
     } // end of class
