@@ -110,6 +110,7 @@
     <None Include="Resources\fly_plane_3.dae" />
     <None Include="Resources\funky_hat_1.dae" />
     <None Include="Resources\funky_hat_2.dae" />
+    <None Include="Resources\funky_hat_3.dae" />
     <None Include="Resources\square_center_1.dae" />
     <None Include="Resources\square_center_2.dae" />
     <None Include="Resources\wave_to_me_1.dae" />
