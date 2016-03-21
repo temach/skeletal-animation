@@ -131,6 +131,36 @@ namespace WinFormAnimation2D.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] fly_plane_1 {
+            get {
+                object obj = ResourceManager.GetObject("fly_plane_1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] fly_plane_2 {
+            get {
+                object obj = ResourceManager.GetObject("fly_plane_2", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] fly_plane_3 {
+            get {
+                object obj = ResourceManager.GetObject("fly_plane_3", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to # begin file
         ///# s 50.0 15.0 99.0 4.5
         ///# polygon of a square. top left is (100, 100) bottom right is (500, 300)
@@ -193,6 +223,26 @@ namespace WinFormAnimation2D.Properties {
         internal static byte[] wave_to_me_3 {
             get {
                 object obj = ResourceManager.GetObject("wave_to_me_3", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] wave_to_me_5 {
+            get {
+                object obj = ResourceManager.GetObject("wave_to_me_5", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] wave_to_me_6 {
+            get {
+                object obj = ResourceManager.GetObject("wave_to_me_6", resourceCulture);
                 return ((byte[])(obj));
             }
         }
