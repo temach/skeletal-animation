@@ -33,5 +33,23 @@ namespace WinFormAnimation2D
             return new PointF(v.X, v.Y);
         }
 
+        /// <summary>
+        /// Convert _OpenTK_ 2D vector to 2D System.Drawing.Point
+        /// for drawing with Graphics object.
+        /// </summary>
+        public static Point eToPoint(this tk.Vector2 v)
+        {
+            return new Point((int)v.X, (int)v.Y);
+        }
+
+        /// <summary>
+        /// Convert _OpenTK_ 2D vector to 2D System.Drawing.PointF (floating point)
+        /// for drawing with Graphics object.
+        /// </summary>
+        public static PointF eToPointFloat(this tk.Vector2 v)
+        {
+            return new PointF(v.X, v.Y);
+        }
+
     }
 }
