@@ -111,13 +111,6 @@ namespace WinFormAnimation2D
 {
     class World
     {
-        /// debug stuff
-        public List<Point> debug_vertices = new List<Point>();
-        public Matrix debug_mat = null;
-        public Point[] debug_points = null;
-        public Random rand = new Random();
-        public int rand_brush_count = 0;
-
         public Logger _logger = new Logger("skeletal_animation.txt");
         public Entity _enttity_one = null;
         public Renderer _renderer = null;
@@ -139,17 +132,7 @@ namespace WinFormAnimation2D
                 EnablePolygonModeFill = true,
                 EnableLight = true,
             };
-            //byte[] filedata = Properties.Resources.square_center_2;
-            //MemoryStream sphere = new MemoryStream(filedata);
-            // var rect_scene = LoadScene(sphere, "dae");
-            // _enttity_one = new Entity(rect_scene, rect_scene.RootNode, "square_center");
-
-            // use format "nff" for sphere_3d
-            // LoadModel(sphere, "nff");
-            // use format "obj" for bird_plane_5
-            // LoadModel(sphere, "obj");
-            // use format "dae" for bird_planes
-            byte[] filedata = Properties.Resources.funky_hat_2;
+            byte[] filedata = Properties.Resources.funky_hat_3;
             MemoryStream sphere = new MemoryStream(filedata);
             var wave_scene = LoadScene(sphere, "dae");
             _cur_scene = wave_scene;

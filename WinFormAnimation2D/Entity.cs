@@ -95,7 +95,6 @@ namespace WinFormAnimation2D
     /// </summary>
     class Geometry
     {
-
         // public List<TriangularFace> _face_borders = new List<TriangularFace>();
         public List<AxiAlignedBoundingBox> _mesh_borders = new List<AxiAlignedBoundingBox>();
         public AxiAlignedBoundingBox _entity_border = null;
