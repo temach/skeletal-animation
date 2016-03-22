@@ -35,5 +35,10 @@ namespace WinFormAnimation2D
                                  xz + yw, yz - xw, 1.0f-xx-yy, 0.0f,
                                  0.0f, 0.0f, 0.0f, 1.0f);
         }
+
+        public static tk.Quaternion eToOpenTK(this Quaternion q)
+        {
+            return new tk.Quaternion(q.X, q.Y, q.Z, q.W);
+        }
     }
 }
