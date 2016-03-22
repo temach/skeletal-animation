@@ -163,6 +163,16 @@ namespace WinFormAnimation2D.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] fly_plane_4 {
+            get {
+                object obj = ResourceManager.GetObject("fly_plane_4", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] funky_hat_1 {
             get {
                 object obj = ResourceManager.GetObject("funky_hat_1", resourceCulture);
