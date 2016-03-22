@@ -91,6 +91,15 @@
 /// they use:
 /// v*M = v * R*S*T
 
+
+/// Comment on files:
+/// square_center = simple square with no bones, no nothing, just a square
+/// bird_plane = like simple square but with shape
+/// fly_plane = one bone, one mesh. No animation.
+/// funky_hat = two bones, one mesh, one animation action.
+/// wave_to_me = 3 bones, 3 meshes, one animation. (things are renamed i.e. no "Armature", no "Cube")
+
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
