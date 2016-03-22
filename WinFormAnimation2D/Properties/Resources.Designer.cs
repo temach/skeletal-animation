@@ -201,6 +201,66 @@ namespace WinFormAnimation2D.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] mamonth_1 {
+            get {
+                object obj = ResourceManager.GetObject("mamonth_1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] mamonth_2 {
+            get {
+                object obj = ResourceManager.GetObject("mamonth_2", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] mamonth_3 {
+            get {
+                object obj = ResourceManager.GetObject("mamonth_3", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] plane_planets_1 {
+            get {
+                object obj = ResourceManager.GetObject("plane_planets_1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] plane_planets_2 {
+            get {
+                object obj = ResourceManager.GetObject("plane_planets_2", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] plane_planets_3 {
+            get {
+                object obj = ResourceManager.GetObject("plane_planets_3", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to # begin file
         ///# s 50.0 15.0 99.0 4.5
         ///# polygon of a square. top left is (100, 100) bottom right is (500, 300)

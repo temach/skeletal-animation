@@ -160,6 +160,24 @@
   <data name="funky_hat_3" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\funky_hat_3.dae;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="mamonth_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\mamonth_1.dae;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="mamonth_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\mamonth_2.dae;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="mamonth_3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\mamonth_3.dae;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="plane_planets_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\plane_planets_1.dae;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="plane_planets_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\plane_planets_2.dae;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="plane_planets_3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\plane_planets_3.dae;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="sphere_3d" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\sphere_3d.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
