@@ -57,7 +57,7 @@
   <ItemGroup>
     <Compile Include="Animator.cs" />
     <Compile Include="AnimEval.cs" />
-    <Compile Include="Armature.cs" />
+    <Compile Include="ArmatureEntity.cs" />
     <Compile Include="AssimpMatrixExtensions.cs" />
     <Compile Include="AssimpQuaternionExtensions.cs" />
     <Compile Include="AssimpVectorExtensions.cs" />
