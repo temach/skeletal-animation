@@ -51,6 +51,8 @@
             this.toolStripStatusLabel_entity_position = new System.Windows.Forms.ToolStripStatusLabel();
             this.treeView_entity_info = new System.Windows.Forms.TreeView();
             this.checkBox_breakpoints_on = new System.Windows.Forms.CheckBox();
+            this.button_NextKeyframe = new System.Windows.Forms.Button();
+            this.button_PreviousKeyframe = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).BeginInit();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -276,11 +278,33 @@
             this.checkBox_breakpoints_on.UseVisualStyleBackColor = true;
             this.checkBox_breakpoints_on.CheckedChanged += new System.EventHandler(this.checkBox_breakpoints_on_CheckedChanged);
             // 
+            // button_NextKeyframe
+            // 
+            this.button_NextKeyframe.Location = new System.Drawing.Point(629, 8);
+            this.button_NextKeyframe.Name = "button_NextKeyframe";
+            this.button_NextKeyframe.Size = new System.Drawing.Size(104, 23);
+            this.button_NextKeyframe.TabIndex = 28;
+            this.button_NextKeyframe.Text = "Next Keyframe";
+            this.button_NextKeyframe.UseVisualStyleBackColor = true;
+            this.button_NextKeyframe.Click += new System.EventHandler(this.button_NextKeyframe_Click);
+            // 
+            // button_PreviousKeyframe
+            // 
+            this.button_PreviousKeyframe.Location = new System.Drawing.Point(511, 8);
+            this.button_PreviousKeyframe.Name = "button_PreviousKeyframe";
+            this.button_PreviousKeyframe.Size = new System.Drawing.Size(112, 23);
+            this.button_PreviousKeyframe.TabIndex = 29;
+            this.button_PreviousKeyframe.Text = "Previous Keyframe";
+            this.button_PreviousKeyframe.UseVisualStyleBackColor = true;
+            this.button_PreviousKeyframe.Click += new System.EventHandler(this.button_PreviousKeyframe_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(958, 528);
+            this.Controls.Add(this.button_PreviousKeyframe);
+            this.Controls.Add(this.button_NextKeyframe);
             this.Controls.Add(this.checkBox_breakpoints_on);
             this.Controls.Add(this.treeView_entity_info);
             this.Controls.Add(this.statusStrip1);
@@ -330,6 +354,8 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
         private System.Windows.Forms.TreeView treeView_entity_info;
         private System.Windows.Forms.CheckBox checkBox_breakpoints_on;
+        private System.Windows.Forms.Button button_NextKeyframe;
+        private System.Windows.Forms.Button button_PreviousKeyframe;
     }
 }
 

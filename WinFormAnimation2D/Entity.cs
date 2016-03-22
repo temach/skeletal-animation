@@ -95,6 +95,7 @@ namespace WinFormAnimation2D
     /// </summary>
     class Geometry
     {
+
         // public List<TriangularFace> _face_borders = new List<TriangularFace>();
         public List<AxiAlignedBoundingBox> _mesh_borders = new List<AxiAlignedBoundingBox>();
         public AxiAlignedBoundingBox _entity_border = null;
@@ -232,11 +233,12 @@ namespace WinFormAnimation2D
         }
 
         // the only public constructor
-        public Entity(Scene sc, Node nd)
+        public Entity(Scene sc, Node nd, Node arma)
         {
             _scene = sc;
             _node = nd;
             _extra_geometry = new Geometry(sc, nd);
+            _armature = arma;
         }
 
         public void RotateBy(double angle_degrees)
@@ -318,7 +320,11 @@ namespace WinFormAnimation2D
                 Util.GR.InterpolationMode = InterpolationMode.HighQualityBilinear;
                 Util.GR.SmoothingMode = SmoothingMode.AntiAlias;
             }
-            Util.GR.MultiplyTransform(_matrix);
+            // this should be the matrix of root bone. 
+            // The root bone should store in world transaltion/rotation/scale.
+            // currently it is just _matrix.
+            //Util.GR.MultiplyTransform(_matrix);
+            Util.GR.MultiplyTransform(_armature.Transform.eTo3x2());
             _extra_geometry.RenderEntityBorder();
             RecursiveRenderSystemDrawing(_node);
         }
@@ -385,7 +391,7 @@ namespace WinFormAnimation2D
             {
                 foreach (var vert_id in cur_face.Indices)
                 {
-                    Vector2 pos = mesh.Vertices[vert_id].eToOpenTK();
+                    Vector2 pos = mesh.Vertices[vert_id].eAs2DandOpenTK();
                     RenderVertex(pos);
                 }
             }
@@ -406,8 +412,15 @@ namespace WinFormAnimation2D
             {
                 Mesh cur_mesh = _scene.Meshes[mesh_id];
                 Util.PushMatrix();
-                Matrix4x4 bone_mat = cur_mesh.Bones[0].OffsetMatrix;
-                Util.GR.MultiplyTransform(bone_mat.eTo3x2());
+                Bone mesh_bone = cur_mesh.Bones[0];
+                // a bone transform is more than by what we need to trasnform the model
+                Node armature_node = InnerRecurFindNodeInScene(_scene.RootNode, mesh_bone.Name);
+                Matrix4x4 armature_bone = armature_node.Transform;
+                // bind tells the original delta, so we can find current delta
+                Matrix4x4 bind = mesh_bone.OffsetMatrix;
+                //bind.Inverse();
+                Matrix4x4 delta = armature_bone * bind;
+                Util.GR.MultiplyTransform(delta.eTo3x2());
                 RenderMesh(cur_mesh);
                 Util.PopMatrix();
             }

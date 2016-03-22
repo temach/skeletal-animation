@@ -283,5 +283,16 @@ namespace WinFormAnimation2D
         {
         }
 
+        private void button_PreviousKeyframe_Click(object sender, EventArgs e)
+        {
+            _world._silly_waving_action.SnapToKeyframe(_world._silly_waving_action._frame - 1);
+            this.Text = _world._silly_waving_action._frame.ToString();
+        }
+
+        private void button_NextKeyframe_Click(object sender, EventArgs e)
+        {
+            _world._silly_waving_action.SnapToKeyframe(_world._silly_waving_action._frame + 1);
+            this.Text = _world._silly_waving_action._frame.ToString();
+        }
     }
 }

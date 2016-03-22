@@ -125,6 +125,7 @@ namespace WinFormAnimation2D
         public Renderer _renderer = null;
 
         public Scene _cur_scene;
+        public NodeAnimator _silly_waving_action;
 
         private Entity _currently_selected;
         public Entity CurrentlySelected
@@ -146,10 +147,10 @@ namespace WinFormAnimation2D
             var wave_scene = LoadScene(sphere, "dae");
             _cur_scene = wave_scene;
 
-            var all_entities = new List<Entity>();
-            SpawnEntities(all_entities, wave_scene, wave_scene.RootNode);
-            Debug.Assert(all_entities.Count == 1, "Expecting only one entity to be made.");
-            _enttity_one = all_entities[0];
+            _silly_waving_action = new NodeAnimator(wave_scene, _cur_scene.Animations[0]);
+            Node armature = FindNodeInScene("Armature");
+            Node mesh = FindNodeInScene("Cube");
+            _enttity_one = new Entity(wave_scene, mesh, armature);
         }
 
         /// <summary>
@@ -179,19 +180,6 @@ namespace WinFormAnimation2D
             return null;
         }
 
-        public void SpawnEntities(List<Entity> all, Scene sc, Node nd)
-        {
-            if (nd.HasMeshes)
-            {
-                var entity = new Entity(sc, nd);
-                all.Add(entity);
-            }
-            foreach (var child in nd.Children)
-            {
-                SpawnEntities(all, sc, child);
-            }
-        }
-        
         /// <summary>
         /// Make sure that all meshes are named.
         /// </summary>
