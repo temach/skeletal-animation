@@ -12,6 +12,7 @@ using System.IO;        // for MemoryStream
 using System.Reflection;
 using OpenTK;
 using System.Diagnostics;
+using Quaternion = Assimp.Quaternion;
 
 // TODO: this is piece of text taken from function that no longer exists.
 // but it is trying to describe my architechture. But it is getting old and useless. 
@@ -326,7 +327,7 @@ namespace WinFormAnimation2D
             //Util.GR.MultiplyTransform(_matrix);
             Util.GR.MultiplyTransform(_armature.Transform.eTo3x2());
             _extra_geometry.RenderEntityBorder();
-            RecursiveRenderSystemDrawing(_node);
+            RecursiveRenderSystemDrawing(_node, _armature.Transform);
         }
 
         public List<Bone> GetBonesAffectingVertex(int vertex_id, Mesh mesh)
@@ -397,17 +398,40 @@ namespace WinFormAnimation2D
             }
         }
 
+        /// <summary>
+        /// Get the armature node and trace back its changes
+        /// </summary>
+        /// <param name="bone"></param>
+        /// <returns></returns>
+        public Tuple<Matrix4x4,Matrix4x4> GetArmatureGlobalTransform(Node bone)
+        {
+            Matrix4x4 ret_other = new Matrix4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+            Matrix4x4 ret = new Matrix4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+            ret *= bone.Transform;
+            ret_other *= bone.Transform;
+            Node cur = bone;
+            while (cur.Parent != null)
+            {
+                Matrix4x4 tmp = ret * cur.Parent.Transform;
+                ret = tmp;
+                ret_other = cur.Parent.Transform * ret_other;
+                cur = cur.Parent;
+            }
+            return Tuple.Create(ret, ret_other);
+        }
+
+
         //-------------------------------------------------------------------------------------------------
         // Render the scene.
         // Begin at the root node of the imported data and traverse
         // the scenegraph by multiplying subsequent local transforms
         // together on OpenGL matrix stack.
         // one mesh, one bone policy
-        private void RecursiveRenderSystemDrawing(Node nd)
+        private void RecursiveRenderSystemDrawing(Node nd, Matrix4x4 curmat)
         {
             Util.PushMatrix();
-            Matrix4x4 mat44 = nd.Transform;
-            Util.GR.MultiplyTransform(mat44.eTo3x2());
+            Matrix4x4 nd_local_mat = nd.Transform;
+            Util.GR.MultiplyTransform(nd_local_mat.eTo3x2());
             foreach(int mesh_id in nd.MeshIndices)
             {
                 Mesh cur_mesh = _scene.Meshes[mesh_id];
@@ -415,18 +439,24 @@ namespace WinFormAnimation2D
                 Bone mesh_bone = cur_mesh.Bones[0];
                 // a bone transform is more than by what we need to trasnform the model
                 Node armature_node = InnerRecurFindNodeInScene(_scene.RootNode, mesh_bone.Name);
-                Matrix4x4 armature_bone = armature_node.Transform;
-                // bind tells the original delta, so we can find current delta
+                /// Transform tells delta in local coords
+                // Matrix4x4 armature_bone = armature_node.Transform;
+                var tmp = GetArmatureGlobalTransform(armature_node);
+                Matrix4x4 bone_global_mat = tmp.Item1;
+                /// bind tells the original delta in global coord, so we can find current delta
                 Matrix4x4 bind = mesh_bone.OffsetMatrix;
-                //bind.Inverse();
-                Matrix4x4 delta = armature_bone * bind;
-                Util.GR.MultiplyTransform(delta.eTo3x2());
+                /// This does not work because even in initial state bind != armature_bone.Inverse()
+                /// but it should be equal for this to work. so let's find global transofrm for armature_bone\
+                /// then it will work ok. 
+                Matrix4x4 delta_roto = bind * bone_global_mat;
+                Matrix4 really_tmp = OpenTK.Matrix4.CreateFromAxisAngle(new Vector3(0, 0, 1), (float)(Math.PI / -4.0));
+                Util.GR.MultiplyTransform(delta_roto.eTo3x2());
                 RenderMesh(cur_mesh);
                 Util.PopMatrix();
             }
             foreach (Node child in nd.Children)
             {
-                RecursiveRenderSystemDrawing(child);
+                RecursiveRenderSystemDrawing(child, nd_local_mat * curmat);
             }
             // we don't want to apply this branch transform to the next branch
             Util.PopMatrix();

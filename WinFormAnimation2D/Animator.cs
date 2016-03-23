@@ -54,7 +54,7 @@ namespace WinFormAnimation2D
         // , to make sure they are syncronised in position/rotation.
         public void SnapToKeyframe(int frame)
         {
-            if (frame < 0 || frame >= _action.NodeAnimationChannelCount)
+            if (frame < 0 || frame >= _action.NodeAnimationChannels[0].PositionKeyCount)
             {
                 MessageBox.Show("invalid frame " + frame);
                 return;

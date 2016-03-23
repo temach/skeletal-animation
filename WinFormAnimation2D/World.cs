@@ -142,7 +142,7 @@ namespace WinFormAnimation2D
                 EnablePolygonModeFill = true,
                 EnableLight = true,
             };
-            byte[] filedata = Properties.Resources.funky_hat_3;
+            byte[] filedata = Properties.Resources.triple_fold_2;
             MemoryStream sphere = new MemoryStream(filedata);
             var wave_scene = LoadScene(sphere, "dae");
             _cur_scene = wave_scene;
