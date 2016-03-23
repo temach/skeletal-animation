@@ -122,6 +122,9 @@
     <None Include="Resources\plane_planets_3.dae" />
     <None Include="Resources\square_center_1.dae" />
     <None Include="Resources\square_center_2.dae" />
+    <None Include="Resources\triple_fold_1.dae" />
+    <None Include="Resources\triple_fold_2.dae" />
+    <None Include="Resources\triple_fold_3.dae" />
     <None Include="Resources\wave_to_me_1.dae" />
     <None Include="Resources\wave_to_me_2.dae" />
     <None Include="Resources\wave_to_me_3.dae" />

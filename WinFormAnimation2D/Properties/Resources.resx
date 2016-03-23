@@ -187,6 +187,15 @@
   <data name="square_center_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\square_center_2.dae;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="triple_fold_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\triple_fold_1.dae;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="triple_fold_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\triple_fold_2.dae;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="triple_fold_3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\triple_fold_3.dae;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="wave_to_me_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\wave_to_me_1.dae;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>

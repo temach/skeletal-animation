@@ -300,6 +300,36 @@ namespace WinFormAnimation2D.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] triple_fold_1 {
+            get {
+                object obj = ResourceManager.GetObject("triple_fold_1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] triple_fold_2 {
+            get {
+                object obj = ResourceManager.GetObject("triple_fold_2", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] triple_fold_3 {
+            get {
+                object obj = ResourceManager.GetObject("triple_fold_3", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] wave_to_me_1 {
             get {
                 object obj = ResourceManager.GetObject("wave_to_me_1", resourceCulture);
