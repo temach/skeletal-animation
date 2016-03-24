@@ -23,30 +23,13 @@ namespace WinFormAnimation2D
         // Animation is what blender calls "action"
         // It is a set of keyframes that describe some action
         public Animation _action;
-        public Scene _scene;
+        public SceneWrapper _scene;
         public int _frame;
 
-        public  NodeAnimator(Scene sc, Animation action)
+        public  NodeAnimator(SceneWrapper sc, Animation action)
         {
             _action = action;
             _scene = sc;
-        }
-
-        private Node InnerRecurFindNodeInScene(Node cur_node, string node_name)
-        {
-            if (cur_node.Name == node_name)
-            {
-                return cur_node;
-            }
-            foreach (var child in cur_node.Children)
-            {
-                var tmp =  InnerRecurFindNodeInScene(child, node_name);
-                if (tmp != null)
-                {
-                    return tmp;
-                }
-            }
-            return null;
         }
 
         // our job is to update the skeleton. 
@@ -61,7 +44,7 @@ namespace WinFormAnimation2D
             }
             foreach (NodeAnimationChannel channel in _action.NodeAnimationChannels)
             {
-                Node nd = InnerRecurFindNodeInScene(_scene.RootNode, channel.NodeName);
+                Node nd = _scene.FindNode(channel.NodeName);
                 tk.Quaternion roto = channel.RotationKeys[frame].Value.eToOpenTK();
                 tk.Vector3 trans = channel.PositionKeys[frame].Value.eToOpenTK();
                 // snap rotation and translation. See the long comment to NodeAnimationChannel class.

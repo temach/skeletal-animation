@@ -213,7 +213,7 @@ namespace WinFormAnimation2D
     {
         public Node _armature;
         public Node _node;
-        public Scene _scene;
+        public SceneWrapper _scene;
         public Geometry _extra_geometry;
         public DrawConfig _draw_conf;
         public Matrix _matrix = new Matrix();
@@ -234,11 +234,11 @@ namespace WinFormAnimation2D
         }
 
         // the only public constructor
-        public Entity(Scene sc, Node nd, Node arma)
+        public Entity(SceneWrapper sc, Node nd, Node arma)
         {
             _scene = sc;
             _node = nd;
-            _extra_geometry = new Geometry(sc, nd);
+            _extra_geometry = new Geometry(sc._inner, nd);
             _armature = arma;
         }
 
@@ -346,24 +346,6 @@ namespace WinFormAnimation2D
             return ret;
         }
 
-        private Node InnerRecurFindNodeInScene(Node cur_node, string node_name)
-        {
-            if (cur_node.Name == node_name)
-            {
-                return cur_node;
-            }
-            foreach (var child in cur_node.Children)
-            {
-                var tmp =  InnerRecurFindNodeInScene(child, node_name);
-                if (tmp != null)
-                {
-                    return tmp;
-                }
-            }
-            return null;
-        }
-
-
         public void RenderTriangle(List<Vector2> vertices)
         {
             Brush br = Util.GetNextBrush();
@@ -429,10 +411,10 @@ namespace WinFormAnimation2D
             Util.GR.MultiplyTransform(nd_local_mat.eTo3x2());
             foreach(int mesh_id in nd.MeshIndices)
             {
-                Mesh cur_mesh = _scene.Meshes[mesh_id];
+                Mesh cur_mesh = _scene._inner.Meshes[mesh_id];
                 Bone mesh_bone = cur_mesh.Bones[0];
                 // a bone transform is more than by what we need to trasnform the model
-                Node armature_node = InnerRecurFindNodeInScene(_scene.RootNode, mesh_bone.Name);
+                Node armature_node = _scene.FindNode(mesh_bone.Name);
                 Matrix4x4 bone_global_mat = GetArmatureGlobalTransform(armature_node);
                 /// bind tells the original delta in global coord, so we can find current delta
                 Matrix4x4 bind = mesh_bone.OffsetMatrix;

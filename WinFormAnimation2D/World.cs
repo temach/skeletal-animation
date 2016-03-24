@@ -124,7 +124,7 @@ namespace WinFormAnimation2D
         public Entity _enttity_one = null;
         public Renderer _renderer = null;
 
-        public Scene _cur_scene;
+        public SceneWrapper _cur_scene;
         public NodeAnimator _silly_waving_action;
 
         private Entity _currently_selected;
@@ -144,55 +144,13 @@ namespace WinFormAnimation2D
             };
             byte[] filedata = Properties.Resources.triple_fold_2;
             MemoryStream sphere = new MemoryStream(filedata);
-            var wave_scene = LoadScene(sphere, "dae");
-            _cur_scene = wave_scene;
+            _cur_scene = new SceneWrapper(LoadScene(sphere, "dae"));
+            _cur_scene.NameUnnamedMeshes();
 
-            _silly_waving_action = new NodeAnimator(wave_scene, _cur_scene.Animations[0]);
-            Node armature = FindNodeInScene("Armature");
-            Node mesh = FindNodeInScene("Cube");
-            _enttity_one = new Entity(wave_scene, mesh, armature);
-        }
-
-        /// <summary>
-        /// Recursively search the node tree for the node with name
-        /// </summary>
-        /// <param name="cur_node"></param>
-        /// <param name="node_name"></param>
-        /// <returns></returns>
-        public Node FindNodeInScene(string node_name)
-        {
-            return InnerRecurFindNodeInScene(_cur_scene.RootNode, node_name);
-        }
-        private Node InnerRecurFindNodeInScene(Node cur_node, string node_name)
-        {
-            if (cur_node.Name == node_name)
-            {
-                return cur_node;
-            }
-            foreach (var child in cur_node.Children)
-            {
-                var tmp =  InnerRecurFindNodeInScene(child, node_name);
-                if (tmp != null)
-                {
-                    return tmp;
-                }
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Make sure that all meshes are named.
-        /// </summary>
-        public void PreProcessScene(Scene sc)
-        {
-            for (int i = 0; i < sc.MeshCount; i++)
-            {
-                Mesh mesh = sc.Meshes[i];
-                if (mesh.Name.Length == 0)
-                {
-                    mesh.Name = i.ToString();
-                }
-            }
+            _silly_waving_action = new NodeAnimator(_cur_scene, _cur_scene._inner.Animations[0]);
+            Node armature = _cur_scene.FindNode("Armature");
+            Node mesh = _cur_scene.FindNode("Cube");
+            _enttity_one = new Entity(_cur_scene, mesh, armature);
         }
 
         public Scene LoadScene(MemoryStream model_data, string format_hint)
@@ -212,7 +170,6 @@ namespace WinFormAnimation2D
             {
                 throw new Exception("Failed to load scene");
             }
-            PreProcessScene(cur_scene);
             return cur_scene;
         }
 
