@@ -219,6 +219,9 @@ namespace WinFormAnimation2D
         public Matrix _matrix = new Matrix();
         private readonly float _motion_speed = 10.0f;
 
+        // binding offset for each bone, but relative to the parent
+        public Dictionary<string, Matrix4x4> _local_bind_offset;
+
         public string Name
         {
             get { return _node.Name; }
@@ -240,6 +243,25 @@ namespace WinFormAnimation2D
             _node = nd;
             _extra_geometry = new Geometry(sc, nd);
             _armature = arma;
+            InitCalcLocalOffset(arma);
+        }
+
+        public void InitCalcLocalOffset(Node armature_root)
+        {
+            _local_bind_offset = new Dictionary<string, Matrix4x4>();
+            RecurCalcLocalOffset(armature_root);
+        }
+
+        public void RecurCalcLocalOffset(Node nd)
+        {
+            // the local offset for each bone is its transform when the bone is in initial position
+            var local = nd.Transform;
+            local.Inverse();
+            _local_bind_offset[nd.Name] = local;
+            foreach (var child in nd.Children)
+            {
+                RecurCalcLocalOffset(child);
+            }
         }
 
         public void RotateBy(double angle_degrees)
@@ -327,7 +349,10 @@ namespace WinFormAnimation2D
             //Util.GR.MultiplyTransform(_matrix);
             Util.GR.MultiplyTransform(_armature.Transform.eTo3x2());
             _extra_geometry.RenderEntityBorder();
-            RecursiveRenderSystemDrawing(_node, _armature.Transform);
+            Util.PushMatrix();
+            NewRecursiveRenderSystemDrawing(_node);
+            Util.PopMatrix();
+            OldRecursiveRenderSystemDrawing(_node);
         }
 
         public List<Bone> GetBonesAffectingVertex(int vertex_id, Mesh mesh)
@@ -421,13 +446,14 @@ namespace WinFormAnimation2D
         }
 
 
+
         //-------------------------------------------------------------------------------------------------
         // Render the scene.
         // Begin at the root node of the imported data and traverse
         // the scenegraph by multiplying subsequent local transforms
         // together on OpenGL matrix stack.
         // one mesh, one bone policy
-        private void RecursiveRenderSystemDrawing(Node nd, Matrix4x4 curmat)
+        private void OldRecursiveRenderSystemDrawing(Node nd)
         {
             Util.PushMatrix();
             Matrix4x4 nd_local_mat = nd.Transform;
@@ -449,19 +475,49 @@ namespace WinFormAnimation2D
                 /// but it should be equal for this to work. so let's find global transofrm for armature_bone\
                 /// then it will work ok. 
                 Matrix4x4 delta_roto = bind * bone_global_mat;
-                Matrix4 really_tmp = OpenTK.Matrix4.CreateFromAxisAngle(new Vector3(0, 0, 1), (float)(Math.PI / -4.0));
                 Util.GR.MultiplyTransform(delta_roto.eTo3x2());
                 RenderMesh(cur_mesh);
                 Util.PopMatrix();
             }
             foreach (Node child in nd.Children)
             {
-                RecursiveRenderSystemDrawing(child, nd_local_mat * curmat);
+                OldRecursiveRenderSystemDrawing(child);
             }
             // we don't want to apply this branch transform to the next branch
             Util.PopMatrix();
         }
 
+        //-------------------------------------------------------------------------------------------------
+        // Render the scene.
+        // Begin at the root node of the imported data and traverse
+        // the scenegraph by multiplying subsequent local transforms
+        // together on OpenGL matrix stack.
+        // one mesh, one bone policy
+        private void NewRecursiveRenderSystemDrawing(Node nd)
+        {
+            Util.PushMatrix();
+            Matrix4x4 nd_local_mat = nd.Transform;
+            //Util.GR.MultiplyTransform(nd_local_mat.eTo3x2());
+            foreach(int mesh_id in nd.MeshIndices)
+            {
+                Mesh cur_mesh = _scene.Meshes[mesh_id];
+                Bone mesh_bone = cur_mesh.Bones[0];
+                // a bone transform is more than by what we need to trasnform the model
+                Node armature_node = InnerRecurFindNodeInScene(_scene.RootNode, mesh_bone.Name);
+                // Transform tells delta in local coords
+                Matrix4x4 local_bone = armature_node.Transform;
+                Matrix4x4 local_bind = _local_bind_offset[mesh_bone.Name];
+                Matrix4x4 delta_roto =  local_bone * local_bind;
+                Util.GR.MultiplyTransform(delta_roto.eTo3x2());
+                RenderMesh(cur_mesh);
+            }
+            foreach (Node child in nd.Children)
+            {
+                NewRecursiveRenderSystemDrawing(child);
+            }
+            // we don't want to apply this branch transform to the next branch
+            Util.PopMatrix();
+        }
     } // end of class
 
 }
