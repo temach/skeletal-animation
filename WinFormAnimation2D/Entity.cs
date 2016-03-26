@@ -211,7 +211,7 @@ namespace WinFormAnimation2D
     /// </summary>
     class Entity
     {
-        public Node _armature;
+        public NodeWrapper _armature;
         public Node _node;
         public SceneWrapper _scene;
         public Geometry _extra_geometry;
@@ -234,7 +234,7 @@ namespace WinFormAnimation2D
         }
 
         // the only public constructor
-        public Entity(SceneWrapper sc, Node nd, Node arma)
+        public Entity(SceneWrapper sc, Node nd, NodeWrapper arma)
         {
             _scene = sc;
             _node = nd;
@@ -325,7 +325,7 @@ namespace WinFormAnimation2D
             // The root bone should store in world transaltion/rotation/scale.
             // currently it is just _matrix.
             //Util.GR.MultiplyTransform(_matrix);
-            Util.GR.MultiplyTransform(_armature.Transform.eTo3x2());
+            Util.GR.MultiplyTransform(_armature.LocTrans.eTo3x2());
             _extra_geometry.RenderEntityBorder();
             RecursiveRenderSystemDrawing(_node);
         }
@@ -380,23 +380,6 @@ namespace WinFormAnimation2D
             }
         }
 
-        /// <summary>
-        /// Get the armature node and trace back its changes
-        /// </summary>
-        /// <param name="bone"></param>
-        /// <returns></returns>
-        public Matrix4x4 GetArmatureGlobalTransform(Node bone)
-        {
-            Matrix4x4 ret = new Matrix4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-            ret *= bone.Transform;
-            Node cur = bone;
-            while (cur.Parent != null)
-            {
-                ret *= cur.Parent.Transform;
-                cur = cur.Parent;
-            }
-            return ret;
-        }
 
         //-------------------------------------------------------------------------------------------------
         // Render the scene.
@@ -414,8 +397,8 @@ namespace WinFormAnimation2D
                 Mesh cur_mesh = _scene._inner.Meshes[mesh_id];
                 Bone mesh_bone = cur_mesh.Bones[0];
                 // a bone transform is more than by what we need to trasnform the model
-                Node armature_node = _scene.FindNode(mesh_bone.Name);
-                Matrix4x4 bone_global_mat = GetArmatureGlobalTransform(armature_node);
+                NodeWrapper armature_node = _scene.FindNodeWrapper(mesh_bone.Name);
+                Matrix4x4 bone_global_mat = armature_node.GlobTrans;
                 /// bind tells the original delta in global coord, so we can find current delta
                 Matrix4x4 bind = mesh_bone.OffsetMatrix;
                 /// This does not work because even in initial state bind != armature_bone.Inverse()

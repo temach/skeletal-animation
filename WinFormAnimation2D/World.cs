@@ -142,13 +142,13 @@ namespace WinFormAnimation2D
                 EnablePolygonModeFill = true,
                 EnableLight = true,
             };
-            byte[] filedata = Properties.Resources.triple_fold_2;
+            byte[] filedata = Properties.Resources.mamonth_3;
             MemoryStream sphere = new MemoryStream(filedata);
             _cur_scene = new SceneWrapper(LoadScene(sphere, "dae"));
             _cur_scene.NameUnnamedMeshes();
 
             _silly_waving_action = new NodeAnimator(_cur_scene, _cur_scene._inner.Animations[0]);
-            Node armature = _cur_scene.FindNode("Armature");
+            NodeWrapper armature = _cur_scene.BuildArmatureWrapper("Armature");
             Node mesh = _cur_scene.FindNode("Cube");
             _enttity_one = new Entity(_cur_scene, mesh, armature);
         }

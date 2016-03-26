@@ -13,18 +13,72 @@ namespace WinFormAnimation2D
     class SceneWrapper
     {
         public Scene _inner;
+        public Dictionary<Node,NodeWrapper> _node2wrapper = new Dictionary<Node,NodeWrapper>();
 
         public SceneWrapper(Scene sc)
         {
             _inner = sc;
         }
 
-        public Node FindNode(string node_name)
+        public NodeWrapper GetWrapperForNode(Node nd)
         {
-            return InnerRecurFindNodeInScene(_inner.RootNode, node_name);
+            return _node2wrapper[nd];
         }
 
-        private Node InnerRecurFindNodeInScene(Node cur_node, string node_name)
+        public NodeWrapper BuildArmatureWrapper(string armature_root_name)
+        {
+            Node armature_root = InnerRecurFindNode(_inner.RootNode, armature_root_name);
+            NodeWrapper root = InnerRecurBuildArmature(armature_root);
+            return root;
+        }
+
+        private NodeWrapper InnerRecurBuildArmature(Node nd)
+        {
+            var w_current = new NodeWrapper(nd);
+            w_current.GlobTrans = GetArmatureGlobalTransform(nd);
+            w_current.LocTrans = nd.Transform;
+            // add to dict for faster lookup
+            _node2wrapper[nd] = w_current;
+            foreach (var child in nd.Children)
+            {
+                NodeWrapper w_child = InnerRecurBuildArmature(child);
+                w_child.Parent = w_current;
+                w_current.Children.Add(w_child);
+            }
+            return w_current;
+        }
+
+        /// <summary>
+        /// Get the armature node and trace back its changes
+        /// </summary>
+        /// <param name="bone"></param>
+        /// <returns></returns>
+        public Matrix4x4 GetArmatureGlobalTransform(Node bone)
+        {
+            Matrix4x4 ret = new Matrix4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+            ret *= bone.Transform;
+            Node cur = bone;
+            while (cur.Parent != null)
+            {
+                ret *= cur.Parent.Transform;
+                cur = cur.Parent;
+            }
+            return ret;
+        }
+
+        // for getting the bone nodes
+        public NodeWrapper FindNodeWrapper(string node_name)
+        {
+            return GetWrapperForNode(FindNode(node_name));
+        }
+
+        // Use only NodeWrapper in the interface to outside
+        public Node FindNode(string node_name)
+        {
+            return InnerRecurFindNode(_inner.RootNode, node_name);
+        }
+
+        private Node InnerRecurFindNode(Node cur_node, string node_name)
         {
             if (cur_node.Name == node_name)
             {
@@ -32,7 +86,7 @@ namespace WinFormAnimation2D
             }
             foreach (var child in cur_node.Children)
             {
-                var tmp =  InnerRecurFindNodeInScene(child, node_name);
+                var tmp =  InnerRecurFindNode(child, node_name);
                 if (tmp != null)
                 {
                     return tmp;
