@@ -24,10 +24,9 @@ namespace WinFormAnimation2D
         // done by moving objects closer/further
         // in Drawing2D it is done by scaling. 
         // Actually in OpenGL we can use scaling as well. No? interesting idea....
-        private readonly float _init_zoom = 0.9f;
         private readonly float _rotation_speed = 1.5f;
         private readonly float _motion_speed = 10.0f;
-        private Matrix _cam_mat = new Matrix();
+        private Matrix _cam_mat;
 
         public double GetRotationAngleDeg
         {
@@ -45,10 +44,7 @@ namespace WinFormAnimation2D
         /// <returns></returns>
         public PointF ConvertScreen2WorldCoordinates(PointF screen_coords)
         {
-            Debug.Assert(_cam_mat.IsInvertible == true, "can not change into world coordinates.");
-            var tmp = _cam_mat.Clone();
-            tmp.Invert();
-            return tmp.eTransformSinglePointF(screen_coords);
+            return _cam_mat.eTransformSinglePointF(screen_coords);
         }
 
         public Matrix CamMatrix {
@@ -56,14 +52,33 @@ namespace WinFormAnimation2D
             set { _cam_mat = value; }
         }
 
-        public Drawing2DCamera()
+        public Drawing2DCamera(Matrix init_mat)
         {
-            _cam_mat.Scale(_init_zoom, _init_zoom);
+            _cam_mat = init_mat;
+        }
+
+        /// <summary>
+        /// Get the camera matrix to be uploaded to drawing 2D
+        /// </summary>
+        public Matrix MatrixToDrawing2D()
+        {
+            Matrix cam_inverted = CamMatrix.Clone();
+            // this translation is only needed in 2D where camera is not positioned at (0,0)
+            //cam_inverted.Translate(-360.5f, -233f);
+            cam_inverted.Invert();
+            return cam_inverted;
         }
 
         public void RotateBy(double angle_degrees)
         {
+            // rotation is applied last
+            //Vector2 cur_pos = new Vector2(_cam_mat.OffsetX, _cam_mat.OffsetY);
+            // translate _half_ a screen back to the origin.
+            _cam_mat.Translate(360.5f,233f);
+            // do rotation
             _cam_mat.Rotate((float)angle_degrees);
+            _cam_mat.Translate(-360.5f,-233f);
+            // translate back half a screen
         }
 
         public void RotateByKey(KeyEventArgs e)
@@ -71,10 +86,10 @@ namespace WinFormAnimation2D
             switch (e.KeyData)
             {
                 case Keys.I:
-                    RotateBy(17);
+                    RotateBy(-10);
                     break;
                 case Keys.O:
-                    RotateBy(-17);
+                    RotateBy(10);
                     break;
                 default:
                     Debug.Assert(false);
@@ -102,16 +117,16 @@ namespace WinFormAnimation2D
             switch (e.KeyData)
             {
                 case Keys.Left:
-                    MoveBy(-1, 0);
-                    break;
-                case Keys.Up:
-                    MoveBy(0, -1);
-                    break;
-                case Keys.Right:
                     MoveBy(1, 0);
                     break;
-                case Keys.Down:
+                case Keys.Up:
                     MoveBy(0, 1);
+                    break;
+                case Keys.Right:
+                    MoveBy(-1, 0);
+                    break;
+                case Keys.Down:
+                    MoveBy(0, -1);
                     break;
                 default:
                     Debug.Assert(false);
@@ -126,7 +141,7 @@ namespace WinFormAnimation2D
         public void ProcessScroll(int z)
         {
             float factor = Math.Max((float)Math.Pow(_zoom_speed, z), _zoom_close_limit);
-            _cam_mat.Scale(factor, factor);
+            //_cam_mat.Scale(factor, factor);
         }
 
     }

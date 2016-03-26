@@ -176,7 +176,7 @@ namespace WinFormAnimation2D
         /// <summary>
         /// Render the model stored in EntityScene useing the Graphics object.
         /// </summary>
-        public void RenderWorld(Matrix camera_matrix)
+        public void RenderWorld()
         {
             _enttity_one.RenderModel(_renderer.GlobalDrawConf);
         }

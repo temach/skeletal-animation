@@ -26,13 +26,29 @@ namespace WinFormAnimation2D
         private Timer tm = new Timer();
 
         // State of the camera currently. We can affect this with buttons.
-        private Drawing2DCamera _camera = new Drawing2DCamera();
         private GUIConfig _gui_conf = new GUIConfig();
         private Entity _currently_selected;
+
+        // camera related stuff
+        private Drawing2DCamera _camera;
+        private readonly float _init_zoom = 1.0f;
+        private Point PictureBoxCenterPoint
+        {
+            get
+            {
+                return new Point(this.pictureBox_main.Width / 2, this.pictureBox_main.Height / 2);
+            }
+        }
+
 
         public MainForm()
         {
             InitializeComponent();
+            Matrix init_camera = new Matrix();
+            // translate _half_ screen width.
+            //init_camera.Translate(PictureBoxCenterPoint.X, PictureBoxCenterPoint.Y);
+            init_camera.Scale(_init_zoom, _init_zoom);
+            _camera = new Drawing2DCamera(init_camera);
             // we have to manually register the mousewheel event handler.
             this.MouseWheel += new MouseEventHandler(this.pictureBox_main_MouseMove);
             tm.Interval = 150;
@@ -83,6 +99,18 @@ namespace WinFormAnimation2D
             }
         }
 
+        // Ugly hack
+        // To get the object rotating around picture box center where the camera is
+        // we need to initially translate the camera there, and then translate is back before render
+        public Matrix GetMatrixToUploadFromCamera()
+        {
+            Matrix tmp = _camera.MatrixToDrawing2D();
+            // this translation is only needed in 2D where camera is not positioned at (0,0)
+            //cam_inverted.Translate(-360.5f, -233f);
+            tmp.Translate(PictureBoxCenterPoint.X, PictureBoxCenterPoint.Y, MatrixOrder.Append);
+            return tmp;
+        }
+
         // functions to move the world objects left/right/up/down on 2D canvas
         private void button_up_Click(object sender, EventArgs e) {
             _camera.MoveBy(0, -1);
@@ -108,7 +136,7 @@ namespace WinFormAnimation2D
         }
         private void button_resetzoom_Click(object sender, EventArgs e)
         {
-            _camera.CamMatrix = _camera.CamMatrix.eSnapScale(1.0);
+            //_camera.CamMatrix = _camera.CamMatrix.eSnapScale(1.0);
         }
 
         private void button_start_Click(object sender, EventArgs e)
@@ -252,24 +280,29 @@ namespace WinFormAnimation2D
 
         private void pictureBox_main_Paint(object sender, PaintEventArgs e)
         {
+            this.toolStripStatusLabel_mouse_coords.Text = _m_status.InnerWorldPos.ToString();
             // Set GR field so that we can use Sysem.Drawing2D as if it was like OpenGL
             Util.GR = e.Graphics;
             _world._renderer.SetupRender(Util.GR);
-            // Render the mouse and model (unaffected by transforms)
-            Util.GR.eDrawBigPoint(_m_status.InnerWorldPos);
+            // camera center in sceen coords
+            Util.GR.eDrawCircle(Util.pp4, PictureBoxCenterPoint, 3);
+            // mouse unaffected
+            Util.GR.eDrawCircle(Util.pp2, Point.Round(_m_status.InnerWorldPos), 3);
+            // model unaffected
             GraphicsState gs = Util.GR.Save();
             _world._enttity_one.RenderModel(_world._renderer.GlobalDrawConf);
             Util.GR.Restore(gs);
-            // show what is currently selected in tree view
+            // currently selected in tree view, unaffected
             HighlightSlectedNode();
-            // Applying camera transform is good here.
-            Util.GR.MultiplyTransform(_camera.CamMatrix);
-            // draw in camera coordinates
+            // change to world (i.e. camera) coordinates
+            Util.GR.MultiplyTransform(_camera.MatrixToDrawing2D());
+            // center
+            Util.GR.eDrawCircle(Util.pp2, new Point(0,0), 3);
+            // mouse position, big-green-circle should be under the mouse arrow
             Util.GR.eDrawBigPoint(_m_status.InnerWorldPos);
-            this.toolStripStatusLabel_mouse_coords.Text = _m_status.InnerWorldPos.ToString();
-            // apply entity specific matrix on top of camera matrix and render the entity
-            _world.RenderWorld(_camera.CamMatrix);
-            // show what is currently selected in tree view, but in world coords now
+            // render entity
+            _world.RenderWorld();
+            // currently selected in tree view
             HighlightSlectedNode();
         }
 
