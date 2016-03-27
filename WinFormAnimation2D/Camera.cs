@@ -63,22 +63,20 @@ namespace WinFormAnimation2D
         public Matrix MatrixToDrawing2D()
         {
             Matrix cam_inverted = CamMatrix.Clone();
-            // this translation is only needed in 2D where camera is not positioned at (0,0)
-            //cam_inverted.Translate(-360.5f, -233f);
             cam_inverted.Invert();
             return cam_inverted;
         }
 
+        // when doing a rotation we want to perform it around the screen center.
         public void RotateBy(double angle_degrees)
         {
-            // rotation is applied last
-            //Vector2 cur_pos = new Vector2(_cam_mat.OffsetX, _cam_mat.OffsetY);
-            // translate _half_ a screen back to the origin.
+            // we would remove the translation in OpenGL because its screen center is at (0,0,0)
+            // in 2D camera screen center is at (Width/2.0, Height/2.0)
+            // so translate to screen center 
             _cam_mat.Translate(360.5f,233f);
-            // do rotation
             _cam_mat.Rotate((float)angle_degrees);
+            // translate back
             _cam_mat.Translate(-360.5f,-233f);
-            // translate back half a screen
         }
 
         public void RotateByKey(KeyEventArgs e)

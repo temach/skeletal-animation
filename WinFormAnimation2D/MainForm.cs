@@ -45,9 +45,7 @@ namespace WinFormAnimation2D
         {
             InitializeComponent();
             Matrix init_camera = new Matrix();
-            // translate _half_ screen width.
-            //init_camera.Translate(PictureBoxCenterPoint.X, PictureBoxCenterPoint.Y);
-            init_camera.Scale(_init_zoom, _init_zoom);
+            //init_camera.Scale(_init_zoom, _init_zoom);
             _camera = new Drawing2DCamera(init_camera);
             // we have to manually register the mousewheel event handler.
             this.MouseWheel += new MouseEventHandler(this.pictureBox_main_MouseMove);
@@ -97,18 +95,6 @@ namespace WinFormAnimation2D
                 default:
                     return base.ProcessCmdKey(ref msg, keyData);
             }
-        }
-
-        // Ugly hack
-        // To get the object rotating around picture box center where the camera is
-        // we need to initially translate the camera there, and then translate is back before render
-        public Matrix GetMatrixToUploadFromCamera()
-        {
-            Matrix tmp = _camera.MatrixToDrawing2D();
-            // this translation is only needed in 2D where camera is not positioned at (0,0)
-            //cam_inverted.Translate(-360.5f, -233f);
-            tmp.Translate(PictureBoxCenterPoint.X, PictureBoxCenterPoint.Y, MatrixOrder.Append);
-            return tmp;
         }
 
         // functions to move the world objects left/right/up/down on 2D canvas
