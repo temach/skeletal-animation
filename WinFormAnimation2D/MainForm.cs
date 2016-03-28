@@ -308,7 +308,9 @@ namespace WinFormAnimation2D
             {
                 return;
             }
-            _world._silly_waving_action.SnapToKeyframe(_currently_selected._armature, _world._silly_waving_action._keyframe - 1);
+            _world._silly_waving_action.SnapToKeyframe(_currently_selected._armature
+                , _world._silly_waving_action._keyframe - 1
+                , _world._keyframe_blend);
             this.Text = _world._silly_waving_action._keyframe.ToString();
         }
 
@@ -318,8 +320,16 @@ namespace WinFormAnimation2D
             {
                 return;
             }
-            _world._silly_waving_action.SnapToKeyframe(_currently_selected._armature, _world._silly_waving_action._keyframe + 1);
+            _world._silly_waving_action.SnapToKeyframe(_currently_selected._armature
+                , _world._silly_waving_action._keyframe + 1
+                , _world._keyframe_blend);
             this.Text = _world._silly_waving_action._keyframe.ToString();
+        }
+
+        // sets the blend value for current keyframe
+        private void trackBar1_ValueChanged(object sender, EventArgs e)
+        {
+            _world._keyframe_blend = (sender as TrackBar).Value / 10.0;
         }
     }
 }

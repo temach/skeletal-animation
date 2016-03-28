@@ -53,8 +53,11 @@
             this.checkBox_breakpoints_on = new System.Windows.Forms.CheckBox();
             this.button_NextKeyframe = new System.Windows.Forms.Button();
             this.button_PreviousKeyframe = new System.Windows.Forms.Button();
+            this.trackBar1 = new System.Windows.Forms.TrackBar();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).BeginInit();
             this.statusStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
             // 
             // button_start
@@ -298,11 +301,29 @@
             this.button_PreviousKeyframe.UseVisualStyleBackColor = true;
             this.button_PreviousKeyframe.Click += new System.EventHandler(this.button_PreviousKeyframe_Click);
             // 
+            // trackBar1
+            // 
+            this.trackBar1.Location = new System.Drawing.Point(350, 5);
+            this.trackBar1.Name = "trackBar1";
+            this.trackBar1.Size = new System.Drawing.Size(104, 45);
+            this.trackBar1.TabIndex = 30;
+            this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(247, 13);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(97, 13);
+            this.label1.TabIndex = 31;
+            this.label1.Text = "Blend for animation";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(958, 528);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.button_PreviousKeyframe);
             this.Controls.Add(this.button_NextKeyframe);
             this.Controls.Add(this.checkBox_breakpoints_on);
@@ -319,11 +340,13 @@
             this.Controls.Add(this.button_up);
             this.Controls.Add(this.pictureBox_main);
             this.Controls.Add(this.button_start);
+            this.Controls.Add(this.trackBar1);
             this.Name = "MainForm";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -356,6 +379,8 @@
         private System.Windows.Forms.CheckBox checkBox_breakpoints_on;
         private System.Windows.Forms.Button button_NextKeyframe;
         private System.Windows.Forms.Button button_PreviousKeyframe;
+        private System.Windows.Forms.TrackBar trackBar1;
+        private System.Windows.Forms.Label label1;
     }
 }
 

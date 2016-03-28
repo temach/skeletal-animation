@@ -67,16 +67,44 @@ namespace WinFormAnimation2D
             _scene = sc;
         }
 
+        // blend - 0..1 how much to get close to this frame, i.e. to blend from current to this frame
+        public void ChangeLocalWithBlend(int frame, double blend)
+        {
+            Debug.Assert(0 <= blend && blend <= 1);
+            foreach (NodeAnimationChannel channel in _action.NodeAnimationChannels)
+            {
+                NodeWrapper bone_nd = _scene.FindNodeWrapper(channel.NodeName);
+                tk.Quaternion target_roto = tk.Quaternion.Identity;
+                if (channel.RotationKeyCount > frame)
+                {
+                    target_roto = channel.RotationKeys[frame].Value.eToOpenTK();
+                }
+                tk.Quaternion current_roto = bone_nd.LocalTransform.ExtractRotation();
+                tk.Quaternion result_roto = tk.Quaternion.Slerp(current_roto, target_roto, (float)blend);
+                tk.Vector3 target_trans = tk.Vector3.Zero;
+                if (channel.PositionKeyCount > frame)
+                {
+                    target_trans = channel.PositionKeys[frame].Value.eToOpenTK();
+                }
+                tk.Vector3 cur_trans = bone_nd.LocalTransform.ExtractTranslation();
+                tk.Vector3 result_trans = cur_trans + tk.Vector3.Multiply(target_trans - cur_trans, (float)blend);
+                // snap rotation and translation. See the long comment to NodeAnimationChannel class.
+                tk.Matrix4 result = tk.Matrix4.CreateFromQuaternion(result_roto);
+                result.Row3.Xyz = result_trans;
+                bone_nd.LocTrans = result.eToAssimp();
+            }
+        }
+
         // Update this particular armature to this particular frame in action (to this particular keyframe)
-        public void SnapToKeyframe(NodeWrapper armature, int keyframe)
+        public void SnapToKeyframe(NodeWrapper armature, int keyframe, double blend)
         {
             if (keyframe < 0 || keyframe >= _action.NodeAnimationChannels[0].PositionKeyCount)
             {
                 MessageBox.Show("invalid frame " + keyframe);
                 return;
             }
-            ChangeLocalTransform(keyframe);
-            ChangeGlobalTransform(armature);
+            ChangeLocalWithBlend(keyframe, blend);
+            ReCalculateGlobalTransform(armature);
             _keyframe = keyframe;
         }
 
@@ -104,7 +132,7 @@ namespace WinFormAnimation2D
         }
 
         // Updates global transforms by walking the hierarchy 
-        private void ChangeGlobalTransform(NodeWrapper nd)
+        private void ReCalculateGlobalTransform(NodeWrapper nd)
         {
             if (nd.Parent != null)
             {
@@ -117,7 +145,7 @@ namespace WinFormAnimation2D
             }
             foreach (var child in nd.Children)
             {
-                ChangeGlobalTransform(child);
+                ReCalculateGlobalTransform(child);
             }
         }
 

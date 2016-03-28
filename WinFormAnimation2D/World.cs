@@ -126,6 +126,7 @@ namespace WinFormAnimation2D
 
         public SceneWrapper _cur_scene;
         public NodeAnimator _silly_waving_action;
+        public double _keyframe_blend = 0;
 
         private Entity _currently_selected;
         public Entity CurrentlySelected
