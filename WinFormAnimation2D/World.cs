@@ -126,7 +126,6 @@ namespace WinFormAnimation2D
 
         public SceneWrapper _cur_scene;
         public NodeInterpolator _silly_waving_action;
-        public double _keyframe_blend = 0;
 
         private Entity _currently_selected;
         public Entity CurrentlySelected
@@ -151,7 +150,9 @@ namespace WinFormAnimation2D
             _silly_waving_action = new NodeInterpolator(_cur_scene, _cur_scene._inner.Animations[0]);
             NodeWrapper armature = _cur_scene.BuildArmatureWrapper("Armature");
             Node mesh = _cur_scene.FindNode("Cube");
-            _enttity_one = new Entity(_cur_scene, mesh, armature);
+            AnimState state = new AnimState();
+            state.SetCurrentAction(_cur_scene._inner.Animations[0]);
+            _enttity_one = new Entity(_cur_scene, mesh, armature, state);
         }
 
         public Scene LoadScene(MemoryStream model_data, string format_hint)

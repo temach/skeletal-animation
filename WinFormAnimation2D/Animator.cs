@@ -195,15 +195,47 @@ namespace WinFormAnimation2D
     /// </summary>
     class AnimState
     {
-        public int KeyframeCount;
-        // name of the animation
-        public string Name;
+        public Animation _action;
+        public int KeyframeCount
+        {
+            get { return _action.NodeAnimationChannels[0].PositionKeyCount; }
+        }
+        public string Name
+        {
+            get { return _action.Name; }
+        }
+        public double TimeSeconds
+        {
+            get { return _action.DurationInTicks * _action.TicksPerSecond; }
+        }
         public int OriginKeyframe;
         public int TargetKeyframe;
         // 0.0 <= Blend <= 1.0, how much in between are we
-        public double Blend;
-        public double TimeSeconds;
-        public double TicksPerSecond;
+        private double _blend;
+        public double Blend
+        {
+            get { return _blend; }
+            set { _blend = Math.Min(Math.Max(0, value), 1.0); }
+        }
+
+        public void SetTargetKeyframe(int frame)
+        {
+            // Note: frame is strictly less than KeyframeCount
+            if (0 <= frame && frame < KeyframeCount)
+            {
+                Blend = 0;
+                OriginKeyframe = TargetKeyframe;
+                TargetKeyframe = frame;
+            }
+        }
+
+        public void SetCurrentAction(Animation action)
+        {
+            _action = action;
+            Blend = 0; 
+            OriginKeyframe = 0;
+            TargetKeyframe = 0;
+        }
     }
 }
 

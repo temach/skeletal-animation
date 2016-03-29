@@ -349,6 +349,7 @@
             this.button_AllKeyframeIntervals.TabIndex = 34;
             this.button_AllKeyframeIntervals.Text = "Play all keyframes";
             this.button_AllKeyframeIntervals.UseVisualStyleBackColor = true;
+            this.button_AllKeyframeIntervals.Click += new System.EventHandler(this.button_AllKeyframeIntervals_Click);
             // 
             // MainForm
             // 

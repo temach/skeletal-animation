@@ -40,6 +40,8 @@ namespace WinFormAnimation2D
             }
         }
 
+        public EventHandler IncreaseBlendValue;
+        public EventHandler IncreaseKeyframeValue;
         public EventHandler ClearScreen;
 
         public MainForm()
@@ -50,8 +52,21 @@ namespace WinFormAnimation2D
             _camera = new Drawing2DCamera(init_camera);
             // we have to manually register the mousewheel event handler.
             this.MouseWheel += new MouseEventHandler(this.pictureBox_main_MouseMove);
-            tm.Interval = 150;
+            tm.Interval = 100;
             ClearScreen = delegate { this.pictureBox_main.Invalidate(); };
+            IncreaseBlendValue = delegate 
+            {
+                _currently_selected._animation_state.Blend += 0.005;
+                _world._silly_waving_action.ApplyAnimation(_currently_selected._armature
+                    , _currently_selected._animation_state);
+                this.Text = _currently_selected._animation_state.Blend.ToString(); 
+                this.pictureBox_main.Invalidate();
+            };
+            IncreaseKeyframeValue = delegate 
+            {
+                _currently_selected._animation_state.SetTargetKeyframe(
+                    _currently_selected._animation_state.TargetKeyframe + 1);
+            };
             // world.RenderModel(this.button_start.CreateGraphics());
             _world = new World(this.pictureBox_main);
             InitFillTreeFromWorldSingleEntity();
@@ -356,6 +371,19 @@ namespace WinFormAnimation2D
         }
 
         private void button_PlayKeyframeInterval_Click(object sender, EventArgs e)
+        {
+            if (_currently_selected == null)
+            {
+                return;
+            }
+            tm.Tick += IncreaseBlendValue;
+            if (tm.Enabled == false)
+            {
+                tm.Start();
+            }
+        }
+
+        private void button_AllKeyframeIntervals_Click(object sender, EventArgs e)
         {
 
         }
