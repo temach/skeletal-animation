@@ -40,6 +40,7 @@ namespace WinFormAnimation2D
             }
         }
 
+        public EventHandler ClearScreen;
 
         public MainForm()
         {
@@ -50,7 +51,7 @@ namespace WinFormAnimation2D
             // we have to manually register the mousewheel event handler.
             this.MouseWheel += new MouseEventHandler(this.pictureBox_main_MouseMove);
             tm.Interval = 150;
-            tm.Tick += delegate { this.pictureBox_main.Invalidate(); };
+            ClearScreen = delegate { this.pictureBox_main.Invalidate(); };
             // world.RenderModel(this.button_start.CreateGraphics());
             _world = new World(this.pictureBox_main);
             InitFillTreeFromWorldSingleEntity();
@@ -128,11 +129,15 @@ namespace WinFormAnimation2D
         private void button_start_Click(object sender, EventArgs e)
         {
             pictureBox_main.Invalidate();
-            tm.Start();
+            tm.Tick += ClearScreen;
+            if (tm.Enabled == false)
+            {
+                tm.Start();
+            }
         }
         private void button_stop_colors_Click(object sender, EventArgs e)
         {
-            tm.Stop();
+            tm.Tick -= ClearScreen;
         }
 
         private void pictureBox_main_MouseUp(object sender, MouseEventArgs e)
@@ -348,6 +353,11 @@ namespace WinFormAnimation2D
             _world._silly_waving_action.ApplyAnimation(_currently_selected._armature
                 , _currently_selected._animation_state);
             this.pictureBox_main.Invalidate();
+        }
+
+        private void button_PlayKeyframeInterval_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

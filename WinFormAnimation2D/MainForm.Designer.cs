@@ -339,6 +339,7 @@
             this.button_PlayKeyframeInterval.TabIndex = 33;
             this.button_PlayKeyframeInterval.Text = "Play current keyframe interval";
             this.button_PlayKeyframeInterval.UseVisualStyleBackColor = true;
+            this.button_PlayKeyframeInterval.Click += new System.EventHandler(this.button_PlayKeyframeInterval_Click);
             // 
             // button_AllKeyframeIntervals
             // 
