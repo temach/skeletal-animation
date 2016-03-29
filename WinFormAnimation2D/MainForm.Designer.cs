@@ -55,6 +55,9 @@
             this.button_PreviousKeyframe = new System.Windows.Forms.Button();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.label1 = new System.Windows.Forms.Label();
+            this.button_ApplyCurrentAnimState = new System.Windows.Forms.Button();
+            this.button_PlayKeyframeInterval = new System.Windows.Forms.Button();
+            this.button_AllKeyframeIntervals = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).BeginInit();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
@@ -62,7 +65,7 @@
             // 
             // button_start
             // 
-            this.button_start.Location = new System.Drawing.Point(832, 172);
+            this.button_start.Location = new System.Drawing.Point(832, 235);
             this.button_start.Name = "button_start";
             this.button_start.Size = new System.Drawing.Size(75, 23);
             this.button_start.TabIndex = 0;
@@ -88,7 +91,7 @@
             // button_up
             // 
             this.button_up.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_up.Location = new System.Drawing.Point(845, 85);
+            this.button_up.Location = new System.Drawing.Point(845, 148);
             this.button_up.Name = "button_up";
             this.button_up.Size = new System.Drawing.Size(52, 23);
             this.button_up.TabIndex = 9;
@@ -99,7 +102,7 @@
             // button_down
             // 
             this.button_down.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_down.Location = new System.Drawing.Point(845, 141);
+            this.button_down.Location = new System.Drawing.Point(845, 204);
             this.button_down.Name = "button_down";
             this.button_down.Size = new System.Drawing.Size(52, 23);
             this.button_down.TabIndex = 10;
@@ -110,7 +113,7 @@
             // button_left
             // 
             this.button_left.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_left.Location = new System.Drawing.Point(804, 112);
+            this.button_left.Location = new System.Drawing.Point(804, 175);
             this.button_left.Name = "button_left";
             this.button_left.Size = new System.Drawing.Size(52, 23);
             this.button_left.TabIndex = 11;
@@ -121,7 +124,7 @@
             // button_right
             // 
             this.button_right.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_right.Location = new System.Drawing.Point(884, 112);
+            this.button_right.Location = new System.Drawing.Point(884, 175);
             this.button_right.Name = "button_right";
             this.button_right.Size = new System.Drawing.Size(52, 23);
             this.button_right.TabIndex = 12;
@@ -132,7 +135,7 @@
             // button_resetzoom
             // 
             this.button_resetzoom.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_resetzoom.Location = new System.Drawing.Point(832, 56);
+            this.button_resetzoom.Location = new System.Drawing.Point(847, 119);
             this.button_resetzoom.Name = "button_resetzoom";
             this.button_resetzoom.Size = new System.Drawing.Size(75, 23);
             this.button_resetzoom.TabIndex = 16;
@@ -143,7 +146,7 @@
             // button_resetpos
             // 
             this.button_resetpos.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_resetpos.Location = new System.Drawing.Point(829, 27);
+            this.button_resetpos.Location = new System.Drawing.Point(750, 119);
             this.button_resetpos.Name = "button_resetpos";
             this.button_resetpos.Size = new System.Drawing.Size(91, 23);
             this.button_resetpos.TabIndex = 18;
@@ -153,7 +156,7 @@
             // 
             // button_stop_colors
             // 
-            this.button_stop_colors.Location = new System.Drawing.Point(832, 201);
+            this.button_stop_colors.Location = new System.Drawing.Point(832, 264);
             this.button_stop_colors.Name = "button_stop_colors";
             this.button_stop_colors.Size = new System.Drawing.Size(75, 23);
             this.button_stop_colors.TabIndex = 19;
@@ -165,7 +168,7 @@
             // 
             this.label_zoom.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label_zoom.AutoSize = true;
-            this.label_zoom.Location = new System.Drawing.Point(913, 61);
+            this.label_zoom.Location = new System.Drawing.Point(928, 124);
             this.label_zoom.Name = "label_zoom";
             this.label_zoom.Size = new System.Drawing.Size(22, 13);
             this.label_zoom.TabIndex = 17;
@@ -174,7 +177,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(739, 269);
+            this.label2.Location = new System.Drawing.Point(739, 313);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(122, 13);
             this.label2.TabIndex = 22;
@@ -264,16 +267,16 @@
             // 
             // treeView_entity_info
             // 
-            this.treeView_entity_info.Location = new System.Drawing.Point(742, 285);
+            this.treeView_entity_info.Location = new System.Drawing.Point(742, 329);
             this.treeView_entity_info.Name = "treeView_entity_info";
-            this.treeView_entity_info.Size = new System.Drawing.Size(194, 216);
+            this.treeView_entity_info.Size = new System.Drawing.Size(194, 172);
             this.treeView_entity_info.TabIndex = 26;
             this.treeView_entity_info.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView_entity_info_AfterSelect);
             // 
             // checkBox_breakpoints_on
             // 
             this.checkBox_breakpoints_on.AutoSize = true;
-            this.checkBox_breakpoints_on.Location = new System.Drawing.Point(804, 230);
+            this.checkBox_breakpoints_on.Location = new System.Drawing.Point(804, 293);
             this.checkBox_breakpoints_on.Name = "checkBox_breakpoints_on";
             this.checkBox_breakpoints_on.Size = new System.Drawing.Size(118, 17);
             this.checkBox_breakpoints_on.TabIndex = 27;
@@ -318,11 +321,42 @@
             this.label1.TabIndex = 31;
             this.label1.Text = "Blend for animation";
             // 
+            // button_ApplyCurrentAnimState
+            // 
+            this.button_ApplyCurrentAnimState.Location = new System.Drawing.Point(785, 8);
+            this.button_ApplyCurrentAnimState.Name = "button_ApplyCurrentAnimState";
+            this.button_ApplyCurrentAnimState.Size = new System.Drawing.Size(151, 23);
+            this.button_ApplyCurrentAnimState.TabIndex = 32;
+            this.button_ApplyCurrentAnimState.Text = "Apply current frame+blend";
+            this.button_ApplyCurrentAnimState.UseVisualStyleBackColor = true;
+            this.button_ApplyCurrentAnimState.Click += new System.EventHandler(this.button_ApplyCurrentAnimState_Click);
+            // 
+            // button_PlayKeyframeInterval
+            // 
+            this.button_PlayKeyframeInterval.Location = new System.Drawing.Point(781, 38);
+            this.button_PlayKeyframeInterval.Name = "button_PlayKeyframeInterval";
+            this.button_PlayKeyframeInterval.Size = new System.Drawing.Size(165, 24);
+            this.button_PlayKeyframeInterval.TabIndex = 33;
+            this.button_PlayKeyframeInterval.Text = "Play current keyframe interval";
+            this.button_PlayKeyframeInterval.UseVisualStyleBackColor = true;
+            // 
+            // button_AllKeyframeIntervals
+            // 
+            this.button_AllKeyframeIntervals.Location = new System.Drawing.Point(785, 68);
+            this.button_AllKeyframeIntervals.Name = "button_AllKeyframeIntervals";
+            this.button_AllKeyframeIntervals.Size = new System.Drawing.Size(151, 23);
+            this.button_AllKeyframeIntervals.TabIndex = 34;
+            this.button_AllKeyframeIntervals.Text = "Play all keyframes";
+            this.button_AllKeyframeIntervals.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(958, 528);
+            this.Controls.Add(this.button_AllKeyframeIntervals);
+            this.Controls.Add(this.button_PlayKeyframeInterval);
+            this.Controls.Add(this.button_ApplyCurrentAnimState);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button_PreviousKeyframe);
             this.Controls.Add(this.button_NextKeyframe);
@@ -381,6 +415,9 @@
         private System.Windows.Forms.Button button_PreviousKeyframe;
         private System.Windows.Forms.TrackBar trackBar1;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button button_ApplyCurrentAnimState;
+        private System.Windows.Forms.Button button_PlayKeyframeInterval;
+        private System.Windows.Forms.Button button_AllKeyframeIntervals;
     }
 }
 

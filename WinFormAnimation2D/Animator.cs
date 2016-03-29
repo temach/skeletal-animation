@@ -53,7 +53,7 @@ namespace WinFormAnimation2D
     //
     // Node animator knows about an action. It can perform the action on a given armature.
     // So it does: Snap this particular armature to this particular pose
-    class NodeAnimator
+    class NodeInterpolator
     {
         // Animation is what blender calls "action"
         // It is a set of keyframes that describe some action
@@ -61,13 +61,62 @@ namespace WinFormAnimation2D
         public SceneWrapper _scene;
         public int _keyframe;
 
-        public  NodeAnimator(SceneWrapper sc, Animation action)
+        public  NodeInterpolator(SceneWrapper sc, Animation action)
         {
-            _action = action;
             _scene = sc;
+            _action = action;
         }
 
-        // blend - 0..1 how much to get close to this frame, i.e. to blend from current to this frame
+        // Update this particular armature to this particular frame in action (to this particular keyframe)
+        public void ApplyAnimation(NodeWrapper armature, AnimState st)
+        {
+            if (st.TargetKeyframe < 0 || st.TargetKeyframe >= _action.NodeAnimationChannels[0].PositionKeyCount)
+            {
+                MessageBox.Show("invalid frame " + st.TargetKeyframe);
+                return;
+            }
+            ChangeLocalFixedDataBlend(st);
+            //ChangeLocalWithBlend(keyframe, blend);
+            ReCalculateGlobalTransform(armature);
+            _keyframe = st.OriginKeyframe;
+        }
+
+        /// <summary>
+        /// Function to blend from one keyframe to another.
+        /// </summary>
+        public void ChangeLocalFixedDataBlend(AnimState st)
+        {
+            Debug.Assert(0 <= st.Blend && st.Blend <= 1);
+            foreach (NodeAnimationChannel channel in _action.NodeAnimationChannels)
+            {
+                NodeWrapper bone_nd = _scene.FindNodeWrapper(channel.NodeName);
+                // now rotation
+                tk.Quaternion target_roto = tk.Quaternion.Identity;
+                if (channel.RotationKeyCount > st.TargetKeyframe)
+                {
+                    target_roto = channel.RotationKeys[st.TargetKeyframe].Value.eToOpenTK();
+                }
+                tk.Quaternion start_frame_roto = channel.RotationKeys[st.OriginKeyframe].Value.eToOpenTK();
+                tk.Quaternion result_roto = tk.Quaternion.Slerp(start_frame_roto, target_roto, (float)st.Blend);
+                // now translation
+                tk.Vector3 target_trans = tk.Vector3.Zero;
+                if (channel.PositionKeyCount > st.TargetKeyframe)
+                {
+                    target_trans = channel.PositionKeys[st.TargetKeyframe].Value.eToOpenTK();
+                }
+                tk.Vector3 cur_trans = channel.PositionKeys[st.OriginKeyframe].Value.eToOpenTK();
+                tk.Vector3 result_trans = cur_trans + tk.Vector3.Multiply(target_trans - cur_trans, (float)st.Blend);
+                // combine rotation and translation
+                tk.Matrix4 result = tk.Matrix4.CreateFromQuaternion(result_roto);
+                result.Row3.Xyz = result_trans;
+                bone_nd.LocTrans = result.eToAssimp();
+            }
+        }
+
+        /// <summary>
+        /// blend - 0..1 how much to get close to this frame, i.e. to blend from current to this frame
+        /// Function to blend from any position to the target position
+        /// </summary>
         public void ChangeLocalWithBlend(int frame, double blend)
         {
             Debug.Assert(0 <= blend && blend <= 1);
@@ -95,20 +144,10 @@ namespace WinFormAnimation2D
             }
         }
 
-        // Update this particular armature to this particular frame in action (to this particular keyframe)
-        public void SnapToKeyframe(NodeWrapper armature, int keyframe, double blend)
-        {
-            if (keyframe < 0 || keyframe >= _action.NodeAnimationChannels[0].PositionKeyCount)
-            {
-                MessageBox.Show("invalid frame " + keyframe);
-                return;
-            }
-            ChangeLocalWithBlend(keyframe, blend);
-            ReCalculateGlobalTransform(armature);
-            _keyframe = keyframe;
-        }
-
-        // For each channel update bone local transforms
+        /// <summary>
+        /// Snap from any position to frame position.
+        /// For each channel update bone local transforms
+        /// </summary>
         private void ChangeLocalTransform(int frame)
         {
             foreach (NodeAnimationChannel channel in _action.NodeAnimationChannels)
@@ -149,6 +188,22 @@ namespace WinFormAnimation2D
             }
         }
 
+    }
+
+    /// <summary>
+    /// This class knows what argumets to pass to NodeInterpolator 
+    /// </summary>
+    class AnimState
+    {
+        public int KeyframeCount;
+        // name of the animation
+        public string Name;
+        public int OriginKeyframe;
+        public int TargetKeyframe;
+        // 0.0 <= Blend <= 1.0, how much in between are we
+        public double Blend;
+        public double TimeSeconds;
+        public double TicksPerSecond;
     }
 }
 

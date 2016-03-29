@@ -211,6 +211,7 @@ namespace WinFormAnimation2D
     /// </summary>
     class Entity
     {
+        public AnimState _animation_state;
         public NodeWrapper _armature;
         public Node _node;
         public SceneWrapper _scene;
@@ -234,12 +235,13 @@ namespace WinFormAnimation2D
         }
 
         // the only public constructor
-        public Entity(SceneWrapper sc, Node nd, NodeWrapper arma)
+        public Entity(SceneWrapper sc, Node mesh, NodeWrapper armature)
         {
             _scene = sc;
-            _node = nd;
-            _extra_geometry = new Geometry(sc._inner, nd);
-            _armature = arma;
+            _node = mesh;
+            _extra_geometry = new Geometry(sc._inner, mesh);
+            _armature = armature;
+            _animation_state = new AnimState();
         }
 
         public void RotateBy(double angle_degrees)

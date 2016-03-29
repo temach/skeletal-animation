@@ -308,10 +308,11 @@ namespace WinFormAnimation2D
             {
                 return;
             }
-            _world._silly_waving_action.SnapToKeyframe(_currently_selected._armature
-                , _world._silly_waving_action._keyframe - 1
-                , _world._keyframe_blend);
-            this.Text = _world._silly_waving_action._keyframe.ToString();
+            _currently_selected._animation_state.OriginKeyframe = _currently_selected._animation_state.TargetKeyframe;
+            _currently_selected._animation_state.TargetKeyframe -= 1;
+            this.Text = _currently_selected._animation_state.OriginKeyframe.ToString() 
+                + " - " + 
+                _currently_selected._animation_state.TargetKeyframe.ToString();
         }
 
         private void button_NextKeyframe_Click(object sender, EventArgs e)
@@ -320,16 +321,33 @@ namespace WinFormAnimation2D
             {
                 return;
             }
-            _world._silly_waving_action.SnapToKeyframe(_currently_selected._armature
-                , _world._silly_waving_action._keyframe + 1
-                , _world._keyframe_blend);
-            this.Text = _world._silly_waving_action._keyframe.ToString();
+            _currently_selected._animation_state.OriginKeyframe = _currently_selected._animation_state.TargetKeyframe;
+            _currently_selected._animation_state.TargetKeyframe += 1;
+            this.Text = _currently_selected._animation_state.OriginKeyframe.ToString() 
+                + " - " + 
+                _currently_selected._animation_state.TargetKeyframe.ToString();
         }
 
         // sets the blend value for current keyframe
         private void trackBar1_ValueChanged(object sender, EventArgs e)
         {
-            _world._keyframe_blend = (sender as TrackBar).Value / 10.0;
+            if (_currently_selected == null)
+            {
+                return;
+            }
+            _currently_selected._animation_state.Blend = (sender as TrackBar).Value / 10.0;
+        }
+
+        // applies the animation to the armature
+        private void button_ApplyCurrentAnimState_Click(object sender, EventArgs e)
+        {
+            if (_currently_selected == null)
+            {
+                return;
+            }
+            _world._silly_waving_action.ApplyAnimation(_currently_selected._armature
+                , _currently_selected._animation_state);
+            this.pictureBox_main.Invalidate();
         }
     }
 }
