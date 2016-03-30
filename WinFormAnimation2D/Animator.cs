@@ -196,10 +196,13 @@ namespace WinFormAnimation2D
     class AnimState
     {
         public Animation _action;
+
+        public List<double> KeyframeTimes;
         public int KeyframeCount
         {
-            get { return _action.NodeAnimationChannels[0].PositionKeyCount; }
+            get { return KeyframeTimes.Count; }
         }
+
         public string Name
         {
             get { return _action.Name; }
@@ -208,9 +211,50 @@ namespace WinFormAnimation2D
         {
             get { return _action.DurationInTicks * _action.TicksPerSecond; }
         }
-        public int OriginKeyframe;
-        public int TargetKeyframe;
-        // 0.0 <= Blend <= 1.0, how much in between are we
+        public double DurationInTicks
+        {
+            get { return _action.DurationInTicks; }
+        }
+
+        // TickPerSec can be used to change speed.
+        private double _tps;
+        public double TickPerSec
+        {
+            get { return _tps; }
+            set { _tps = value; }
+        }
+
+        // start or origin keyframe
+        private int _origin_keyframe;
+        public int OriginKeyframe
+        {
+            get { return _origin_keyframe; }
+            set
+            {
+                // Note: frame is strictly less than KeyframeCount
+                if (0 <= value && value < KeyframeCount)
+                {
+                     _origin_keyframe = value;
+                }
+            }
+        }
+
+        // end or target keyframe
+        private int _target_keyframe;
+        public int TargetKeyframe
+        {
+            get { return _target_keyframe; }
+            set
+            {
+                // Note: frame is strictly less than KeyframeCount
+                if (0 <= value && value < KeyframeCount)
+                {
+                     _target_keyframe = value;
+                }
+            }
+        }
+
+        // 0.0 <= Blend <= 1.0, how much in between two keyframes are we
         private double _blend;
         public double Blend
         {
@@ -218,24 +262,64 @@ namespace WinFormAnimation2D
             set { _blend = Math.Min(Math.Max(0, value), 1.0); }
         }
 
-        public void SetTargetKeyframe(int frame)
+        public AnimState(Animation action)
         {
-            // Note: frame is strictly less than KeyframeCount
-            if (0 <= frame && frame < KeyframeCount)
-            {
-                Blend = 0;
-                OriginKeyframe = TargetKeyframe;
-                TargetKeyframe = frame;
-            }
+            SetCurrentAction(action);
+        }
+
+        public void NextKeyframe()
+        {
+            OriginKeyframe = TargetKeyframe;
+            TargetKeyframe += 1;
         }
 
         public void SetCurrentAction(Animation action)
         {
             _action = action;
+            _tps = action.TicksPerSecond;
             Blend = 0; 
+            // Keyframe times must be initialised before Origin/Target Keyframes
+            KeyframeTimes = _action.NodeAnimationChannels[0].PositionKeys.Select(vk => vk.Time).ToList();
             OriginKeyframe = 0;
             TargetKeyframe = 0;
         }
+
+        public double _time;
+        public int FindStartFrameAtTime(double time_ticks)
+        {
+            Debug.Assert(time_ticks >= 0);
+            for (int i = 0; i < KeyframeCount; i++)
+            {
+                if (time_ticks < KeyframeTimes[i])
+                {
+                    return i - 1;
+                }
+            }
+            // return last frame if not found (because of numerical inaccuracies?)
+            return KeyframeCount - 1;
+        }
+
+        //Note: all the calculations here are done in ticks.
+        public void SetTime(double time_seconds)
+        {            
+            double time_ticks = time_seconds * TickPerSec;
+            // when time overflows we loop by default
+            double time = time_ticks % DurationInTicks;
+            int start_frame = FindStartFrameAtTime(time_seconds);
+            int end_frame = (start_frame + 1) % KeyframeCount;
+            double delta_time = KeyframeTimes[end_frame] - KeyframeTimes[start_frame];
+            // when we looped the animation
+            if (delta_time < 0.0)
+            {
+                delta_time += DurationInTicks;
+            }
+            double blend = (time - KeyframeTimes[start_frame]) / delta_time;
+            // assign results
+            OriginKeyframe = start_frame;
+            TargetKeyframe = end_frame;
+            Blend = blend;
+        }
+
     }
 }
 

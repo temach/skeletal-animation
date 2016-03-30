@@ -58,9 +58,13 @@
             this.button_ApplyCurrentAnimState = new System.Windows.Forms.Button();
             this.button_PlayKeyframeInterval = new System.Windows.Forms.Button();
             this.button_AllKeyframeIntervals = new System.Windows.Forms.Button();
+            this.button_StepOneFrame = new System.Windows.Forms.Button();
+            this.trackBar2 = new System.Windows.Forms.TrackBar();
+            this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).BeginInit();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.SuspendLayout();
             // 
             // button_start
@@ -306,7 +310,7 @@
             // 
             // trackBar1
             // 
-            this.trackBar1.Location = new System.Drawing.Point(350, 5);
+            this.trackBar1.Location = new System.Drawing.Point(401, 8);
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Size = new System.Drawing.Size(104, 45);
             this.trackBar1.TabIndex = 30;
@@ -315,7 +319,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(247, 13);
+            this.label1.Location = new System.Drawing.Point(298, 13);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(97, 13);
             this.label1.TabIndex = 31;
@@ -327,7 +331,7 @@
             this.button_ApplyCurrentAnimState.Name = "button_ApplyCurrentAnimState";
             this.button_ApplyCurrentAnimState.Size = new System.Drawing.Size(151, 23);
             this.button_ApplyCurrentAnimState.TabIndex = 32;
-            this.button_ApplyCurrentAnimState.Text = "Apply current frame+blend";
+            this.button_ApplyCurrentAnimState.Text = "Snap to current frame+blend";
             this.button_ApplyCurrentAnimState.UseVisualStyleBackColor = true;
             this.button_ApplyCurrentAnimState.Click += new System.EventHandler(this.button_ApplyCurrentAnimState_Click);
             // 
@@ -351,11 +355,40 @@
             this.button_AllKeyframeIntervals.UseVisualStyleBackColor = true;
             this.button_AllKeyframeIntervals.Click += new System.EventHandler(this.button_AllKeyframeIntervals_Click);
             // 
+            // button_StepOneFrame
+            // 
+            this.button_StepOneFrame.Location = new System.Drawing.Point(197, 8);
+            this.button_StepOneFrame.Name = "button_StepOneFrame";
+            this.button_StepOneFrame.Size = new System.Drawing.Size(95, 23);
+            this.button_StepOneFrame.TabIndex = 35;
+            this.button_StepOneFrame.Text = "Step one frame";
+            this.button_StepOneFrame.UseVisualStyleBackColor = true;
+            this.button_StepOneFrame.Click += new System.EventHandler(this.button_StepOneFrame_Click);
+            // 
+            // trackBar2
+            // 
+            this.trackBar2.Location = new System.Drawing.Point(87, 8);
+            this.trackBar2.Name = "trackBar2";
+            this.trackBar2.Size = new System.Drawing.Size(104, 45);
+            this.trackBar2.TabIndex = 36;
+            this.trackBar2.ValueChanged += new System.EventHandler(this.trackBar_AnimationTime_ValueChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(12, 13);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(73, 13);
+            this.label3.TabIndex = 37;
+            this.label3.Text = "Time seconds";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(958, 528);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.button_StepOneFrame);
             this.Controls.Add(this.button_AllKeyframeIntervals);
             this.Controls.Add(this.button_PlayKeyframeInterval);
             this.Controls.Add(this.button_ApplyCurrentAnimState);
@@ -377,12 +410,14 @@
             this.Controls.Add(this.pictureBox_main);
             this.Controls.Add(this.button_start);
             this.Controls.Add(this.trackBar1);
+            this.Controls.Add(this.trackBar2);
             this.Name = "MainForm";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -420,6 +455,9 @@
         private System.Windows.Forms.Button button_ApplyCurrentAnimState;
         private System.Windows.Forms.Button button_PlayKeyframeInterval;
         private System.Windows.Forms.Button button_AllKeyframeIntervals;
+        private System.Windows.Forms.Button button_StepOneFrame;
+        private System.Windows.Forms.TrackBar trackBar2;
+        private System.Windows.Forms.Label label3;
     }
 }
 

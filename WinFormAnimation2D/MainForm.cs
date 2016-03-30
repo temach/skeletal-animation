@@ -40,8 +40,8 @@ namespace WinFormAnimation2D
             }
         }
 
-        public EventHandler IncreaseBlendValue;
-        public EventHandler IncreaseKeyframeValue;
+        public EventHandler PlayAnimationInterval;
+        public EventHandler PlayAnimation;
         public EventHandler ClearScreen;
 
         public MainForm()
@@ -54,20 +54,14 @@ namespace WinFormAnimation2D
             this.MouseWheel += new MouseEventHandler(this.pictureBox_main_MouseMove);
             tm.Interval = 100;
             ClearScreen = delegate { this.pictureBox_main.Invalidate(); };
-            IncreaseBlendValue = delegate 
+            PlayAnimationInterval = delegate
             {
-                _currently_selected._animation_state.Blend += 0.005;
-                _world._silly_waving_action.ApplyAnimation(_currently_selected._armature
-                    , _currently_selected._animation_state);
-                this.Text = _currently_selected._animation_state.Blend.ToString(); 
-                this.pictureBox_main.Invalidate();
+                this.button_StepOneFrame_Click(null, EventArgs.Empty);
             };
-            IncreaseKeyframeValue = delegate 
+            PlayAnimation = delegate
             {
-                _currently_selected._animation_state.SetTargetKeyframe(
-                    _currently_selected._animation_state.TargetKeyframe + 1);
+                _currently_selected._animation_state.NextKeyframe();
             };
-            // world.RenderModel(this.button_start.CreateGraphics());
             _world = new World(this.pictureBox_main);
             InitFillTreeFromWorldSingleEntity();
         }
@@ -376,7 +370,7 @@ namespace WinFormAnimation2D
             {
                 return;
             }
-            tm.Tick += IncreaseBlendValue;
+            tm.Tick += PlayAnimationInterval;
             if (tm.Enabled == false)
             {
                 tm.Start();
@@ -385,7 +379,50 @@ namespace WinFormAnimation2D
 
         private void button_AllKeyframeIntervals_Click(object sender, EventArgs e)
         {
+            if (_currently_selected == null)
+            {
+                return;
+            }
+            if (_currently_selected._animation_state.Blend < 0.99)
+            {
+                _currently_selected._animation_state.Blend += 0.1;
+            }
+            else
+            {
+                _currently_selected._animation_state.Blend = 0.0;
+                _currently_selected._animation_state.NextKeyframe();
+            }
+            _world._silly_waving_action.ApplyAnimation(_currently_selected._armature
+                , _currently_selected._animation_state);
+            this.Text = _currently_selected._animation_state.Blend.ToString(); 
+            this.pictureBox_main.Invalidate();
+        }
 
+        private void button_StepOneFrame_Click(object sender, EventArgs e)
+        {
+            if (_currently_selected == null)
+            {
+                return;
+            }
+            if (_currently_selected._animation_state.Blend < 0.99)
+            {
+                _currently_selected._animation_state.Blend += 0.1;
+            }
+            _world._silly_waving_action.ApplyAnimation(_currently_selected._armature
+                , _currently_selected._animation_state);
+            this.Text = _currently_selected._animation_state.Blend.ToString(); 
+            this.pictureBox_main.Invalidate();
+        }
+
+        private void trackBar_AnimationTime_ValueChanged(object sender, EventArgs e)
+        {
+            if (_currently_selected == null)
+            {
+                return;
+            }
+            double factor = _currently_selected._animation_state.KeyframeTimes.Last() / 10.0;
+            double time_seconds = (sender as TrackBar).Value * factor;
+            _currently_selected._animation_state.SetTime(time_seconds);
         }
     }
 }

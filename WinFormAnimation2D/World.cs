@@ -150,8 +150,7 @@ namespace WinFormAnimation2D
             _silly_waving_action = new NodeInterpolator(_cur_scene, _cur_scene._inner.Animations[0]);
             NodeWrapper armature = _cur_scene.BuildArmatureWrapper("Armature");
             Node mesh = _cur_scene.FindNode("Cube");
-            AnimState state = new AnimState();
-            state.SetCurrentAction(_cur_scene._inner.Animations[0]);
+            AnimState state = new AnimState(_cur_scene._inner.Animations[0]);
             _enttity_one = new Entity(_cur_scene, mesh, armature, state);
         }
 
