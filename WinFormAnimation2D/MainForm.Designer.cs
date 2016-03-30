@@ -61,6 +61,8 @@
             this.button_StepOneFrame = new System.Windows.Forms.Button();
             this.trackBar2 = new System.Windows.Forms.TrackBar();
             this.label3 = new System.Windows.Forms.Label();
+            this.toolStripStatusLabel_AnimTime = new System.Windows.Forms.ToolStripStatusLabel();
+            this.label_keyframe_interval = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).BeginInit();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
@@ -198,7 +200,8 @@
             this.toolStripStatusLabel_camera_position,
             this.toolStripStatusLabel3,
             this.toolStripStatusLabel_entity_rotation,
-            this.toolStripStatusLabel_entity_position});
+            this.toolStripStatusLabel_entity_position,
+            this.toolStripStatusLabel_AnimTime});
             this.statusStrip1.Location = new System.Drawing.Point(0, 504);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(958, 24);
@@ -275,7 +278,6 @@
             this.treeView_entity_info.Name = "treeView_entity_info";
             this.treeView_entity_info.Size = new System.Drawing.Size(194, 172);
             this.treeView_entity_info.TabIndex = 26;
-            this.treeView_entity_info.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView_entity_info_AfterSelect);
             // 
             // checkBox_breakpoints_on
             // 
@@ -382,11 +384,26 @@
             this.label3.TabIndex = 37;
             this.label3.Text = "Time seconds";
             // 
+            // toolStripStatusLabel_AnimTime
+            // 
+            this.toolStripStatusLabel_AnimTime.Name = "toolStripStatusLabel_AnimTime";
+            this.toolStripStatusLabel_AnimTime.Size = new System.Drawing.Size(118, 15);
+            this.toolStripStatusLabel_AnimTime.Text = "toolStripStatusLabel4";
+            // 
+            // label_keyframe_interval
+            // 
+            this.label_keyframe_interval.Location = new System.Drawing.Point(760, 100);
+            this.label_keyframe_interval.Name = "label_keyframe_interval";
+            this.label_keyframe_interval.Size = new System.Drawing.Size(176, 16);
+            this.label_keyframe_interval.TabIndex = 0;
+            this.label_keyframe_interval.Text = "Keyframe interval:";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(958, 528);
+            this.Controls.Add(this.label_keyframe_interval);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.button_StepOneFrame);
             this.Controls.Add(this.button_AllKeyframeIntervals);
@@ -458,6 +475,8 @@
         private System.Windows.Forms.Button button_StepOneFrame;
         private System.Windows.Forms.TrackBar trackBar2;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_AnimTime;
+        private System.Windows.Forms.Label label_keyframe_interval;
     }
 }
 

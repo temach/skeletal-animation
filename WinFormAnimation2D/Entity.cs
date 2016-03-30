@@ -211,7 +211,7 @@ namespace WinFormAnimation2D
     /// </summary>
     class Entity
     {
-        public AnimState _animation_state;
+        public ActionState _action;
         public NodeWrapper _armature;
         public Node _node;
         public SceneWrapper _scene;
@@ -235,13 +235,13 @@ namespace WinFormAnimation2D
         }
 
         // the only public constructor
-        public Entity(SceneWrapper sc, Node mesh, NodeWrapper armature, AnimState state)
+        public Entity(SceneWrapper sc, Node mesh, NodeWrapper armature, ActionState state)
         {
             _scene = sc;
             _node = mesh;
             _extra_geometry = new Geometry(sc._inner, mesh);
             _armature = armature;
-            _animation_state = state;
+            _action = state;
         }
 
         public void RotateBy(double angle_degrees)
@@ -293,23 +293,12 @@ namespace WinFormAnimation2D
             }
         }
 
-        /// <summary>
-        /// Change the matrices for each node to 
-        /// match the orientaitons in the keyframe data.
-        /// Then during rendering the mesh will look different.
-        /// </summary>
-        public void NextKeyframe()
-        {
-            return;
-        }
-
         public bool ContainsPoint(Vector2 p)
         {
             // modify the point so it is in entity space
             var tmp = _matrix.Clone();
             tmp.Invert();
-            var entity_coord_space_point = tmp.eTransformSingleVector2(p);
-            return _extra_geometry.EntityBorderContainsPoint(entity_coord_space_point);
+            return _extra_geometry.EntityBorderContainsPoint(tmp.eTransformSingleVector2(p));
         }
         
         /// Render the model stored in EntityScene useing the Graphics object.
@@ -323,10 +312,6 @@ namespace WinFormAnimation2D
                 Util.GR.InterpolationMode = InterpolationMode.HighQualityBilinear;
                 Util.GR.SmoothingMode = SmoothingMode.AntiAlias;
             }
-            // this should be the matrix of root bone. 
-            // The root bone should store in world transaltion/rotation/scale.
-            // currently it is just _matrix.
-            //Util.GR.MultiplyTransform(_matrix);
             Util.GR.MultiplyTransform(_armature.LocTrans.eTo3x2());
             _extra_geometry.RenderEntityBorder();
             RecursiveRenderSystemDrawing(_node);
@@ -353,7 +338,6 @@ namespace WinFormAnimation2D
             Brush br = Util.GetNextBrush();
             var to_draw = vertices.Select(vec => vec.eToPointFloat()).ToArray();
             Util.GR.FillPolygon(br, to_draw);
-            // Bad code to draw a single point
             foreach (var p in to_draw)
             {
                 Util.GR.eDrawPoint(p);
@@ -382,12 +366,7 @@ namespace WinFormAnimation2D
             }
         }
 
-
-        //-------------------------------------------------------------------------------------------------
         // Render the scene.
-        // Begin at the root node of the imported data and traverse
-        // the scenegraph by multiplying subsequent local transforms
-        // together on OpenGL matrix stack.
         // one mesh, one bone policy
         private void RecursiveRenderSystemDrawing(Node nd)
         {
@@ -403,9 +382,6 @@ namespace WinFormAnimation2D
                 Matrix4x4 bone_global_mat = armature_node.GlobTrans;
                 /// bind tells the original delta in global coord, so we can find current delta
                 Matrix4x4 bind = mesh_bone.OffsetMatrix;
-                /// This does not work because even in initial state bind != armature_bone.Inverse()
-                /// but it should be equal for this to work. so let's find global transofrm for armature_bone\
-                /// then it will work ok. 
                 Matrix4x4 delta_roto = bind * bone_global_mat;
                 Util.PushMatrix();
                 Util.GR.MultiplyTransform(delta_roto.eTo3x2());
@@ -416,7 +392,6 @@ namespace WinFormAnimation2D
             {
                 RecursiveRenderSystemDrawing(child);
             }
-            // we don't want to apply this branch transform to the next branch
             Util.PopMatrix();
         }
 

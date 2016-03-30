@@ -59,7 +59,6 @@ namespace WinFormAnimation2D
         // It is a set of keyframes that describe some action
         public Animation _action;
         public SceneWrapper _scene;
-        public int _keyframe;
 
         public  NodeInterpolator(SceneWrapper sc, Animation action)
         {
@@ -68,23 +67,16 @@ namespace WinFormAnimation2D
         }
 
         // Update this particular armature to this particular frame in action (to this particular keyframe)
-        public void ApplyAnimation(NodeWrapper armature, AnimState st)
+        public void ApplyAnimation(NodeWrapper armature, ActionState st)
         {
-            if (st.TargetKeyframe < 0 || st.TargetKeyframe >= _action.NodeAnimationChannels[0].PositionKeyCount)
-            {
-                MessageBox.Show("invalid frame " + st.TargetKeyframe);
-                return;
-            }
             ChangeLocalFixedDataBlend(st);
-            //ChangeLocalWithBlend(keyframe, blend);
             ReCalculateGlobalTransform(armature);
-            _keyframe = st.OriginKeyframe;
         }
 
         /// <summary>
         /// Function to blend from one keyframe to another.
         /// </summary>
-        public void ChangeLocalFixedDataBlend(AnimState st)
+        public void ChangeLocalFixedDataBlend(ActionState st)
         {
             Debug.Assert(0 <= st.Blend && st.Blend <= 1);
             foreach (NodeAnimationChannel channel in _action.NodeAnimationChannels)
@@ -113,63 +105,6 @@ namespace WinFormAnimation2D
             }
         }
 
-        /// <summary>
-        /// blend - 0..1 how much to get close to this frame, i.e. to blend from current to this frame
-        /// Function to blend from any position to the target position
-        /// </summary>
-        public void ChangeLocalWithBlend(int frame, double blend)
-        {
-            Debug.Assert(0 <= blend && blend <= 1);
-            foreach (NodeAnimationChannel channel in _action.NodeAnimationChannels)
-            {
-                NodeWrapper bone_nd = _scene.FindNodeWrapper(channel.NodeName);
-                tk.Quaternion target_roto = tk.Quaternion.Identity;
-                if (channel.RotationKeyCount > frame)
-                {
-                    target_roto = channel.RotationKeys[frame].Value.eToOpenTK();
-                }
-                tk.Quaternion current_roto = bone_nd.LocalTransform.ExtractRotation();
-                tk.Quaternion result_roto = tk.Quaternion.Slerp(current_roto, target_roto, (float)blend);
-                tk.Vector3 target_trans = tk.Vector3.Zero;
-                if (channel.PositionKeyCount > frame)
-                {
-                    target_trans = channel.PositionKeys[frame].Value.eToOpenTK();
-                }
-                tk.Vector3 cur_trans = bone_nd.LocalTransform.ExtractTranslation();
-                tk.Vector3 result_trans = cur_trans + tk.Vector3.Multiply(target_trans - cur_trans, (float)blend);
-                // snap rotation and translation. See the long comment to NodeAnimationChannel class.
-                tk.Matrix4 result = tk.Matrix4.CreateFromQuaternion(result_roto);
-                result.Row3.Xyz = result_trans;
-                bone_nd.LocTrans = result.eToAssimp();
-            }
-        }
-
-        /// <summary>
-        /// Snap from any position to frame position.
-        /// For each channel update bone local transforms
-        /// </summary>
-        private void ChangeLocalTransform(int frame)
-        {
-            foreach (NodeAnimationChannel channel in _action.NodeAnimationChannels)
-            {
-                NodeWrapper bone_nd = _scene.FindNodeWrapper(channel.NodeName);
-                tk.Quaternion roto = tk.Quaternion.Identity;
-                if (channel.RotationKeyCount > frame)
-                {
-                    roto = channel.RotationKeys[frame].Value.eToOpenTK();
-                }
-                tk.Vector3 trans = tk.Vector3.Zero;
-                if (channel.PositionKeyCount > frame)
-                {
-                    trans = channel.PositionKeys[frame].Value.eToOpenTK();
-                }
-                // snap rotation and translation. See the long comment to NodeAnimationChannel class.
-                tk.Matrix4 mat_new = tk.Matrix4.CreateFromQuaternion(roto);
-                mat_new.Row3.Xyz = trans;
-                bone_nd.LocTrans = mat_new.eToAssimp();
-            }
-        }
-
         // Updates global transforms by walking the hierarchy 
         private void ReCalculateGlobalTransform(NodeWrapper nd)
         {
@@ -193,7 +128,7 @@ namespace WinFormAnimation2D
     /// <summary>
     /// This class knows what argumets to pass to NodeInterpolator 
     /// </summary>
-    class AnimState
+    class ActionState
     {
         public Animation _action;
 
@@ -207,13 +142,22 @@ namespace WinFormAnimation2D
         {
             get { return _action.Name; }
         }
-        public double TimeSeconds
+        public double TotalDurationSeconds
         {
             get { return _action.DurationInTicks * _action.TicksPerSecond; }
         }
-        public double DurationInTicks
+        public double TotalDurationTicks
         {
             get { return _action.DurationInTicks; }
+        }
+
+        public double CurrentTimeSeconds
+        {
+            get
+            {
+                double interval = (KeyframeTimes[TargetKeyframe] - KeyframeTimes[OriginKeyframe]);
+                return KeyframeTimes[OriginKeyframe] + interval * Blend;
+            }
         }
 
         // TickPerSec can be used to change speed.
@@ -262,15 +206,20 @@ namespace WinFormAnimation2D
             set { _blend = Math.Min(Math.Max(0, value), 1.0); }
         }
 
-        public AnimState(Animation action)
+        public ActionState(Animation action)
         {
             SetCurrentAction(action);
         }
 
-        public void NextKeyframe()
+        public void ForwardKeyframe()
         {
             OriginKeyframe = TargetKeyframe;
             TargetKeyframe += 1;
+        }
+        public void BackwardKeyframe()
+        {
+            OriginKeyframe = TargetKeyframe;
+            TargetKeyframe -= 1;
         }
 
         public void SetCurrentAction(Animation action)
@@ -284,7 +233,6 @@ namespace WinFormAnimation2D
             TargetKeyframe = 0;
         }
 
-        public double _time;
         public int FindStartFrameAtTime(double time_ticks)
         {
             Debug.Assert(time_ticks >= 0);
@@ -304,14 +252,14 @@ namespace WinFormAnimation2D
         {            
             double time_ticks = time_seconds * TickPerSec;
             // when time overflows we loop by default
-            double time = time_ticks % DurationInTicks;
+            double time = time_ticks % TotalDurationTicks;
             int start_frame = FindStartFrameAtTime(time_seconds);
             int end_frame = (start_frame + 1) % KeyframeCount;
             double delta_time = KeyframeTimes[end_frame] - KeyframeTimes[start_frame];
             // when we looped the animation
             if (delta_time < 0.0)
             {
-                delta_time += DurationInTicks;
+                delta_time += TotalDurationTicks;
             }
             double blend = (time - KeyframeTimes[start_frame]) / delta_time;
             // assign results

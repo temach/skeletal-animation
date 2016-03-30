@@ -27,11 +27,10 @@ namespace WinFormAnimation2D
 
         // State of the camera currently. We can affect this with buttons.
         private GUIConfig _gui_conf = new GUIConfig();
-        private Entity _currently_selected;
+        private Entity _current;
 
         // camera related stuff
         private Drawing2DCamera _camera;
-        private readonly float _init_zoom = 1.0f;
         private Point PictureBoxCenterPoint
         {
             get
@@ -41,7 +40,6 @@ namespace WinFormAnimation2D
         }
 
         public EventHandler PlayAnimationInterval;
-        public EventHandler PlayAnimation;
         public EventHandler ClearScreen;
 
         public MainForm()
@@ -50,18 +48,11 @@ namespace WinFormAnimation2D
             Matrix init_camera = new Matrix();
             //init_camera.Scale(_init_zoom, _init_zoom);
             _camera = new Drawing2DCamera(init_camera);
-            // we have to manually register the mousewheel event handler.
+            // manually register the mousewheel event handler.
             this.MouseWheel += new MouseEventHandler(this.pictureBox_main_MouseMove);
             tm.Interval = 100;
             ClearScreen = delegate { this.pictureBox_main.Invalidate(); };
-            PlayAnimationInterval = delegate
-            {
-                this.button_StepOneFrame_Click(null, EventArgs.Empty);
-            };
-            PlayAnimation = delegate
-            {
-                _currently_selected._animation_state.NextKeyframe();
-            };
+            PlayAnimationInterval = delegate { this.button_StepOneFrame_Click(null, EventArgs.Empty); };
             _world = new World(this.pictureBox_main);
             InitFillTreeFromWorldSingleEntity();
         }
@@ -76,14 +67,14 @@ namespace WinFormAnimation2D
             {
                 case Keys.I:
                 case Keys.O:
-                    if (_currently_selected == null)
+                    if (_current == null)
                     {
                         _camera.RotateByKey(new KeyEventArgs(keyData));
                         this.toolStripStatusLabel_camera_rotation.Text = _camera.GetRotationAngleDeg.ToString();
                     }
                     else
                     { 
-                        _currently_selected.RotateByKey(new KeyEventArgs(keyData));
+                        _current.RotateByKey(new KeyEventArgs(keyData));
                     }
                     this.pictureBox_main.Invalidate();
                     return true;
@@ -91,14 +82,14 @@ namespace WinFormAnimation2D
                 case Keys.Right:
                 case Keys.Down:
                 case Keys.Up:
-                    if (_currently_selected == null)
+                    if (_current == null)
                     {
                         _camera.MoveByKey(new KeyEventArgs(keyData));
                         this.toolStripStatusLabel_camera_position.Text = _camera.GetTranslation.ToString();
                     }
                     else
                     {
-                        _currently_selected.MoveByKey(new KeyEventArgs(keyData));
+                        _current.MoveByKey(new KeyEventArgs(keyData));
                     }
                     this.pictureBox_main.Invalidate();
                     return true; // hide this key event from other controls
@@ -166,14 +157,14 @@ namespace WinFormAnimation2D
             _m_status.RecordMouseClick(e, mouse_world_pos);
             if (_world.CheckMouseEntitySelect(_m_status))
             {
-                _currently_selected = _world.CurrentlySelected;
-                this.toolStripStatusLabel_entity_position.Text = _currently_selected.GetTranslation.ToString();
-                this.toolStripStatusLabel_entity_rotation.Text = _currently_selected.GetRotationAngleDeg.ToString();
-                this.treeView_entity_info.SelectedNode = this.treeView_entity_info.Nodes[_currently_selected.Name];
+                _current = _world.CurrentlySelected;
+                this.toolStripStatusLabel_entity_position.Text = _current.GetTranslation.ToString();
+                this.toolStripStatusLabel_entity_rotation.Text = _current.GetRotationAngleDeg.ToString();
+                this.treeView_entity_info.SelectedNode = this.treeView_entity_info.Nodes[_current.Name];
             }
             else
             {
-                _currently_selected = null;
+                _current = null;
                 this.toolStripStatusLabel_entity_position.Text = "none";
                 this.toolStripStatusLabel_entity_rotation.Text = "none";
                 this.treeView_entity_info.SelectedNode = null;
@@ -284,16 +275,6 @@ namespace WinFormAnimation2D
             // Set GR field so that we can use Sysem.Drawing2D as if it was like OpenGL
             Util.GR = e.Graphics;
             _world._renderer.SetupRender(Util.GR);
-            // camera center in sceen coords
-            Util.GR.eDrawCircle(Util.pp4, PictureBoxCenterPoint, 3);
-            // mouse unaffected
-            Util.GR.eDrawCircle(Util.pp2, Point.Round(_m_status.InnerWorldPos), 3);
-            // model unaffected
-            GraphicsState gs = Util.GR.Save();
-            _world._enttity_one.RenderModel(_world._renderer.GlobalDrawConf);
-            Util.GR.Restore(gs);
-            // currently selected in tree view, unaffected
-            HighlightSlectedNode();
             // change to world (i.e. camera) coordinates
             Util.GR.MultiplyTransform(_camera.MatrixToDrawing2D());
             // center
@@ -311,62 +292,58 @@ namespace WinFormAnimation2D
             Breakpoints.Allow = this.checkBox_breakpoints_on.Checked;
         }
 
-        // when the selected item has been changed
-        private void treeView_entity_info_AfterSelect(object sender, TreeViewEventArgs e)
+        public void SetAnimationKeyframeInterval(int origin, int target)
         {
+            this.label_keyframe_interval.Text = origin + " -> " + target;
         }
 
         private void button_PreviousKeyframe_Click(object sender, EventArgs e)
         {
-            if (_currently_selected == null)
+            if (_current == null)
             {
                 return;
             }
-            _currently_selected._animation_state.OriginKeyframe = _currently_selected._animation_state.TargetKeyframe;
-            _currently_selected._animation_state.TargetKeyframe -= 1;
-            this.Text = _currently_selected._animation_state.OriginKeyframe.ToString() 
-                + " - " + 
-                _currently_selected._animation_state.TargetKeyframe.ToString();
+            _current._action.BackwardKeyframe();
+            SetAnimationKeyframeInterval(_current._action.OriginKeyframe
+                , _current._action.TargetKeyframe);
         }
 
         private void button_NextKeyframe_Click(object sender, EventArgs e)
         {
-            if (_currently_selected == null)
+            if (_current == null)
             {
                 return;
             }
-            _currently_selected._animation_state.OriginKeyframe = _currently_selected._animation_state.TargetKeyframe;
-            _currently_selected._animation_state.TargetKeyframe += 1;
-            this.Text = _currently_selected._animation_state.OriginKeyframe.ToString() 
-                + " - " + 
-                _currently_selected._animation_state.TargetKeyframe.ToString();
+            _current._action.ForwardKeyframe();
+            SetAnimationKeyframeInterval(_current._action.OriginKeyframe
+                , _current._action.TargetKeyframe);
         }
 
         // sets the blend value for current keyframe
         private void trackBar1_ValueChanged(object sender, EventArgs e)
         {
-            if (_currently_selected == null)
+            if (_current == null)
             {
                 return;
             }
-            _currently_selected._animation_state.Blend = (sender as TrackBar).Value / 10.0;
+            _current._action.Blend = (sender as TrackBar).Value / 10.0;
         }
 
         // applies the animation to the armature
         private void button_ApplyCurrentAnimState_Click(object sender, EventArgs e)
         {
-            if (_currently_selected == null)
+            if (_current == null)
             {
                 return;
             }
-            _world._silly_waving_action.ApplyAnimation(_currently_selected._armature
-                , _currently_selected._animation_state);
+            _world._silly_waving_action.ApplyAnimation(_current._armature
+                , _current._action);
             this.pictureBox_main.Invalidate();
         }
 
         private void button_PlayKeyframeInterval_Click(object sender, EventArgs e)
         {
-            if (_currently_selected == null)
+            if (_current == null)
             {
                 return;
             }
@@ -379,50 +356,53 @@ namespace WinFormAnimation2D
 
         private void button_AllKeyframeIntervals_Click(object sender, EventArgs e)
         {
-            if (_currently_selected == null)
+            if (_current == null)
             {
                 return;
             }
-            if (_currently_selected._animation_state.Blend < 0.99)
+            if (_current._action.Blend < 0.99)
             {
-                _currently_selected._animation_state.Blend += 0.1;
+                _current._action.Blend += 0.1;
             }
             else
             {
-                _currently_selected._animation_state.Blend = 0.0;
-                _currently_selected._animation_state.NextKeyframe();
+                _current._action.Blend = 0.0;
+                _current._action.ForwardKeyframe();
             }
-            _world._silly_waving_action.ApplyAnimation(_currently_selected._armature
-                , _currently_selected._animation_state);
-            this.Text = _currently_selected._animation_state.Blend.ToString(); 
+            _world._silly_waving_action.ApplyAnimation(_current._armature
+                , _current._action);
             this.pictureBox_main.Invalidate();
+            this.toolStripStatusLabel_AnimTime.Text = "time: " + _current._action.CurrentTimeSeconds;
         }
 
         private void button_StepOneFrame_Click(object sender, EventArgs e)
         {
-            if (_currently_selected == null)
+            if (_current == null)
             {
                 return;
             }
-            if (_currently_selected._animation_state.Blend < 0.99)
+            if (_current._action.Blend < 0.99)
             {
-                _currently_selected._animation_state.Blend += 0.1;
+                _current._action.Blend += 0.1;
             }
-            _world._silly_waving_action.ApplyAnimation(_currently_selected._armature
-                , _currently_selected._animation_state);
-            this.Text = _currently_selected._animation_state.Blend.ToString(); 
+            _world._silly_waving_action.ApplyAnimation(_current._armature
+                , _current._action);
             this.pictureBox_main.Invalidate();
+            this.toolStripStatusLabel_AnimTime.Text = "time: " + _current._action.CurrentTimeSeconds;
         }
 
         private void trackBar_AnimationTime_ValueChanged(object sender, EventArgs e)
         {
-            if (_currently_selected == null)
+            if (_current == null)
             {
                 return;
             }
-            double factor = _currently_selected._animation_state.KeyframeTimes.Last() / 10.0;
+            double factor = _current._action.TotalDurationSeconds / 10.0;
             double time_seconds = (sender as TrackBar).Value * factor;
-            _currently_selected._animation_state.SetTime(time_seconds);
+            _current._action.SetTime(time_seconds);
+            _world._silly_waving_action.ApplyAnimation(_current._armature
+                , _current._action);
+            this.pictureBox_main.Invalidate();
         }
     }
 }
