@@ -34,10 +34,7 @@
             this.button_down = new System.Windows.Forms.Button();
             this.button_left = new System.Windows.Forms.Button();
             this.button_right = new System.Windows.Forms.Button();
-            this.button_resetzoom = new System.Windows.Forms.Button();
-            this.button_resetpos = new System.Windows.Forms.Button();
             this.button_stop_colors = new System.Windows.Forms.Button();
-            this.label_zoom = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -47,31 +44,26 @@
             this.toolStripStatusLabel_camera_rotation = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_camera_position = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel_entity_rotation = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_entity_position = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_AnimTime = new System.Windows.Forms.ToolStripStatusLabel();
             this.treeView_entity_info = new System.Windows.Forms.TreeView();
             this.checkBox_breakpoints_on = new System.Windows.Forms.CheckBox();
-            this.button_NextKeyframe = new System.Windows.Forms.Button();
-            this.button_PreviousKeyframe = new System.Windows.Forms.Button();
-            this.trackBar1 = new System.Windows.Forms.TrackBar();
-            this.label1 = new System.Windows.Forms.Label();
-            this.button_ApplyCurrentAnimState = new System.Windows.Forms.Button();
-            this.button_PlayKeyframeInterval = new System.Windows.Forms.Button();
-            this.button_AllKeyframeIntervals = new System.Windows.Forms.Button();
-            this.button_StepOneFrame = new System.Windows.Forms.Button();
-            this.trackBar2 = new System.Windows.Forms.TrackBar();
+            this.trackBar_time = new System.Windows.Forms.TrackBar();
             this.label3 = new System.Windows.Forms.Label();
-            this.toolStripStatusLabel_AnimTime = new System.Windows.Forms.ToolStripStatusLabel();
-            this.label_keyframe_interval = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
+            this.textBox_cli = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.listBox_display = new System.Windows.Forms.ListBox();
+            this.button_RunCli = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).BeginInit();
             this.statusStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar_time)).BeginInit();
             this.SuspendLayout();
             // 
             // button_start
             // 
-            this.button_start.Location = new System.Drawing.Point(832, 235);
+            this.button_start.Location = new System.Drawing.Point(871, 271);
             this.button_start.Name = "button_start";
             this.button_start.Size = new System.Drawing.Size(75, 23);
             this.button_start.TabIndex = 0;
@@ -97,7 +89,7 @@
             // button_up
             // 
             this.button_up.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_up.Location = new System.Drawing.Point(845, 148);
+            this.button_up.Location = new System.Drawing.Point(772, 209);
             this.button_up.Name = "button_up";
             this.button_up.Size = new System.Drawing.Size(52, 23);
             this.button_up.TabIndex = 9;
@@ -108,7 +100,7 @@
             // button_down
             // 
             this.button_down.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_down.Location = new System.Drawing.Point(845, 204);
+            this.button_down.Location = new System.Drawing.Point(772, 265);
             this.button_down.Name = "button_down";
             this.button_down.Size = new System.Drawing.Size(52, 23);
             this.button_down.TabIndex = 10;
@@ -119,7 +111,7 @@
             // button_left
             // 
             this.button_left.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_left.Location = new System.Drawing.Point(804, 175);
+            this.button_left.Location = new System.Drawing.Point(751, 236);
             this.button_left.Name = "button_left";
             this.button_left.Size = new System.Drawing.Size(52, 23);
             this.button_left.TabIndex = 11;
@@ -130,7 +122,7 @@
             // button_right
             // 
             this.button_right.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_right.Location = new System.Drawing.Point(884, 175);
+            this.button_right.Location = new System.Drawing.Point(809, 236);
             this.button_right.Name = "button_right";
             this.button_right.Size = new System.Drawing.Size(52, 23);
             this.button_right.TabIndex = 12;
@@ -138,47 +130,15 @@
             this.button_right.UseVisualStyleBackColor = true;
             this.button_right.Click += new System.EventHandler(this.button_right_Click);
             // 
-            // button_resetzoom
-            // 
-            this.button_resetzoom.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_resetzoom.Location = new System.Drawing.Point(847, 119);
-            this.button_resetzoom.Name = "button_resetzoom";
-            this.button_resetzoom.Size = new System.Drawing.Size(75, 23);
-            this.button_resetzoom.TabIndex = 16;
-            this.button_resetzoom.Text = "Reset zoom";
-            this.button_resetzoom.UseVisualStyleBackColor = true;
-            this.button_resetzoom.Click += new System.EventHandler(this.button_resetzoom_Click);
-            // 
-            // button_resetpos
-            // 
-            this.button_resetpos.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_resetpos.Location = new System.Drawing.Point(750, 119);
-            this.button_resetpos.Name = "button_resetpos";
-            this.button_resetpos.Size = new System.Drawing.Size(91, 23);
-            this.button_resetpos.TabIndex = 18;
-            this.button_resetpos.Text = "Reset Position";
-            this.button_resetpos.UseVisualStyleBackColor = true;
-            this.button_resetpos.Click += new System.EventHandler(this.button_resetpos_Click);
-            // 
             // button_stop_colors
             // 
-            this.button_stop_colors.Location = new System.Drawing.Point(832, 264);
+            this.button_stop_colors.Location = new System.Drawing.Point(871, 300);
             this.button_stop_colors.Name = "button_stop_colors";
             this.button_stop_colors.Size = new System.Drawing.Size(75, 23);
             this.button_stop_colors.TabIndex = 19;
             this.button_stop_colors.Text = "Stop colors";
             this.button_stop_colors.UseVisualStyleBackColor = true;
             this.button_stop_colors.Click += new System.EventHandler(this.button_stop_colors_Click);
-            // 
-            // label_zoom
-            // 
-            this.label_zoom.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.label_zoom.AutoSize = true;
-            this.label_zoom.Location = new System.Drawing.Point(928, 124);
-            this.label_zoom.Name = "label_zoom";
-            this.label_zoom.Size = new System.Drawing.Size(22, 13);
-            this.label_zoom.TabIndex = 17;
-            this.label_zoom.Text = "1.0";
             // 
             // label2
             // 
@@ -199,8 +159,8 @@
             this.toolStripStatusLabel_camera_rotation,
             this.toolStripStatusLabel_camera_position,
             this.toolStripStatusLabel3,
-            this.toolStripStatusLabel_entity_rotation,
             this.toolStripStatusLabel_entity_position,
+            this.toolStripStatusLabel4,
             this.toolStripStatusLabel_AnimTime});
             this.statusStrip1.Location = new System.Drawing.Point(0, 504);
             this.statusStrip1.Name = "statusStrip1";
@@ -257,13 +217,6 @@
             this.toolStripStatusLabel3.Size = new System.Drawing.Size(40, 19);
             this.toolStripStatusLabel3.Text = "entity:";
             // 
-            // toolStripStatusLabel_entity_rotation
-            // 
-            this.toolStripStatusLabel_entity_rotation.AutoSize = false;
-            this.toolStripStatusLabel_entity_rotation.Name = "toolStripStatusLabel_entity_rotation";
-            this.toolStripStatusLabel_entity_rotation.Size = new System.Drawing.Size(118, 19);
-            this.toolStripStatusLabel_entity_rotation.Text = "toolStripStatusLabel1";
-            // 
             // toolStripStatusLabel_entity_position
             // 
             this.toolStripStatusLabel_entity_position.AutoSize = false;
@@ -271,6 +224,18 @@
             this.toolStripStatusLabel_entity_position.Name = "toolStripStatusLabel_entity_position";
             this.toolStripStatusLabel_entity_position.Size = new System.Drawing.Size(118, 19);
             this.toolStripStatusLabel_entity_position.Text = "toolStripStatusLabel1";
+            // 
+            // toolStripStatusLabel4
+            // 
+            this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
+            this.toolStripStatusLabel4.Size = new System.Drawing.Size(34, 19);
+            this.toolStripStatusLabel4.Text = "time:";
+            // 
+            // toolStripStatusLabel_AnimTime
+            // 
+            this.toolStripStatusLabel_AnimTime.Name = "toolStripStatusLabel_AnimTime";
+            this.toolStripStatusLabel_AnimTime.Size = new System.Drawing.Size(118, 19);
+            this.toolStripStatusLabel_AnimTime.Text = "toolStripStatusLabel4";
             // 
             // treeView_entity_info
             // 
@@ -282,7 +247,7 @@
             // checkBox_breakpoints_on
             // 
             this.checkBox_breakpoints_on.AutoSize = true;
-            this.checkBox_breakpoints_on.Location = new System.Drawing.Point(804, 293);
+            this.checkBox_breakpoints_on.Location = new System.Drawing.Point(743, 293);
             this.checkBox_breakpoints_on.Name = "checkBox_breakpoints_on";
             this.checkBox_breakpoints_on.Size = new System.Drawing.Size(118, 17);
             this.checkBox_breakpoints_on.TabIndex = 27;
@@ -290,151 +255,96 @@
             this.checkBox_breakpoints_on.UseVisualStyleBackColor = true;
             this.checkBox_breakpoints_on.CheckedChanged += new System.EventHandler(this.checkBox_breakpoints_on_CheckedChanged);
             // 
-            // button_NextKeyframe
+            // trackBar_time
             // 
-            this.button_NextKeyframe.Location = new System.Drawing.Point(629, 8);
-            this.button_NextKeyframe.Name = "button_NextKeyframe";
-            this.button_NextKeyframe.Size = new System.Drawing.Size(104, 23);
-            this.button_NextKeyframe.TabIndex = 28;
-            this.button_NextKeyframe.Text = "Next Keyframe";
-            this.button_NextKeyframe.UseVisualStyleBackColor = true;
-            this.button_NextKeyframe.Click += new System.EventHandler(this.button_NextKeyframe_Click);
-            // 
-            // button_PreviousKeyframe
-            // 
-            this.button_PreviousKeyframe.Location = new System.Drawing.Point(511, 8);
-            this.button_PreviousKeyframe.Name = "button_PreviousKeyframe";
-            this.button_PreviousKeyframe.Size = new System.Drawing.Size(112, 23);
-            this.button_PreviousKeyframe.TabIndex = 29;
-            this.button_PreviousKeyframe.Text = "Previous Keyframe";
-            this.button_PreviousKeyframe.UseVisualStyleBackColor = true;
-            this.button_PreviousKeyframe.Click += new System.EventHandler(this.button_PreviousKeyframe_Click);
-            // 
-            // trackBar1
-            // 
-            this.trackBar1.Location = new System.Drawing.Point(401, 8);
-            this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(104, 45);
-            this.trackBar1.TabIndex = 30;
-            this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(298, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(97, 13);
-            this.label1.TabIndex = 31;
-            this.label1.Text = "Blend for animation";
-            // 
-            // button_ApplyCurrentAnimState
-            // 
-            this.button_ApplyCurrentAnimState.Location = new System.Drawing.Point(785, 8);
-            this.button_ApplyCurrentAnimState.Name = "button_ApplyCurrentAnimState";
-            this.button_ApplyCurrentAnimState.Size = new System.Drawing.Size(151, 23);
-            this.button_ApplyCurrentAnimState.TabIndex = 32;
-            this.button_ApplyCurrentAnimState.Text = "Snap to current frame+blend";
-            this.button_ApplyCurrentAnimState.UseVisualStyleBackColor = true;
-            this.button_ApplyCurrentAnimState.Click += new System.EventHandler(this.button_ApplyCurrentAnimState_Click);
-            // 
-            // button_PlayKeyframeInterval
-            // 
-            this.button_PlayKeyframeInterval.Location = new System.Drawing.Point(781, 38);
-            this.button_PlayKeyframeInterval.Name = "button_PlayKeyframeInterval";
-            this.button_PlayKeyframeInterval.Size = new System.Drawing.Size(165, 24);
-            this.button_PlayKeyframeInterval.TabIndex = 33;
-            this.button_PlayKeyframeInterval.Text = "Play current keyframe interval";
-            this.button_PlayKeyframeInterval.UseVisualStyleBackColor = true;
-            this.button_PlayKeyframeInterval.Click += new System.EventHandler(this.button_PlayKeyframeInterval_Click);
-            // 
-            // button_AllKeyframeIntervals
-            // 
-            this.button_AllKeyframeIntervals.Location = new System.Drawing.Point(785, 68);
-            this.button_AllKeyframeIntervals.Name = "button_AllKeyframeIntervals";
-            this.button_AllKeyframeIntervals.Size = new System.Drawing.Size(151, 23);
-            this.button_AllKeyframeIntervals.TabIndex = 34;
-            this.button_AllKeyframeIntervals.Text = "Play all keyframes";
-            this.button_AllKeyframeIntervals.UseVisualStyleBackColor = true;
-            this.button_AllKeyframeIntervals.Click += new System.EventHandler(this.button_AllKeyframeIntervals_Click);
-            // 
-            // button_StepOneFrame
-            // 
-            this.button_StepOneFrame.Location = new System.Drawing.Point(197, 8);
-            this.button_StepOneFrame.Name = "button_StepOneFrame";
-            this.button_StepOneFrame.Size = new System.Drawing.Size(95, 23);
-            this.button_StepOneFrame.TabIndex = 35;
-            this.button_StepOneFrame.Text = "Step one frame";
-            this.button_StepOneFrame.UseVisualStyleBackColor = true;
-            this.button_StepOneFrame.Click += new System.EventHandler(this.button_StepOneFrame_Click);
-            // 
-            // trackBar2
-            // 
-            this.trackBar2.Location = new System.Drawing.Point(87, 8);
-            this.trackBar2.Name = "trackBar2";
-            this.trackBar2.Size = new System.Drawing.Size(104, 45);
-            this.trackBar2.TabIndex = 36;
-            this.trackBar2.ValueChanged += new System.EventHandler(this.trackBar_AnimationTime_ValueChanged);
+            this.trackBar_time.Location = new System.Drawing.Point(377, 9);
+            this.trackBar_time.Name = "trackBar_time";
+            this.trackBar_time.Size = new System.Drawing.Size(104, 45);
+            this.trackBar_time.TabIndex = 36;
+            this.trackBar_time.ValueChanged += new System.EventHandler(this.trackBar_AnimationTime_ValueChanged);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 13);
+            this.label3.Location = new System.Drawing.Point(298, 9);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(73, 13);
             this.label3.TabIndex = 37;
             this.label3.Text = "Time seconds";
             // 
-            // toolStripStatusLabel_AnimTime
+            // button1
             // 
-            this.toolStripStatusLabel_AnimTime.Name = "toolStripStatusLabel_AnimTime";
-            this.toolStripStatusLabel_AnimTime.Size = new System.Drawing.Size(118, 15);
-            this.toolStripStatusLabel_AnimTime.Text = "toolStripStatusLabel4";
+            this.button1.Location = new System.Drawing.Point(871, 230);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 35);
+            this.button1.TabIndex = 38;
+            this.button1.Text = "Camera reset";
+            this.button1.UseVisualStyleBackColor = true;
             // 
-            // label_keyframe_interval
+            // textBox_cli
             // 
-            this.label_keyframe_interval.Location = new System.Drawing.Point(760, 100);
-            this.label_keyframe_interval.Name = "label_keyframe_interval";
-            this.label_keyframe_interval.Size = new System.Drawing.Size(176, 16);
-            this.label_keyframe_interval.TabIndex = 0;
-            this.label_keyframe_interval.Text = "Keyframe interval:";
+            this.textBox_cli.Location = new System.Drawing.Point(585, 11);
+            this.textBox_cli.Name = "textBox_cli";
+            this.textBox_cli.Size = new System.Drawing.Size(280, 20);
+            this.textBox_cli.TabIndex = 39;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(502, 14);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(77, 13);
+            this.label1.TabIndex = 40;
+            this.label1.Text = "Command Line";
+            // 
+            // listBox_display
+            // 
+            this.listBox_display.FormattingEnabled = true;
+            this.listBox_display.HorizontalScrollbar = true;
+            this.listBox_display.Location = new System.Drawing.Point(743, 50);
+            this.listBox_display.Name = "listBox_display";
+            this.listBox_display.Size = new System.Drawing.Size(203, 95);
+            this.listBox_display.TabIndex = 41;
+            // 
+            // button_RunCli
+            // 
+            this.button_RunCli.Location = new System.Drawing.Point(871, 9);
+            this.button_RunCli.Name = "button_RunCli";
+            this.button_RunCli.Size = new System.Drawing.Size(75, 23);
+            this.button_RunCli.TabIndex = 42;
+            this.button_RunCli.Text = "Run";
+            this.button_RunCli.UseVisualStyleBackColor = true;
+            this.button_RunCli.Click += new System.EventHandler(this.button_RunCli_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(958, 528);
-            this.Controls.Add(this.label_keyframe_interval);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.button_StepOneFrame);
-            this.Controls.Add(this.button_AllKeyframeIntervals);
-            this.Controls.Add(this.button_PlayKeyframeInterval);
-            this.Controls.Add(this.button_ApplyCurrentAnimState);
+            this.Controls.Add(this.button_RunCli);
+            this.Controls.Add(this.listBox_display);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.button_PreviousKeyframe);
-            this.Controls.Add(this.button_NextKeyframe);
+            this.Controls.Add(this.textBox_cli);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.checkBox_breakpoints_on);
             this.Controls.Add(this.treeView_entity_info);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.label_zoom);
             this.Controls.Add(this.button_stop_colors);
-            this.Controls.Add(this.button_resetpos);
-            this.Controls.Add(this.button_resetzoom);
             this.Controls.Add(this.button_right);
             this.Controls.Add(this.button_left);
             this.Controls.Add(this.button_down);
             this.Controls.Add(this.button_up);
             this.Controls.Add(this.pictureBox_main);
             this.Controls.Add(this.button_start);
-            this.Controls.Add(this.trackBar1);
-            this.Controls.Add(this.trackBar2);
+            this.Controls.Add(this.trackBar_time);
             this.Name = "MainForm";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar_time)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -448,35 +358,28 @@
         private System.Windows.Forms.Button button_down;
         private System.Windows.Forms.Button button_left;
         private System.Windows.Forms.Button button_right;
-        private System.Windows.Forms.Button button_resetzoom;
-        private System.Windows.Forms.Button button_resetpos;
         private System.Windows.Forms.Button button_stop_colors;
-        private System.Windows.Forms.Label label_zoom;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_is_selected;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_mouse_coords;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_camera_rotation;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_camera_position;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_entity_position;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_entity_rotation;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
         private System.Windows.Forms.TreeView treeView_entity_info;
         private System.Windows.Forms.CheckBox checkBox_breakpoints_on;
-        private System.Windows.Forms.Button button_NextKeyframe;
-        private System.Windows.Forms.Button button_PreviousKeyframe;
-        private System.Windows.Forms.TrackBar trackBar1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button button_ApplyCurrentAnimState;
-        private System.Windows.Forms.Button button_PlayKeyframeInterval;
-        private System.Windows.Forms.Button button_AllKeyframeIntervals;
-        private System.Windows.Forms.Button button_StepOneFrame;
-        private System.Windows.Forms.TrackBar trackBar2;
+        private System.Windows.Forms.TrackBar trackBar_time;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_entity_position;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel4;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_AnimTime;
-        private System.Windows.Forms.Label label_keyframe_interval;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox textBox_cli;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ListBox listBox_display;
+        private System.Windows.Forms.Button button_RunCli;
     }
 }
 
