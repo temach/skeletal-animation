@@ -114,16 +114,16 @@ namespace WinFormAnimation2D
         {
             switch (e.KeyData)
             {
-                case Keys.Left:
+                case Keys.A:
                     MoveBy(1, 0);
                     break;
-                case Keys.Up:
+                case Keys.W:
                     MoveBy(0, 1);
                     break;
-                case Keys.Right:
+                case Keys.D:
                     MoveBy(-1, 0);
                     break;
-                case Keys.Down:
+                case Keys.S:
                     MoveBy(0, -1);
                     break;
                 default:

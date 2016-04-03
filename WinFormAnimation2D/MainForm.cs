@@ -73,6 +73,10 @@ namespace WinFormAnimation2D
         /// </summary>
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
+            if (this.textBox_cli.Focused == true)
+            {
+                return base.ProcessCmdKey(ref msg, keyData);
+            }
             //for the active control to see the keypress, return false
             switch (keyData)
             {
@@ -89,10 +93,10 @@ namespace WinFormAnimation2D
                     }
                     this.pictureBox_main.Invalidate();
                     return true;
-                case Keys.Left:
-                case Keys.Right:
-                case Keys.Down:
-                case Keys.Up:
+                case Keys.A:
+                case Keys.D:
+                case Keys.S:
+                case Keys.W:
                     if (Current == null)
                     {
                         _camera.MoveByKey(new KeyEventArgs(keyData));
