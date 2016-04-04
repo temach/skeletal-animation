@@ -27,8 +27,9 @@ namespace WinFormAnimation2D
         public Entity _current;
         public ListBox _box_debug;
 
-        public EventHandler PlayAnimationInterval;
+        public EventHandler StepInterval;
         public EventHandler ClearScreen;
+        public EventHandler StepAll;
 
         public Dictionary<string, string> _debug = new Dictionary<string, string>();
 
@@ -40,7 +41,8 @@ namespace WinFormAnimation2D
             _box_debug = debug;
             _form = form;
             ClearScreen = delegate { _window.Invalidate(); };
-            PlayAnimationInterval = delegate { this.stepf(); };
+            StepInterval = delegate { this.stepf(); };
+            StepAll = delegate { this.stepall(); };
         }
 
         public void ShowDebug()
@@ -50,10 +52,9 @@ namespace WinFormAnimation2D
             {
                 _box_debug.Items.Add(v.Key + " = " + v.Value);
             }
-            _box_debug.Invalidate();
         }
 
-        public void jumptime(double seconds)
+        public void jumpt(double seconds)
         {
             if (_current == null)
             {
@@ -72,7 +73,7 @@ namespace WinFormAnimation2D
             {
                 return;
             }
-            _current._action.BackwardKeyframe();
+            _current._action.ReverseInterval();
             _debug["from frame"] = _current._action.OriginKeyframe.ToString();
         }
 
@@ -82,7 +83,7 @@ namespace WinFormAnimation2D
             {
                 return;
             }
-            _current._action.ForwardKeyframe();
+            _current._action.NextInterval();
             _debug["from frame"] = _current._action.OriginKeyframe.ToString();
         }
 
@@ -93,8 +94,8 @@ namespace WinFormAnimation2D
             {
                 return;
             }
-            _current._action.Blend = percent / 100.0;
-            _debug["blend"] = _current._action.Blend.ToString();
+            _current._action.KfBlend = percent / 100.0;
+            _debug["blend"] = _current._action.KfBlend.ToString();
         }
 
         // applies the animation to the armature
@@ -109,13 +110,36 @@ namespace WinFormAnimation2D
             _window.Invalidate();
         }
 
-        public void playall()
+        public void playall(bool on)
         {
             if (_current == null)
             {
                 return;
             }
-            _timer.Tick += PlayAnimationInterval;
+            if (on)
+            {
+                //_current._action.SetTime(0);
+                _current._action.Loop = true;
+                _timer.Tick += StepAll;
+                if (_timer.Enabled == false)
+                {
+                    _timer.Start();
+                }
+            }
+            else
+            {
+                _current._action.Loop = false;
+                _timer.Tick -= StepAll;
+            }
+        }
+
+        public void playinterval()
+        {
+            if (_current == null)
+            {
+                return;
+            }
+            _timer.Tick += StepInterval;
             if (_timer.Enabled == false)
             {
                 _timer.Start();
@@ -128,14 +152,14 @@ namespace WinFormAnimation2D
             {
                 return;
             }
-            if (_current._action.Blend < 0.99)
+            if (_current._action.KfBlend < 0.99)
             {
-                _current._action.Blend += 0.1;
+                _current._action.KfBlend += 0.1;
             }
             else
             {
-                _current._action.Blend = 0.0;
-                _current._action.ForwardKeyframe();
+                _current._action.KfBlend = 0.0;
+                _current._action.NextInterval();
             }
             _world._silly_waving_action.ApplyAnimation(_current._armature
                 , _current._action);
@@ -149,9 +173,9 @@ namespace WinFormAnimation2D
             {
                 return;
             }
-            if (_current._action.Blend < 0.99)
+            if (_current._action.KfBlend < 0.99)
             {
-                _current._action.Blend += 0.1;
+                _current._action.KfBlend += 0.1;
             }
             _world._silly_waving_action.ApplyAnimation(_current._armature
                 , _current._action);
@@ -159,34 +183,52 @@ namespace WinFormAnimation2D
             _form.SetAnimTime(_current._action.CurrentTimeSeconds);
         }
 
+        public void help()
+        {
+            _debug["help"] = string.Join(", ", this.GetType().GetMethods().Select(f => f.Name));
+            ShowDebug();
+        }
+
+        public void SetError(string msg)
+        {
+            _debug["err"] = msg;
+            ShowDebug();
+        }
+
         public void RunCmd(string input)
         {
-            string[] tokens = input.Trim(' ').Split(' ');
-            int qty_args = tokens.Length - 1;
-            object[] fargs = new object[qty_args];
-            string fname = tokens[0];
-            for (int k = 0; k < qty_args; k++)
-            {
-                string s = tokens[k];
-                // as int?
-                int i;
-                if (int.TryParse(s, out i)) { fargs[k] = i; continue; }
-                // as double?
-                double d;
-                if (double.TryParse(s, out d)) { fargs[k] = d;  continue; }
-                // then string
-                fargs[k] = s;
-            }
+            IEnumerable<string> tokens = input.Trim(' ').Split(' ');
+            int qty_args = tokens.Count() - 1;
+            string fname = tokens.First();
             // find the function
-            MethodInfo cmdinfo = this.GetType().GetMethod((string)fname, BindingFlags.Public | BindingFlags.Instance);
+            MethodInfo cmdinfo = this.GetType()
+                .GetMethod((string)fname, BindingFlags.Public | BindingFlags.Instance);
             if (cmdinfo == null)
             {
-                _debug["help"] = string.Join(", ", this.GetType().GetMethods().Select(f => f.Name));
+                SetError("cmd wrong name");
+                help();
+                return;
             }
-            else
+            // get converter for each parameter
+            IEnumerable<TypeConverter> arg_converters = cmdinfo.GetParameters()
+                .Select(p => TypeDescriptor.GetConverter(p.ParameterType));
+            if (qty_args < arg_converters.Count())
             {
-                cmdinfo.Invoke(this, fargs);
+                SetError("cmd takes " + arg_converters.Count() + " args");
+                return;
             }
+            // for converted output
+            var fargs = new List<object>(qty_args);
+            foreach (var pair in tokens.Skip(1).Zip(arg_converters, (token,conv) => new { t = token, c = conv}))
+            {
+                if (! pair.c.IsValid(pair.t))
+                {
+                    SetError("can not convert '" + pair.t + "'");
+                    return;
+                }
+                fargs.Add(pair.c.ConvertFromString(pair.t));
+            }
+            cmdinfo.Invoke(this, fargs.ToArray());
             ShowDebug();
         }
     }

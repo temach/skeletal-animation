@@ -78,7 +78,7 @@ namespace WinFormAnimation2D
         /// </summary>
         public void ChangeLocalFixedDataBlend(ActionState st)
         {
-            Debug.Assert(0 <= st.Blend && st.Blend <= 1);
+            Debug.Assert(0 <= st.KfBlend && st.KfBlend <= 1);
             foreach (NodeAnimationChannel channel in _action.NodeAnimationChannels)
             {
                 NodeWrapper bone_nd = _scene.FindNodeWrapper(channel.NodeName);
@@ -89,7 +89,7 @@ namespace WinFormAnimation2D
                     target_roto = channel.RotationKeys[st.TargetKeyframe].Value.eToOpenTK();
                 }
                 tk.Quaternion start_frame_roto = channel.RotationKeys[st.OriginKeyframe].Value.eToOpenTK();
-                tk.Quaternion result_roto = tk.Quaternion.Slerp(start_frame_roto, target_roto, (float)st.Blend);
+                tk.Quaternion result_roto = tk.Quaternion.Slerp(start_frame_roto, target_roto, (float)st.KfBlend);
                 // now translation
                 tk.Vector3 target_trans = tk.Vector3.Zero;
                 if (channel.PositionKeyCount > st.TargetKeyframe)
@@ -97,7 +97,7 @@ namespace WinFormAnimation2D
                     target_trans = channel.PositionKeys[st.TargetKeyframe].Value.eToOpenTK();
                 }
                 tk.Vector3 cur_trans = channel.PositionKeys[st.OriginKeyframe].Value.eToOpenTK();
-                tk.Vector3 result_trans = cur_trans + tk.Vector3.Multiply(target_trans - cur_trans, (float)st.Blend);
+                tk.Vector3 result_trans = cur_trans + tk.Vector3.Multiply(target_trans - cur_trans, (float)st.KfBlend);
                 // combine rotation and translation
                 tk.Matrix4 result = tk.Matrix4.CreateFromQuaternion(result_roto);
                 result.Row3.Xyz = result_trans;
@@ -137,6 +137,10 @@ namespace WinFormAnimation2D
         {
             get { return KeyframeTimes.Count; }
         }
+        public int FinalKeyframe
+        {
+            get { return KeyframeCount - 1; }
+        }
 
         public string Name
         {
@@ -156,7 +160,7 @@ namespace WinFormAnimation2D
             get
             {
                 double interval = (KeyframeTimes[TargetKeyframe] - KeyframeTimes[OriginKeyframe]);
-                return KeyframeTimes[OriginKeyframe] + interval * Blend;
+                return KeyframeTimes[OriginKeyframe] + interval * KfBlend;
             }
         }
 
@@ -199,11 +203,26 @@ namespace WinFormAnimation2D
         }
 
         // 0.0 <= Blend <= 1.0, how much in between two keyframes are we
-        private double _blend;
-        public double Blend
+        private double _kf_blend;
+        public double KfBlend
         {
-            get { return _blend; }
-            set { _blend = Math.Min(Math.Max(0, value), 1.0); }
+            get { return _kf_blend; }
+            set { _kf_blend = Math.Min(Math.Max(0, value), 1.0); }
+        }
+
+        public bool _loop;
+        public bool Loop
+        {
+            get {
+                return _loop;
+            }
+            set { 
+                _loop = value;
+                if (_loop)
+                {
+                    SetTime(0);
+                }
+            }
         }
 
         public ActionState(Animation action)
@@ -211,22 +230,25 @@ namespace WinFormAnimation2D
             SetCurrentAction(action);
         }
 
-        public void ForwardKeyframe()
+        public void NextInterval()
         {
-            OriginKeyframe = TargetKeyframe;
-            TargetKeyframe += 1;
+            OriginKeyframe = Loop ? TargetKeyframe % (FinalKeyframe) : TargetKeyframe;
+            TargetKeyframe = OriginKeyframe + 1;
+            KfBlend = 0.0;
         }
-        public void BackwardKeyframe()
+
+        public void ReverseInterval()
         {
             OriginKeyframe = TargetKeyframe;
             TargetKeyframe -= 1;
+            KfBlend = 1.0 - KfBlend;
         }
 
         public void SetCurrentAction(Animation action)
         {
             _action = action;
             _tps = action.TicksPerSecond;
-            Blend = 0; 
+            KfBlend = 0; 
             // Keyframe times must be initialised before Origin/Target Keyframes
             KeyframeTimes = _action.NodeAnimationChannels[0].PositionKeys.Select(vk => vk.Time).ToList();
             OriginKeyframe = 0;
@@ -265,7 +287,7 @@ namespace WinFormAnimation2D
             // assign results
             OriginKeyframe = start_frame;
             TargetKeyframe = end_frame;
-            Blend = blend;
+            KfBlend = blend;
         }
 
     }
