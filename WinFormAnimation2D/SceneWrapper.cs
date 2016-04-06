@@ -110,6 +110,27 @@ namespace WinFormAnimation2D
             }
         }
 
+        public void NodeNamesAreUnique()
+        {
+            var name_set = new HashSet<string>();
+            InnerRecurCheckNamesUnique(_inner.RootNode, name_set);
+        }
+
+        public void InnerRecurCheckNamesUnique(Node nd, HashSet<string> nd_names)
+        {
+            if (nd_names.Contains(nd.Name))
+            {
+                throw new Exception("Node names in scene are not unique. Can not proceed.");
+            }
+            else
+            {
+                nd_names.Add(nd.Name);
+            }
+            foreach (var child in nd.Children)
+            {
+                InnerRecurCheckNamesUnique(child, nd_names);
+            }
+        }
 
     }
 }

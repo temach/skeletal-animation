@@ -142,11 +142,14 @@ namespace WinFormAnimation2D
                 EnablePolygonModeFill = true,
                 EnableLight = true,
             };
-            byte[] filedata = Properties.Resources.mamonth_3;
-            MemoryStream sphere = new MemoryStream(filedata);
-            _cur_scene = new SceneWrapper(LoadScene(sphere, "dae"));
-            _cur_scene.NameUnnamedMeshes();
+        }
 
+        public void LoadScene(byte[] filedata)
+        {
+            MemoryStream sphere = new MemoryStream(filedata);
+            _cur_scene = new SceneWrapper(BuildAssimpScene(sphere, "dae"));
+            _cur_scene.NameUnnamedMeshes();
+            _cur_scene.NodeNamesAreUnique();
             _silly_waving_action = new NodeInterpolator(_cur_scene, _cur_scene._inner.Animations[0]);
             NodeWrapper armature = _cur_scene.BuildArmatureWrapper("Armature");
             Node mesh = _cur_scene.FindNode("Cube");
@@ -154,7 +157,7 @@ namespace WinFormAnimation2D
             _enttity_one = new Entity(_cur_scene, mesh, armature, state);
         }
 
-        public Scene LoadScene(MemoryStream model_data, string format_hint)
+        public Scene BuildAssimpScene(MemoryStream model_data, string format_hint)
         {
             Scene cur_scene;
             using (var importer = new AssimpContext())
