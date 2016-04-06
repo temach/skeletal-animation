@@ -258,7 +258,12 @@ namespace WinFormAnimation2D
         public int FindStartFrameAtTime(double time_ticks)
         {
             Debug.Assert(time_ticks >= 0);
-            for (int i = 0; i < KeyframeCount; i++)
+            // sometimes first time is non zero (e.g. 0.045)
+            if (time_ticks <= KeyframeTimes[0])
+            {
+                return 0;
+            }
+            for (int i = 1; i < KeyframeCount; i++)
             {
                 if (time_ticks < KeyframeTimes[i])
                 {
