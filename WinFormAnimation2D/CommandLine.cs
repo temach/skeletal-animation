@@ -62,7 +62,7 @@ namespace WinFormAnimation2D
             }
             _current._action.SetTime(seconds);
             _form.SetAnimTime(seconds);
-            _world._silly_waving_action.ApplyAnimation(_current._armature
+            _world._action_one.ApplyAnimation(_current._armature
                 , _current._action);
             _window.Invalidate();
         }
@@ -105,7 +105,7 @@ namespace WinFormAnimation2D
             {
                 return;
             }
-            _world._silly_waving_action.ApplyAnimation(_current._armature
+            _world._action_one.ApplyAnimation(_current._armature
                 , _current._action);
             _window.Invalidate();
         }
@@ -161,7 +161,7 @@ namespace WinFormAnimation2D
                 _current._action.KfBlend = 0.0;
                 _current._action.NextInterval();
             }
-            _world._silly_waving_action.ApplyAnimation(_current._armature
+            _world._action_one.ApplyAnimation(_current._armature
                 , _current._action);
             _window.Invalidate();
             _form.SetAnimTime(_current._action.CurrentTimeSeconds);
@@ -177,7 +177,7 @@ namespace WinFormAnimation2D
             {
                 _current._action.KfBlend += 0.1;
             }
-            _world._silly_waving_action.ApplyAnimation(_current._armature
+            _world._action_one.ApplyAnimation(_current._armature
                 , _current._action);
             _window.Invalidate();
             _form.SetAnimTime(_current._action.CurrentTimeSeconds);

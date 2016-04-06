@@ -19,7 +19,7 @@ namespace WinFormAnimation2D
 {
 
     // Node with extended properties
-    class NodeWrapper
+    class BoneNode
     {
         public Node _inner;
         public Matrix4 GlobalTransform;
@@ -35,13 +35,13 @@ namespace WinFormAnimation2D
             set {  LocalTransform = value.eToOpenTK(); }
         }
 
-        public NodeWrapper Parent;
-        public List<NodeWrapper> Children;
+        public BoneNode Parent;
+        public List<BoneNode> Children;
 
-        public NodeWrapper(Node assimp_node)
+        public BoneNode(Node assimp_node)
         {
             _inner = assimp_node;
-            Children = new List<NodeWrapper>(assimp_node.ChildCount);
+            Children = new List<BoneNode>(assimp_node.ChildCount);
         }
 
     }
@@ -67,7 +67,7 @@ namespace WinFormAnimation2D
         }
 
         // Update this particular armature to this particular frame in action (to this particular keyframe)
-        public void ApplyAnimation(NodeWrapper armature, ActionState st)
+        public void ApplyAnimation(BoneNode armature, ActionState st)
         {
             ChangeLocalFixedDataBlend(st);
             ReCalculateGlobalTransform(armature);
@@ -81,7 +81,7 @@ namespace WinFormAnimation2D
             Debug.Assert(0 <= st.KfBlend && st.KfBlend <= 1);
             foreach (NodeAnimationChannel channel in _action.NodeAnimationChannels)
             {
-                NodeWrapper bone_nd = _scene.FindNodeWrapper(channel.NodeName);
+                BoneNode bone_nd = _scene.GetBoneNode(channel.NodeName);
                 // now rotation
                 tk.Quaternion target_roto = tk.Quaternion.Identity;
                 if (channel.RotationKeyCount > st.TargetKeyframe)
@@ -106,7 +106,7 @@ namespace WinFormAnimation2D
         }
 
         // Updates global transforms by walking the hierarchy 
-        private void ReCalculateGlobalTransform(NodeWrapper nd)
+        private void ReCalculateGlobalTransform(BoneNode nd)
         {
             if (nd.Parent != null)
             {

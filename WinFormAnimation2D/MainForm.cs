@@ -321,7 +321,7 @@ namespace WinFormAnimation2D
             double factor = Current._action.TotalDurationSeconds / 10.0;
             double time_seconds = (sender as TrackBar).Value * factor;
             Current._action.SetTime(time_seconds);
-            _world._silly_waving_action.ApplyAnimation(Current._armature
+            _world._action_one.ApplyAnimation(Current._armature
                 , Current._action);
             this.pictureBox_main.Invalidate();
         }

@@ -18,10 +18,10 @@ namespace WinFormAnimation2D
 {
     class ArmatureEntity
     {
-        public NodeWrapper _armature;
+        public BoneNode _armature;
         public Scene _scene;
 
-        public ArmatureEntity(Scene sc, NodeWrapper arma)
+        public ArmatureEntity(Scene sc, BoneNode arma)
         {
             _armature = arma;
             _scene = sc;

@@ -212,7 +212,7 @@ namespace WinFormAnimation2D
     class Entity
     {
         public ActionState _action;
-        public NodeWrapper _armature;
+        public BoneNode _armature;
         public Node _node;
         public SceneWrapper _scene;
         public Geometry _extra_geometry;
@@ -235,7 +235,7 @@ namespace WinFormAnimation2D
         }
 
         // the only public constructor
-        public Entity(SceneWrapper sc, Node mesh, NodeWrapper armature, ActionState state)
+        public Entity(SceneWrapper sc, Node mesh, BoneNode armature, ActionState state)
         {
             _scene = sc;
             _node = mesh;
@@ -376,17 +376,19 @@ namespace WinFormAnimation2D
             foreach(int mesh_id in nd.MeshIndices)
             {
                 Mesh cur_mesh = _scene._inner.Meshes[mesh_id];
-                Bone mesh_bone = cur_mesh.Bones[0];
-                // a bone transform is more than by what we need to trasnform the model
-                NodeWrapper armature_node = _scene.FindNodeWrapper(mesh_bone.Name);
-                Matrix4x4 bone_global_mat = armature_node.GlobTrans;
-                /// bind tells the original delta in global coord, so we can find current delta
-                Matrix4x4 bind = mesh_bone.OffsetMatrix;
-                Matrix4x4 delta_roto = bind * bone_global_mat;
-                Util.PushMatrix();
-                Util.GR.MultiplyTransform(delta_roto.eTo3x2());
-                RenderMesh(cur_mesh);
-                Util.PopMatrix();
+                foreach (Bone bone in cur_mesh.Bones)
+                {
+                    // a bone transform is more than by what we need to trasnform the model
+                    BoneNode armature_node = _scene.GetBoneNode(bone.Name);
+                    Matrix4x4 bone_global_mat = armature_node.GlobTrans;
+                    /// bind tells the original delta in global coord, so we can find current delta
+                    Matrix4x4 bind = bone.OffsetMatrix;
+                    Matrix4x4 delta_roto = bind * bone_global_mat;
+                    Util.PushMatrix();
+                    Util.GR.MultiplyTransform(delta_roto.eTo3x2());
+                    RenderMesh(cur_mesh);
+                    Util.PopMatrix();
+                }
             }
             foreach (Node child in nd.Children)
             {

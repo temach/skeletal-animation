@@ -13,51 +13,68 @@ namespace WinFormAnimation2D
     class SceneWrapper
     {
         public Scene _inner;
-        public Dictionary<Node,NodeWrapper> _node2wrapper = new Dictionary<Node,NodeWrapper>();
+        // collada file stores armature as a separate node
+        public Dictionary<string,BoneNode> _name2bone_node = new Dictionary<string,BoneNode>();
+        public Dictionary<string,Node> _name2node = new Dictionary<string, Node>();
 
         public SceneWrapper(Scene sc)
         {
             _inner = sc;
+            InnerBuildNodeDict(sc.RootNode);
         }
 
-        public NodeWrapper GetWrapperForNode(Node nd)
+        public void InnerBuildNodeDict(Node nd)
         {
-            return _node2wrapper[nd];
+            _name2node[nd.Name] = nd;
+            foreach (var child in nd.Children)
+            {
+                InnerBuildNodeDict(child);
+            }
         }
 
-        public NodeWrapper BuildArmatureWrapper(string armature_root_name)
+        public Node GetNode(string name)
+        {
+            return _name2node[name];
+        }
+
+        public BoneNode GetBoneNode(string node_name)
+        {
+            return _name2bone_node[node_name];
+        }
+
+        public BoneNode BuildBoneNodes(string armature_root_name)
         {
             Node armature_root = InnerRecurFindNode(_inner.RootNode, armature_root_name);
-            NodeWrapper root = InnerRecurBuildArmature(armature_root);
+            BoneNode root = InnerRecurBuildBones(armature_root);
             return root;
         }
 
-        private NodeWrapper InnerRecurBuildArmature(Node nd)
+        private BoneNode InnerRecurBuildBones(Node nd)
         {
-            var w_current = new NodeWrapper(nd);
-            w_current.GlobTrans = GetArmatureGlobalTransform(nd);
-            w_current.LocTrans = nd.Transform;
+            var current = new BoneNode(nd);
+            current.GlobTrans = GetNodeGlobalTransform(nd);
+            current.LocTrans = nd.Transform;
             // add to dict for faster lookup
-            _node2wrapper[nd] = w_current;
+            _name2bone_node[nd.Name] = current;
             foreach (var child in nd.Children)
             {
-                NodeWrapper w_child = InnerRecurBuildArmature(child);
-                w_child.Parent = w_current;
-                w_current.Children.Add(w_child);
+                BoneNode w_child = InnerRecurBuildBones(child);
+                w_child.Parent = current;
+                current.Children.Add(w_child);
             }
-            return w_current;
+            return current;
         }
 
         /// <summary>
-        /// Get the armature node and trace back its changes
+        /// Get the bone transform and trace back its changes
         /// </summary>
-        /// <param name="bone"></param>
+        /// <param name="nd"></param>
         /// <returns></returns>
-        public Matrix4x4 GetArmatureGlobalTransform(Node bone)
+        public Matrix4x4 GetNodeGlobalTransform(Node nd)
         {
             Matrix4x4 ret = new Matrix4x4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-            ret *= bone.Transform;
-            Node cur = bone;
+            ret *= nd.Transform;
+            Node cur = nd;
             while (cur.Parent != null)
             {
                 ret *= cur.Parent.Transform;
@@ -66,13 +83,8 @@ namespace WinFormAnimation2D
             return ret;
         }
 
-        // for getting the bone nodes
-        public NodeWrapper FindNodeWrapper(string node_name)
-        {
-            return GetWrapperForNode(FindNode(node_name));
-        }
-
         // Use only NodeWrapper in the interface to outside
+        // Deprecated use GetNode
         public Node FindNode(string node_name)
         {
             return InnerRecurFindNode(_inner.RootNode, node_name);

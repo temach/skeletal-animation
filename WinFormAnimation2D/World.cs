@@ -125,7 +125,7 @@ namespace WinFormAnimation2D
         public Renderer _renderer = null;
 
         public SceneWrapper _cur_scene;
-        public NodeInterpolator _silly_waving_action;
+        public NodeInterpolator _action_one;
 
         private Entity _currently_selected;
         public Entity CurrentlySelected
@@ -150,8 +150,9 @@ namespace WinFormAnimation2D
             _cur_scene = new SceneWrapper(BuildAssimpScene(sphere, "dae"));
             _cur_scene.NameUnnamedMeshes();
             _cur_scene.NodeNamesAreUnique();
-            _silly_waving_action = new NodeInterpolator(_cur_scene, _cur_scene._inner.Animations[0]);
-            NodeWrapper armature = _cur_scene.BuildArmatureWrapper("Armature");
+            // load other data
+            _action_one = new NodeInterpolator(_cur_scene, _cur_scene._inner.Animations[0]);
+            BoneNode armature = _cur_scene.BuildBoneNodes("Armature");
             Node mesh = _cur_scene.FindNode("Cube");
             ActionState state = new ActionState(_cur_scene._inner.Animations[0]);
             _enttity_one = new Entity(_cur_scene, mesh, armature, state);
