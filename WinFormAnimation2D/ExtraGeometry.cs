@@ -24,46 +24,45 @@ namespace WinFormAnimation2D
 
     class AxiAlignedBoundingBox
     {
-        public RectangleF _rect;
+        public Vector3 _zero_near;
+        public Vector3 _zero_far;
         public object Source;
 
-        public Vector2 Center
+        public Vector3 Center
         {
-            get { return new Vector2(_rect.X + _rect.Width/2.0f, _rect.Y + _rect.Height/2.0f); }
+            get { return Vector3.Divide(Vector3.Add(_zero_near,_zero_far), 2.0f);  }
         }
-        public Vector2 ZeroNear
+
+        // change from the 3d model into 2d program space just discard Z coordinate
+        public RectangleF Rect
         {
-            get { return new Vector2(_rect.X, _rect.Y); }
-        }
-        public Vector2 ZeroFar
-        {
-            get { return new Vector2(_rect.Right, _rect.Bottom); }
+            get
+            {
+                return new RectangleF(_zero_near.X, _zero_near.Y
+                    , _zero_far.X - _zero_near.X
+                    , _zero_far.Y - _zero_near.Y
+                );
+            }
         }
 
         public AxiAlignedBoundingBox(object source, BoundingVectors bounds)
         {
             this.Source = source;
-            // change from the 3d model into 2d program space just discard Z coordinate
-            _rect = new RectangleF(bounds.ZeroNear.X, bounds.ZeroNear.Y
-                , bounds.ZeroFar.X - bounds.ZeroNear.X
-                , bounds.ZeroFar.Y - bounds.ZeroNear.Y
-            );
+            _zero_far = bounds.ZeroFar.eToOpenTK();
+            _zero_near = bounds.ZeroNear.eToOpenTK();
         }
 
         public AxiAlignedBoundingBox(object source, Vector3D zero_near, Vector3D zero_far)
         {
             this.Source = source;
-            // change from the 3d model into 2d program space just discard Z coordinate
-            _rect = new RectangleF(zero_near.X, zero_near.Y
-                , zero_far.X - zero_near.X
-                , zero_far.Y - zero_near.Y
-            );
+            _zero_far = zero_far.eToOpenTK();
+            _zero_near = zero_near.eToOpenTK();
         }
 
         public bool CheckContainsPoint(Vector2 p)
         {
-            if ((ZeroNear.X < p.X && p.X < ZeroFar.X)
-                && (ZeroNear.Y < p.Y && p.Y < ZeroFar.Y))
+            if ((_zero_near.X < p.X && p.X < _zero_far.X)
+                && (_zero_near.Y < p.Y && p.Y < _zero_far.Y))
             {
                 return true;
             }
@@ -72,7 +71,7 @@ namespace WinFormAnimation2D
 
         public void Render()
         {
-            Util.GR.DrawRectangle(Util.pp4, Rectangle.Round(this._rect));
+            Util.GR.DrawRectangle(Util.pp4, Rectangle.Round(this.Rect));
         }
 
     }
@@ -88,10 +87,10 @@ namespace WinFormAnimation2D
         /// Build geometry data for node (usually use only for one of the children of scene.RootNode)
         public Geometry(Scene sc, Node nd)
         {
-            Matrix4x4 id = Matrix4x4.Identity;
-            Vector3D zero_near = new Vector3D(1e10f, 1e10f, 1e10f);
-        	Vector3D zero_far = new Vector3D(-1e10f, -1e10f, -1e10f);
-            CalcBoundingRect(sc, nd, ref zero_near, ref zero_far, ref id);
+            Matrix4x4 mat_id = Matrix4x4.Identity;
+            Vector3D zero_near = new Vector3D(float.MaxValue, float.MaxValue, float.MaxValue);
+            Vector3D zero_far = new Vector3D(float.MinValue, float.MinValue, float.MinValue);
+            CalcBoundingRect(sc, nd, ref zero_near, ref zero_far, ref mat_id);
             // change from the 3d model into 2d program space
             _entity_border = new AxiAlignedBoundingBox(nd, zero_near, zero_far);
         }
@@ -107,7 +106,7 @@ namespace WinFormAnimation2D
                 foreach (int index in node.MeshIndices)
                 {
                     Mesh mesh = sc.Meshes[index];
-                    var bounds = GetMinMaxForMesh(mesh, cur_mat);
+                    BoundingVectors bounds = GetMinMaxForMesh(mesh, cur_mat);
                     // build mesh bounding box
                     _mesh_borders.Add(new AxiAlignedBoundingBox(mesh, bounds));
                     // check for new min/max with respect to whole scene
@@ -130,8 +129,8 @@ namespace WinFormAnimation2D
         /// Get minimum and maximum vectors from the mesh after trasnformation by matrix.
         public BoundingVectors GetMinMaxForMesh(Mesh mesh, Matrix4x4 mat)
         {
-            Vector3D zero_near = new Vector3D(1e10f, 1e10f, 1e10f);
-            Vector3D zero_far = new Vector3D(-1e10f, -1e10f, -1e10f);
+            Vector3D zero_near = new Vector3D(float.MaxValue, float.MaxValue, float.MaxValue);
+            Vector3D zero_far = new Vector3D(float.MinValue, float.MinValue, float.MinValue);
             for (int i = 0; i < mesh.VertexCount; i++)
             {
                 Vector3D vertex = mesh.Vertices[i];
@@ -158,18 +157,6 @@ namespace WinFormAnimation2D
             return null;
         }
 
-        public bool MeshBorderContainsPoint(Vector2 point)
-        {
-            foreach (AxiAlignedBoundingBox border in _mesh_borders)
-            {
-                if (border.CheckContainsPoint(point))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-        
         public bool EntityBorderContainsPoint(Vector2 point)
         {
             return _entity_border.CheckContainsPoint(point);
