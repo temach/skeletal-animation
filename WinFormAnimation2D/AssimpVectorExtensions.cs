@@ -36,7 +36,7 @@ namespace WinFormAnimation2D
         /// <summary>
         /// Convert assimp 3D vector to opentk 2D vector.
         /// </summary>
-        public static tk.Vector2 eAs2DandOpenTK(this ai.Vector3D v)
+        public static tk.Vector2 eAs2D_OpenTK(this ai.Vector3D v)
         {
             return new tk.Vector2(v.X, v.Y);
         }

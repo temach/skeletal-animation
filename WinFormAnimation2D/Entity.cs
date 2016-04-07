@@ -219,6 +219,7 @@ namespace WinFormAnimation2D
         public DrawConfig _draw_conf;
         public Matrix _matrix = new Matrix();
         private readonly float _motion_speed = 10.0f;
+        public Dictionary<Vector3D,Matrix4x4> _vertex2matrix = new Dictionary<Vector3D, Matrix4x4>();
 
         public string Name
         {
@@ -312,6 +313,9 @@ namespace WinFormAnimation2D
                 Util.GR.InterpolationMode = InterpolationMode.HighQualityBilinear;
                 Util.GR.SmoothingMode = SmoothingMode.AntiAlias;
             }
+            // first pass: calculate a matrix for each vertex
+            RecursiveTransformVertices(_node, _armature.LocTrans);
+            // second pass: render with this matrix
             Util.GR.MultiplyTransform(_armature.LocTrans.eTo3x2());
             _extra_geometry.RenderEntityBorder();
             RecursiveRenderSystemDrawing(_node);
@@ -354,25 +358,44 @@ namespace WinFormAnimation2D
             }
         }
 
-        public void RenderMesh(Mesh mesh)
+        // Render the scene.
+        // each vertex at most one bone policy
+        private void RecursiveRenderSystemDrawing(Node nd)
         {
-            foreach (Face cur_face in mesh.Faces)
+            foreach(int mesh_id in nd.MeshIndices)
             {
-                foreach (var vert_id in cur_face.Indices)
+                Mesh cur_mesh = _scene._inner.Meshes[mesh_id];
+                foreach (Face cur_face in cur_mesh.Faces)
                 {
-                    Vector2 pos = mesh.Vertices[vert_id].eAs2DandOpenTK();
-                    RenderVertex(pos);
+                    foreach (var vert_id in cur_face.Indices)
+                    {
+                        // we must get the new vertex position here
+                        Matrix4 delta = _vertex2matrix[cur_mesh.Vertices[vert_id]].eToOpenTK();
+                        Vector3 default_pose = cur_mesh.Vertices[vert_id].eToOpenTK();
+                        Vector3 trans;
+                        Vector3.Transform(ref default_pose, ref delta, out trans);
+                        RenderVertex(trans.eTo2D());
+                    }
                 }
+            }
+            foreach (Node child in nd.Children)
+            {
+                RecursiveRenderSystemDrawing(child);
             }
         }
 
-        // Render the scene.
-        // one mesh, one bone policy
-        private void RecursiveRenderSystemDrawing(Node nd)
+        // First pass: transform all vertices in a mesh according to bone
+        // here we must associate a matrix with each bone (maybe with each vertex_id??)
+        // then we multiply the current_bone matrix with the one we had before 
+        // (perhaps it was identity, perhaps it was already some matrix (if 
+        // the bone influences many vertices) )
+        // then we store this multiplied matrix.
+        // in the render function we get a vertex_id, so we can find the matrix to apply 
+        // to the vertex, then we send the vertex to OpenGL
+        public void RecursiveTransformVertices(Node nd, Matrix4x4 current)
         {
-            Util.PushMatrix();
-            Matrix4x4 nd_local_mat = nd.Transform;
-            Util.GR.MultiplyTransform(nd_local_mat.eTo3x2());
+            Matrix4x4 push_matrix = current;
+            Matrix4x4 current_node = current * nd.Transform;
             foreach(int mesh_id in nd.MeshIndices)
             {
                 Mesh cur_mesh = _scene._inner.Meshes[mesh_id];
@@ -384,17 +407,18 @@ namespace WinFormAnimation2D
                     /// bind tells the original delta in global coord, so we can find current delta
                     Matrix4x4 bind = bone.OffsetMatrix;
                     Matrix4x4 delta_roto = bind * bone_global_mat;
-                    Util.PushMatrix();
-                    Util.GR.MultiplyTransform(delta_roto.eTo3x2());
-                    RenderMesh(cur_mesh);
-                    Util.PopMatrix();
+                    Matrix4x4 current_bone = current_node * delta_roto;
+                    foreach (var pair in bone.VertexWeights)
+                    {
+                        Vector3D vertex = cur_mesh.Vertices[pair.VertexID];
+                        _vertex2matrix[vertex] = current_bone;
+                    }
                 }
             }
             foreach (Node child in nd.Children)
             {
-                RecursiveRenderSystemDrawing(child);
+                 RecursiveTransformVertices(child, current_node);
             }
-            Util.PopMatrix();
         }
 
     } // end of class

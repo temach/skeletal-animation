@@ -51,5 +51,12 @@ namespace WinFormAnimation2D
             return new PointF(v.X, v.Y);
         }
 
+        /// <summary>
+        /// Convert open tk 3D vector to opentk 2D vector.
+        /// </summary>
+        public static tk.Vector2 eTo2D(this tk.Vector3 v)
+        {
+            return new tk.Vector2(v.X, v.Y);
+        }
     }
 }
