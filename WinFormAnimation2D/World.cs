@@ -91,6 +91,8 @@
 /// they use:
 /// v*M = v * R*S*T
 
+/// The Bone class from Assimp has field VertexWeights this field stores indices of the vertices who's weight
+/// is more than 0. (so unaffected vertices are simply not there)
 
 /// Comment on files:
 /// square_center = simple square with no bones, no nothing, just a square
