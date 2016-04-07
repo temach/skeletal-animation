@@ -249,13 +249,13 @@ namespace WinFormAnimation2D
             var papa = new CustomTreeNode(NodeType.Entity);
             papa.Name = ent.Name;
             papa.Text = ent.Name;
-            papa.DrawData = Rectangle.Round(ent._extra_geometry._entity_border._rect);
+            papa.DrawData = Rectangle.Round(ent._extra_geometry._entity_border.Rect);
             foreach (AxiAlignedBoundingBox border in ent._extra_geometry._mesh_borders)
             {
                 var mesh_view_nd = new CustomTreeNode(NodeType.Mesh);
                 papa.Nodes.Add(mesh_view_nd);
                 mesh_view_nd.Text = ((Mesh)border.Source).Name;
-                mesh_view_nd.DrawData = Rectangle.Round(border._rect);
+                mesh_view_nd.DrawData = Rectangle.Round(border.Rect);
             }
             return papa;
         }
