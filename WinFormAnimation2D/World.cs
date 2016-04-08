@@ -156,6 +156,10 @@ namespace WinFormAnimation2D
             _action_one = new NodeInterpolator(_cur_scene, _cur_scene._inner.Animations[0]);
             BoneNode armature = _cur_scene.BuildBoneNodes("Armature");
             Node mesh = _cur_scene.FindNode("Cube");
+            if (mesh == null)
+            {
+                throw new Exception("Could not find node named 'Cube'");
+            }
             ActionState state = new ActionState(_cur_scene._inner.Animations[0]);
             _enttity_one = new Entity(_cur_scene, mesh, armature, state);
         }

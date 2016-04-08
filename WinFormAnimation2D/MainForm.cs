@@ -59,7 +59,14 @@ namespace WinFormAnimation2D
             this.MouseWheel += new MouseEventHandler(this.pictureBox_main_MouseMove);
             tm.Interval = 100;
             _world = new World(this.pictureBox_main);
-            _world.LoadScene(Properties.Resources.steam_machine);
+            try
+            {
+                _world.LoadScene(Properties.Resources.worm_2);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
             _cmd = new CommandLine(this.pictureBox_main, _world, tm, this.listBox_display, this);
             InitFillTreeFromWorldSingleEntity();
         }
