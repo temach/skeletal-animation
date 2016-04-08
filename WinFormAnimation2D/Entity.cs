@@ -51,10 +51,6 @@ namespace WinFormAnimation2D
             get { return _node.Name; }
             set { _node.Name = value; }
         }
-        public double GetRotationAngleDeg
-        {
-            get { return _matrix.eGetRotationAngle(); }
-        }
         public Point GetTranslation
         {
             get { return Point.Round(_matrix.eGetTranslationPoint()); }
@@ -101,16 +97,16 @@ namespace WinFormAnimation2D
         {
             switch (e.KeyData)
             {
-                case Keys.Left:
+                case Keys.A:
                     MoveBy(-1, 0);
                     break;
-                case Keys.Up:
+                case Keys.W:
                     MoveBy(0, -1);
                     break;
-                case Keys.Right:
+                case Keys.D:
                     MoveBy(1, 0);
                     break;
-                case Keys.Down:
+                case Keys.S:
                     MoveBy(0, 1);
                     break;
                 default:

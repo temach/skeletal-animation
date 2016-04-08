@@ -93,7 +93,6 @@ namespace WinFormAnimation2D
                     if (Current == null)
                     {
                         _camera.RotateByKey(new KeyEventArgs(keyData));
-                        this.toolStripStatusLabel_camera_rotation.Text = _camera.GetRotationAngleDeg.ToString();
                     }
                     else
                     { 

@@ -41,7 +41,6 @@
             this.toolStripStatusLabel_is_selected = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_mouse_coords = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel_camera_rotation = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_camera_position = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_entity_position = new System.Windows.Forms.ToolStripStatusLabel();
@@ -156,7 +155,6 @@
             this.toolStripStatusLabel_is_selected,
             this.toolStripStatusLabel_mouse_coords,
             this.toolStripStatusLabel2,
-            this.toolStripStatusLabel_camera_rotation,
             this.toolStripStatusLabel_camera_position,
             this.toolStripStatusLabel3,
             this.toolStripStatusLabel_entity_position,
@@ -195,13 +193,6 @@
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
             this.toolStripStatusLabel2.Size = new System.Drawing.Size(49, 19);
             this.toolStripStatusLabel2.Text = "camera:";
-            // 
-            // toolStripStatusLabel_camera_rotation
-            // 
-            this.toolStripStatusLabel_camera_rotation.AutoSize = false;
-            this.toolStripStatusLabel_camera_rotation.Name = "toolStripStatusLabel_camera_rotation";
-            this.toolStripStatusLabel_camera_rotation.Size = new System.Drawing.Size(122, 19);
-            this.toolStripStatusLabel_camera_rotation.Text = "toolStripStatusLabel1";
             // 
             // toolStripStatusLabel_camera_position
             // 
@@ -363,7 +354,6 @@
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_is_selected;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_mouse_coords;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_camera_rotation;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_camera_position;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;

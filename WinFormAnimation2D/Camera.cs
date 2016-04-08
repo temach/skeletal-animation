@@ -28,10 +28,6 @@ namespace WinFormAnimation2D
         private readonly float _motion_speed = 10.0f;
         private Matrix _cam_mat;
 
-        public double GetRotationAngleDeg
-        {
-            get { return _cam_mat.eGetRotationAngle(); }
-        }
         public Point GetTranslation
         {
             get { return Point.Round(_cam_mat.eGetTranslationPoint()); }

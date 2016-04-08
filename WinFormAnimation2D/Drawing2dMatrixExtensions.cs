@@ -137,24 +137,6 @@ namespace WinFormAnimation2D
         }
 
         /// <summary>
-        /// Returns the rotation angle in degrees.
-        /// </summary>
-        /// <param name="mat"></param>
-        /// <returns></returns>
-        static public double eGetRotationAngle(this d2d.Matrix mat)
-        {
-            // see http://stackoverflow.com/questions/5072271/get-angle-from-matrix
-            var curmat = mat.Elements;
-            // check that error is tiny
-            //Debug.Assert( 1e-10 
-            //    > Math.Abs(curmat[1] - (-1 * curmat[2])) + Math.Abs(curmat[0] - curmat[1]) 
-            //    , "Matrix has been modified such that getting the rotation angle is meaningless.");
-            var scale_factor = Math.Sqrt((curmat[0]*curmat[3] - curmat[1]*curmat[2]));
-            return Math.Acos(curmat[0]/scale_factor) * 180 / Math.PI; // For degrees
-        }
-
-
-        /// <summary>
         /// Returns the translation component of matrix as a Point
         /// </summary>
         /// <param name="mat"></param>
