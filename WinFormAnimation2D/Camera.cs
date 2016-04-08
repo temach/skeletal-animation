@@ -26,11 +26,11 @@ namespace WinFormAnimation2D
         // Actually in OpenGL we can use scaling as well. No? interesting idea....
         private readonly float _rotation_speed = 1.5f;
         private readonly float _motion_speed = 10.0f;
-        private Matrix _cam_mat;
+        private Matrix4 _cam_mat;
 
-        public Point GetTranslation
+        public Vector2 GetTranslation
         {
-            get { return Point.Round(_cam_mat.eGetTranslationPoint()); }
+            get { return _cam_mat.ExtractTranslation().eTo2D(); }
         }
 
         /// <summary>
@@ -40,15 +40,17 @@ namespace WinFormAnimation2D
         /// <returns></returns>
         public PointF ConvertScreen2WorldCoordinates(PointF screen_coords)
         {
-            return _cam_mat.eTransformSinglePointF(screen_coords);
+            Vector3 tmp = new Vector3(screen_coords.X, screen_coords.Y, 0.0f);
+            tmp = Vector3.Transform(tmp, _cam_mat);
+            return new PointF(tmp.X, tmp.Y);
         }
 
-        public Matrix CamMatrix {
+        public Matrix4 CamMatrix {
             get { return _cam_mat; }
             set { _cam_mat = value; }
         }
 
-        public Drawing2DCamera(Matrix init_mat)
+        public Drawing2DCamera(Matrix4 init_mat)
         {
             _cam_mat = init_mat;
         }
@@ -56,9 +58,9 @@ namespace WinFormAnimation2D
         /// <summary>
         /// Get the camera matrix to be uploaded to drawing 2D
         /// </summary>
-        public Matrix MatrixToDrawing2D()
+        public Matrix4 MatrixToDrawing2D()
         {
-            Matrix cam_inverted = CamMatrix.Clone();
+            Matrix4 cam_inverted = _cam_mat;
             cam_inverted.Invert();
             return cam_inverted;
         }
@@ -66,13 +68,14 @@ namespace WinFormAnimation2D
         // when doing a rotation we want to perform it around the screen center.
         public void RotateBy(double angle_degrees)
         {
+            float angle_radians = (float)(angle_degrees * Math.PI / 180.0);
             // we would remove the translation in OpenGL because its screen center is at (0,0,0)
             // in 2D camera screen center is at (Width/2.0, Height/2.0)
             // so translate to screen center 
-            _cam_mat.Translate(360.5f,233f);
-            _cam_mat.Rotate((float)angle_degrees);
+            _cam_mat = Matrix4.CreateTranslation(360.5f, 233f, 0.0f) * _cam_mat;
+            _cam_mat = Matrix4.CreateRotationZ(angle_radians) * _cam_mat;
             // translate back
-            _cam_mat.Translate(-360.5f,-233f);
+            _cam_mat = Matrix4.CreateTranslation(-360.5f, -233f, 0.0f) * _cam_mat;
         }
 
         public void RotateByKey(KeyEventArgs e)
@@ -103,7 +106,7 @@ namespace WinFormAnimation2D
         // x,y are direction parameters one of {-1, 0, 1}
         public void MoveBy(int x, int y)
         {
-            this.CamMatrix.Translate((_motion_speed * x), (_motion_speed * y));
+            _cam_mat = Matrix4.CreateTranslation((_motion_speed * x), (_motion_speed * y), 0.0f) * _cam_mat;
         }
 
         public void MoveByKey(KeyEventArgs e)

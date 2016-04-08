@@ -90,6 +90,7 @@
 /// see: https://msdn.microsoft.com/en-us/library/system.drawing.drawing2d.matrix%28v=vs.110%29.aspx
 /// they use:
 /// v*M = v * R*S*T
+/// multiplying two matrices PRE-multiplies by default: (A *= B) is same as (A = B*A)
 
 /// The Bone class from Assimp has field VertexWeights this field stores indices of the vertices who's weight
 /// is more than 0. (so unaffected vertices are simply not there)
@@ -100,6 +101,8 @@
 /// fly_plane = one bone, one mesh. No animation.
 /// funky_hat = two bones, one mesh, one animation action.
 /// wave_to_me = 3 bones, 3 meshes, one animation. (things are renamed i.e. no "Armature", no "Cube")
+
+/// OpenTK matrix multiply: (A *= B) is the same as (A = A * B)
 
 
 using System;

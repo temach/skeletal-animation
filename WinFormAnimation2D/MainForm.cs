@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using OpenTK;
 
 namespace WinFormAnimation2D
 {
@@ -53,11 +54,11 @@ namespace WinFormAnimation2D
         public MainForm()
         {
             InitializeComponent();
-            Matrix init_camera = new Matrix();
+            Matrix4 init_camera = Matrix4.Identity;
             _camera = new Drawing2DCamera(init_camera);
             // manually register the mousewheel event handler.
             this.MouseWheel += new MouseEventHandler(this.pictureBox_main_MouseMove);
-            tm.Interval = 100;
+            tm.Interval = 500;
             _world = new World(this.pictureBox_main);
             try
             {
@@ -295,7 +296,7 @@ namespace WinFormAnimation2D
             Util.GR = e.Graphics;
             _world._renderer.SetupRender(Util.GR);
             // change to world (i.e. camera) coordinates
-            Util.GR.MultiplyTransform(_camera.MatrixToDrawing2D());
+            Util.GR.MultiplyTransform(_camera.MatrixToDrawing2D().eTo3x2());
             // center
             Util.GR.eDrawCircle(Util.pp2, new Point(0,0), 3);
             // mouse position, big-green-circle should be under the mouse arrow

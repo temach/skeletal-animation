@@ -42,7 +42,7 @@ namespace WinFormAnimation2D
         public SceneWrapper _scene;
         public Geometry _extra_geometry;
         public DrawConfig _draw_conf;
-        public Matrix _matrix = new Matrix();
+        public Matrix4 _matrix = Matrix4.Identity;
         private readonly float _motion_speed = 10.0f;
         public Dictionary<Vector3D,Matrix4x4> _vertex2matrix = new Dictionary<Vector3D, Matrix4x4>();
 
@@ -51,9 +51,9 @@ namespace WinFormAnimation2D
             get { return _node.Name; }
             set { _node.Name = value; }
         }
-        public Point GetTranslation
+        public Vector2 GetTranslation
         {
-            get { return Point.Round(_matrix.eGetTranslationPoint()); }
+            get { return _matrix.ExtractTranslation().eTo2D(); }
         }
 
         // the only public constructor
@@ -68,7 +68,8 @@ namespace WinFormAnimation2D
 
         public void RotateBy(double angle_degrees)
         {
-            _matrix.Rotate((float)angle_degrees);
+            float angle_radians = (float)(angle_degrees * Math.PI / 180.0);
+            _matrix = Matrix4.CreateRotationZ(angle_radians) * _matrix;
         }
 
         public void RotateByKey(KeyEventArgs e)
@@ -90,7 +91,7 @@ namespace WinFormAnimation2D
         // x,y are direction parameters one of {-1, 0, 1}
         public void MoveBy(int x, int y)
         {
-            this._matrix.Translate((_motion_speed * x), (_motion_speed * y));
+            _matrix = Matrix4.CreateTranslation((_motion_speed * x), (_motion_speed * y), 0.0f) * _matrix;
         }
 
         public void MoveByKey(KeyEventArgs e)
@@ -118,9 +119,10 @@ namespace WinFormAnimation2D
         public bool ContainsPoint(Vector2 p)
         {
             // modify the point so it is in entity space
-            var tmp = _matrix.Clone();
-            tmp.Invert();
-            return _extra_geometry.EntityBorderContainsPoint(tmp.eTransformSingleVector2(p));
+            // var tmp = ;
+            Vector3 tmp = new Vector3(p.X, p.Y, 0.0f);
+            tmp = Vector3.Transform(tmp, Matrix4.Invert(_matrix));
+            return _extra_geometry.EntityBorderContainsPoint(tmp.eTo2D());
         }
         
         /// Render the model stored in EntityScene useing the Graphics object.
@@ -135,11 +137,15 @@ namespace WinFormAnimation2D
                 Util.GR.SmoothingMode = SmoothingMode.AntiAlias;
             }
             // first pass: calculate a matrix for each vertex
-            RecursiveTransformVertices(_node, _armature.LocTrans);
+            RecursiveTransformVertices(_node, Matrix4.Identity.eToAssimp());
+            //RecursiveTransformVertices(_node, _matrix.eToAssimp());
             // second pass: render with this matrix
-            Util.GR.MultiplyTransform(_armature.LocTrans.eTo3x2());
-            _extra_geometry.RenderEntityBorder();
             RecursiveRenderSystemDrawing(_node);
+            // apply the matrix to graphics just to draw the rectangle
+            // TODO: we should just transform the border according to the RecursiveTransformVertices
+            Util.GR.MultiplyTransform(Matrix4.Identity.eTo3x2());
+            //Util.GR.MultiplyTransform(_matrix.eTo3x2());
+            _extra_geometry.RenderEntityBorder();
         }
 
         public List<Bone> GetBonesAffectingVertex(int vertex_id, Mesh mesh)
