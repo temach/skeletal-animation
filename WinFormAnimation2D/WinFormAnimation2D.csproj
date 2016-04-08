@@ -133,6 +133,8 @@
     <None Include="Resources\wave_to_me_3.dae" />
     <None Include="Resources\wave_to_me_5.dae" />
     <None Include="Resources\wave_to_me_6.dae" />
+    <None Include="Resources\worm_1.dae" />
+    <None Include="Resources\worm_2.dae" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
