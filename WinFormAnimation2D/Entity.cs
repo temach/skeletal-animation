@@ -137,14 +137,12 @@ namespace WinFormAnimation2D
                 Util.GR.SmoothingMode = SmoothingMode.AntiAlias;
             }
             // first pass: calculate a matrix for each vertex
-            RecursiveTransformVertices(_node, Matrix4.Identity.eToAssimp());
-            //RecursiveTransformVertices(_node, _matrix.eToAssimp());
+            RecursiveTransformVertices(_node, _matrix.eToAssimp());
             // second pass: render with this matrix
             RecursiveRenderSystemDrawing(_node);
             // apply the matrix to graphics just to draw the rectangle
             // TODO: we should just transform the border according to the RecursiveTransformVertices
-            Util.GR.MultiplyTransform(Matrix4.Identity.eTo3x2());
-            //Util.GR.MultiplyTransform(_matrix.eTo3x2());
+            Util.GR.MultiplyTransform(_matrix.eTo3x2());
             _extra_geometry.RenderEntityBorder();
         }
 
@@ -234,7 +232,7 @@ namespace WinFormAnimation2D
                     /// bind tells the original delta in global coord, so we can find current delta
                     Matrix4x4 bind = bone.OffsetMatrix;
                     Matrix4x4 delta_roto = bind * bone_global_mat;
-                    Matrix4x4 current_bone = current_node * delta_roto;
+                    Matrix4x4 current_bone = delta_roto * current_node;
                     foreach (var pair in bone.VertexWeights)
                     {
                         Vector3D vertex = cur_mesh.Vertices[pair.VertexID];
