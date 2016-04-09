@@ -143,23 +143,8 @@ namespace WinFormAnimation2D
             // apply the matrix to graphics just to draw the rectangle
             // TODO: we should just transform the border according to the RecursiveTransformVertices
             Util.GR.MultiplyTransform(_matrix.eTo3x2());
+            RenderBoundingBoxes(_extra_geometry);
             _extra_geometry.RenderEntityBorder();
-        }
-
-        public List<Bone> GetBonesAffectingVertex(int vertex_id, Mesh mesh)
-        {
-            var ret = new List<Bone>();
-            foreach (var bone in mesh.Bones)
-            {
-                foreach (var vw in bone.VertexWeights)
-                {
-                    if (vw.VertexID == vertex_id)
-                    {
-                        ret.Add(bone);
-                    }
-                }
-            }
-            return ret;
         }
 
         public void RenderTriangle(List<Vector2> vertices)
@@ -190,6 +175,8 @@ namespace WinFormAnimation2D
             foreach(int mesh_id in nd.MeshIndices)
             {
                 Mesh cur_mesh = _scene._inner.Meshes[mesh_id];
+                AxiAlignedBoundingBox aabb = _extra_geometry._mesh_borders[mesh_id];
+                aabb.StartUpdateFrame();
                 foreach (Face cur_face in cur_mesh.Faces)
                 {
                     foreach (var vert_id in cur_face.Indices)
@@ -199,6 +186,7 @@ namespace WinFormAnimation2D
                         Vector3 default_pose = cur_mesh.Vertices[vert_id].eToOpenTK();
                         Vector3 trans;
                         Vector3.Transform(ref default_pose, ref delta, out trans);
+                        aabb.UpdateNearFar(trans);
                         RenderVertex(trans.eTo2D());
                     }
                 }
@@ -244,6 +232,16 @@ namespace WinFormAnimation2D
             {
                  RecursiveTransformVertices(child, current_node);
             }
+        }
+
+        public void RenderBoundingBoxes(Geometry geom)
+        {
+            foreach (var aabb in geom._mesh_borders.Values)
+            {
+                aabb.EndUpdateFrame();
+                aabb.Render();
+            }
+            // _extra_geometry.RenderEntityBorder();
         }
 
     } // end of class

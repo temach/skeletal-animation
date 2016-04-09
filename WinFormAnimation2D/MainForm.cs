@@ -62,7 +62,7 @@ namespace WinFormAnimation2D
             _world = new World(this.pictureBox_main);
             try
             {
-                _world.LoadScene(Properties.Resources.worm_2);
+                _world.LoadScene(Properties.Resources.mamonth_3);
             }
             catch (Exception ex)
             {
@@ -257,11 +257,12 @@ namespace WinFormAnimation2D
             papa.Name = ent.Name;
             papa.Text = ent.Name;
             papa.DrawData = Rectangle.Round(ent._extra_geometry._entity_border.Rect);
-            foreach (AxiAlignedBoundingBox border in ent._extra_geometry._mesh_borders)
+            foreach (int mesh_id in ent._extra_geometry._mesh_borders.Keys)
             {
+                var border = ent._extra_geometry._mesh_borders[mesh_id];
                 var mesh_view_nd = new CustomTreeNode(NodeType.Mesh);
                 papa.Nodes.Add(mesh_view_nd);
-                mesh_view_nd.Text = ((Mesh)border.Source).Name;
+                mesh_view_nd.Text = _world._cur_scene._inner.Meshes[mesh_id].Name;
                 mesh_view_nd.DrawData = Rectangle.Round(border.Rect);
             }
             return papa;
