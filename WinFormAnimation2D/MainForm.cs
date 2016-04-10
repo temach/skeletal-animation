@@ -257,9 +257,9 @@ namespace WinFormAnimation2D
             papa.Name = ent.Name;
             papa.Text = ent.Name;
             papa.DrawData = Rectangle.Round(ent._extra_geometry._entity_border.Rect);
-            foreach (int mesh_id in ent._extra_geometry._mesh_borders.Keys)
+            foreach (int mesh_id in ent._extra_geometry._mesh_id2box.Keys)
             {
-                var border = ent._extra_geometry._mesh_borders[mesh_id];
+                var border = ent._extra_geometry._mesh_id2box[mesh_id];
                 var mesh_view_nd = new CustomTreeNode(NodeType.Mesh);
                 papa.Nodes.Add(mesh_view_nd);
                 mesh_view_nd.Text = _world._cur_scene._inner.Meshes[mesh_id].Name;

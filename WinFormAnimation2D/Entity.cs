@@ -61,7 +61,7 @@ namespace WinFormAnimation2D
         {
             _scene = sc;
             _node = mesh;
-            _extra_geometry = new Geometry(sc._inner, mesh);
+            _extra_geometry = new Geometry(sc._inner.Meshes, mesh);
             _armature = armature;
             _action = state;
         }
@@ -142,9 +142,7 @@ namespace WinFormAnimation2D
             RecursiveRenderSystemDrawing(_node);
             // apply the matrix to graphics just to draw the rectangle
             // TODO: we should just transform the border according to the RecursiveTransformVertices
-            Util.GR.MultiplyTransform(_matrix.eTo3x2());
             RenderBoundingBoxes(_extra_geometry);
-            _extra_geometry.RenderEntityBorder();
         }
 
         public void RenderTriangle(List<Vector2> vertices)
@@ -175,8 +173,8 @@ namespace WinFormAnimation2D
             foreach(int mesh_id in nd.MeshIndices)
             {
                 Mesh cur_mesh = _scene._inner.Meshes[mesh_id];
-                AxiAlignedBoundingBox aabb = _extra_geometry._mesh_borders[mesh_id];
-                aabb.StartUpdateFrame();
+                AxiAlignedBoundingBox aabb = _extra_geometry._mesh_id2box[mesh_id];
+                aabb.SafeStartUpdateNearFar();
                 foreach (Face cur_face in cur_mesh.Faces)
                 {
                     foreach (var vert_id in cur_face.Indices)
@@ -236,12 +234,12 @@ namespace WinFormAnimation2D
 
         public void RenderBoundingBoxes(Geometry geom)
         {
-            foreach (var aabb in geom._mesh_borders.Values)
+            foreach (var aabb in geom._mesh_id2box.Values)
             {
-                aabb.EndUpdateFrame();
+                aabb.EndUpdateNearFar();
                 aabb.Render();
             }
-            // _extra_geometry.RenderEntityBorder();
+            _extra_geometry.RenderEntityBorder();
         }
 
     } // end of class
