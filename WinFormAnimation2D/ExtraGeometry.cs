@@ -122,9 +122,16 @@ namespace WinFormAnimation2D
 
         // public List<TriangularFace> _face_borders = new List<TriangularFace>();
         public Dictionary<int,AxiAlignedBoundingBox> _mesh_id2box = new Dictionary<int,AxiAlignedBoundingBox>();
-        public AxiAlignedBoundingBox _entity_border
+        private AxiAlignedBoundingBox _entity_box = new AxiAlignedBoundingBox();
+        public AxiAlignedBoundingBox EntityBox
         {
-            get { return GetCoveringBoundingBox(_mesh_id2box.Values); }
+            get {
+                // Update before returning
+                var tmp = GetCoveringBoundingBox(_mesh_id2box.Values);
+                _entity_box._zero_far = tmp._zero_far;
+                _entity_box._zero_near = tmp._zero_near;
+                return _entity_box;
+            }
         }
 
         /// Build geometry data for node (usually use only for one of the children of scene.RootNode)
@@ -180,12 +187,12 @@ namespace WinFormAnimation2D
 
         public bool EntityBorderContainsPoint(Vector2 point)
         {
-            return _entity_border.CheckContainsPoint(point);
+            return EntityBox.CheckContainsPoint(point);
         }
 
         public void RenderEntityBorder()
         {
-            _entity_border.Render();
+            EntityBox.Render();
         }
 
     }

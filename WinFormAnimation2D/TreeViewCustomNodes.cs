@@ -28,7 +28,7 @@ namespace WinFormAnimation2D
     class CustomTreeNode : TreeNode
     {
         public NodeType NodeType;
-        public object DrawData;
+        public AxiAlignedBoundingBox DrawData;
 
         public CustomTreeNode(NodeType nt)
         {

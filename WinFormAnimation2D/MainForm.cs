@@ -256,14 +256,14 @@ namespace WinFormAnimation2D
             var papa = new CustomTreeNode(NodeType.Entity);
             papa.Name = ent.Name;
             papa.Text = ent.Name;
-            papa.DrawData = Rectangle.Round(ent._extra_geometry._entity_border.Rect);
+            papa.DrawData = ent._extra_geometry.EntityBox;
             foreach (int mesh_id in ent._extra_geometry._mesh_id2box.Keys)
             {
-                var border = ent._extra_geometry._mesh_id2box[mesh_id];
+                AxiAlignedBoundingBox border = ent._extra_geometry._mesh_id2box[mesh_id];
                 var mesh_view_nd = new CustomTreeNode(NodeType.Mesh);
                 papa.Nodes.Add(mesh_view_nd);
                 mesh_view_nd.Text = _world._cur_scene._inner.Meshes[mesh_id].Name;
-                mesh_view_nd.DrawData = Rectangle.Round(border.Rect);
+                mesh_view_nd.DrawData = border;
             }
             return papa;
         }
@@ -275,9 +275,8 @@ namespace WinFormAnimation2D
             {
                 if (view_nd.NodeType == NodeType.Entity || view_nd.NodeType == NodeType.Mesh)
                 {
-                    // we must draw every mesh inside the entity
-                    Rectangle draw_data = (Rectangle)view_nd.DrawData;
-                    draw_data.Inflate(10, 10);
+                    Rectangle draw_data = Rectangle.Round(view_nd.DrawData.Rect);
+                    //draw_data.Inflate(1, 1);
                     var coords = new Point[]
                     {
                         new Point(draw_data.Left, draw_data.Top),
@@ -285,6 +284,7 @@ namespace WinFormAnimation2D
                         new Point(draw_data.Right, draw_data.Bottom),
                         new Point(draw_data.Left, draw_data.Bottom),
                     };
+                    Util.GR.DrawRectangle(Pens.Red, draw_data);
                     Util.GR.DrawClosedCurve(Pens.Black, coords);
                 }
             }
