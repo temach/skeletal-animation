@@ -30,6 +30,10 @@ namespace WinFormAnimation2D
         public EventHandler StepInterval;
         public EventHandler ClearScreen;
         public EventHandler StepAll;
+        public EventHandler DynamicTimeBlend;
+
+        // time of animation frame that was just rendered and time right now
+        public Stopwatch anim_frame_time = new Stopwatch();
 
         public Dictionary<string, string> _debug = new Dictionary<string, string>();
 
@@ -43,6 +47,7 @@ namespace WinFormAnimation2D
             ClearScreen = delegate { _window.Invalidate(); };
             StepInterval = delegate { this.stepf(); };
             StepAll = delegate { this.stepall(); };
+            DynamicTimeBlend = delegate { this.dynamic_step_time(); };
         }
 
         public void ShowDebug()
@@ -110,6 +115,33 @@ namespace WinFormAnimation2D
             _window.Invalidate();
         }
 
+        public void dynamic_step_time()
+        {
+            if (_current == null)
+            {
+                return;
+            }
+            double frame_millisecs = anim_frame_time.ElapsedMilliseconds;
+            anim_frame_time.Restart();
+            if (_current._action.KfBlend < 1.0)
+            {
+                double interval_millisecs = _current._action.IntervalLengthMilliseconds;
+                // koefficient to map interval time into a 0..1 blend interval
+                double k = 1.0 / interval_millisecs;
+                // we know how much the time changed, now we need to find out how much to add to blend 
+                _current._action.KfBlend += (frame_millisecs * k);
+            }
+            else
+            {
+                _current._action.KfBlend = 0.0;
+                _current._action.NextInterval();
+            }
+            _world._action_one.ApplyAnimation(_current._armature
+                , _current._action);
+            _window.Invalidate();
+            _form.SetAnimTime(_current._action.TimeCursorInTicks);
+        }
+
         public void playall(bool on)
         {
             if (_current == null)
@@ -118,9 +150,11 @@ namespace WinFormAnimation2D
             }
             if (on)
             {
+                anim_frame_time.Reset();
+                anim_frame_time.Start();
                 //_current._action.SetTime(0);
                 _current._action.Loop = true;
-                _timer.Tick += StepAll;
+                _timer.Tick += DynamicTimeBlend;
                 if (_timer.Enabled == false)
                 {
                     _timer.Start();
@@ -152,7 +186,7 @@ namespace WinFormAnimation2D
             {
                 return;
             }
-            if (_current._action.KfBlend < 0.99)
+            if (_current._action.KfBlend < 1.0)
             {
                 _current._action.KfBlend += 0.1;
             }
@@ -164,7 +198,7 @@ namespace WinFormAnimation2D
             _world._action_one.ApplyAnimation(_current._armature
                 , _current._action);
             _window.Invalidate();
-            _form.SetAnimTime(_current._action.CurrentTimeSeconds);
+            _form.SetAnimTime(_current._action.TimeCursorInTicks);
         }
 
         public void stepf()
@@ -180,7 +214,7 @@ namespace WinFormAnimation2D
             _world._action_one.ApplyAnimation(_current._armature
                 , _current._action);
             _window.Invalidate();
-            _form.SetAnimTime(_current._action.CurrentTimeSeconds);
+            _form.SetAnimTime(_current._action.TimeCursorInTicks);
         }
 
         public void help()

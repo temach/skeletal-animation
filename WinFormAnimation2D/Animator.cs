@@ -132,6 +132,7 @@ namespace WinFormAnimation2D
     {
         public Animation _action;
 
+        // index of keyframe maps to its time in ticks
         public List<double> KeyframeTimes;
         public int KeyframeCount
         {
@@ -155,13 +156,23 @@ namespace WinFormAnimation2D
             get { return _action.DurationInTicks; }
         }
 
-        public double CurrentTimeSeconds
+        public double TimeCursorInTicks
         {
             get
             {
-                double interval = (KeyframeTimes[TargetKeyframe] - KeyframeTimes[OriginKeyframe]);
-                return KeyframeTimes[OriginKeyframe] + interval * KfBlend;
+                double interval_ticks = (KeyframeTimes[TargetKeyframe] - KeyframeTimes[OriginKeyframe]);
+                return KeyframeTimes[OriginKeyframe] + interval_ticks * KfBlend;
             }
+        }
+
+        public double IntervalLengthMilliseconds
+        {
+            get
+            {
+                double interval_ticks = Math.Abs(KeyframeTimes[TargetKeyframe] - KeyframeTimes[OriginKeyframe]);
+                double interval_seconds = interval_ticks * _action.TicksPerSecond;
+                return interval_seconds * 1000.0;
+           }
         }
 
         // TickPerSec can be used to change speed.
@@ -282,13 +293,13 @@ namespace WinFormAnimation2D
             double time = time_ticks % TotalDurationTicks;
             int start_frame = FindStartFrameAtTime(time_seconds);
             int end_frame = (start_frame + 1) % KeyframeCount;
-            double delta_time = KeyframeTimes[end_frame] - KeyframeTimes[start_frame];
+            double delta_ticks = KeyframeTimes[end_frame] - KeyframeTimes[start_frame];
             // when we looped the animation
-            if (delta_time < 0.0)
+            if (delta_ticks < 0.0)
             {
-                delta_time += TotalDurationTicks;
+                delta_ticks += TotalDurationTicks;
             }
-            double blend = (time - KeyframeTimes[start_frame]) / delta_time;
+            double blend = (time - KeyframeTimes[start_frame]) / delta_ticks;
             // assign results
             OriginKeyframe = start_frame;
             TargetKeyframe = end_frame;

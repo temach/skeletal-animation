@@ -58,7 +58,7 @@ namespace WinFormAnimation2D
             _camera = new Drawing2DCamera(init_camera);
             // manually register the mousewheel event handler.
             this.MouseWheel += new MouseEventHandler(this.pictureBox_main_MouseMove);
-            tm.Interval = 500;
+            tm.Interval = 1;
             _world = new World(this.pictureBox_main);
             try
             {
