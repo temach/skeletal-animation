@@ -22,6 +22,7 @@ namespace WinFormAnimation2D
         Entity = 0
         , Mesh
         , TriangleFace
+        , Armature
         , Other
         ,
     }
@@ -72,6 +73,22 @@ namespace WinFormAnimation2D
             DrawData.Render();
         }
         public MeshTreeNode(string name)
+        {
+            this.Name = name;
+            this.Text = name;
+        }
+    }
+
+    class ArmatureTreeNode : TreeNode, IHighlightableNode
+    {
+        public TreeNodeType NodeType = TreeNodeType.Armature;
+        public VectorBoundingTriangle DrawData;
+
+        public void Render()
+        {
+            DrawData.Render();
+        }
+        public ArmatureTreeNode(string name)
         {
             this.Name = name;
             this.Text = name;

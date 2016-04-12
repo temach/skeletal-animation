@@ -27,6 +27,48 @@ namespace WinFormAnimation2D
         }
     }
 
+    class VectorBoundingTriangle
+    {
+        public Vector3 _start;
+        public Vector3 _end;
+
+        // arbitrary vector that is perpendicular to the _end - _start
+        // in 3D this might work better Vector3(-1*(_end.Y + _end.Z), 1, 1)
+        // while in 2D use this Vector3(-1 * _end.Y, 1, 0), so that Z = 0;
+        public Vector3 _normal
+        {
+            get { return Vector3.Multiply(new Vector3(-1 * _end.Y, 1, 0), 0.2f); }
+        }
+
+        public VectorBoundingTriangle(Vector3 start, Vector3 end)
+        {
+            _start = start;
+            _end = end;
+        }
+
+        // change from the 3d model into 2d program space just discard Z coordinate
+        public Vector3[] Triangle
+        {
+            get
+            {
+                return new Vector3[] {
+                    _start
+                    , _start + _normal
+                    , _end
+                    , _start - _normal
+                    , _start
+                };
+            }
+        }
+
+        public void Render()
+        {
+            Point[] tmp = Triangle.Select(v => v.eToPoint()).ToArray();
+            Util.GR.DrawLines(Pens.Aqua, tmp);
+            //Util.GR.DrawClosedCurve(Pens.Aqua, tmp);
+        }
+    }
+
     class AxiAlignedBoundingBox
     {
         public Vector3 _zero_near;

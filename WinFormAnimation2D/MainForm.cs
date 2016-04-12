@@ -242,8 +242,8 @@ namespace WinFormAnimation2D
             // make entity mesh
             MeshTreeNode ent_mesh_nodes = MakeMeshTree(_world._enttity_one, _world._enttity_one._node);
             // make entity armature
-            //ArmatureTreeNode ent_arma_nodes = MakeArmatureTree(_world._enttity_one, _world._enttity_one._armature);
-            //ent_one.Nodes.Add(ent_arma_nodes);
+            ArmatureTreeNode ent_arma_nodes = MakeArmatureTree(_world._enttity_one, _world._enttity_one._armature);
+            ent_one.Nodes.Add(ent_arma_nodes);
             ent_one.Nodes.Add(ent_mesh_nodes);
             root_nd.Nodes.Add(ent_one);
             // expand nodes until you find one with at least two children
@@ -276,6 +276,29 @@ namespace WinFormAnimation2D
             foreach (var child_nd in nd.Children)
             {
                 var treeview_child = MakeMeshTree(ent, child_nd);
+                current.Nodes.Add(treeview_child);
+            }
+            return current;
+        }
+
+        private ArmatureTreeNode MakeArmatureTree(Entity ent, BoneNode nd)
+        {
+            var current = new ArmatureTreeNode(nd._inner.Name);
+            Vector3 start;
+            if (nd.Parent != null)
+            {
+                start = nd.Parent.GlobalTransform.ExtractTranslation();
+            }
+            else
+            {
+                start = Vector3.Zero;
+            }
+            Vector3 end = nd.GlobalTransform.ExtractTranslation();
+            VectorBoundingTriangle btri = new VectorBoundingTriangle(start, end);
+            current.DrawData = btri;
+            foreach (var child_nd in nd.Children)
+            {
+                var treeview_child = MakeArmatureTree(ent, child_nd);
                 current.Nodes.Add(treeview_child);
             }
             return current;

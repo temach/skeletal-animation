@@ -86,5 +86,10 @@ namespace WinFormAnimation2D
             throw new NotImplementedException("Either make this method for assimp use, or change to OpenTK matrices!");
         }
 
+        public static ai.Vector3D eGetTranslation(this ai.Matrix4x4 m)
+        {
+            return new ai.Vector3D(m.A4, m.B4, m.C4);
+        }
+
     }
 }
