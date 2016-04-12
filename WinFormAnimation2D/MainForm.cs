@@ -62,7 +62,7 @@ namespace WinFormAnimation2D
             _world = new World(this.pictureBox_main);
             try
             {
-                _world.LoadScene(Properties.Resources.mamonth_3);
+                _world.LoadScene(Properties.Resources.triple_fold_3);
             }
             catch (Exception ex)
             {
@@ -234,10 +234,18 @@ namespace WinFormAnimation2D
         {
             this.treeView_entity_info.Nodes.Clear();
             // make root node and build whole tree
-            var root_nd = new CustomTreeNode(NodeType.Other);
-            root_nd.Text = "scene";
-            var ent_tree = FillTree(_world._enttity_one);
-            root_nd.Nodes.Add(ent_tree);
+            var root_nd = new SceneTreeNode("root");
+            var scene_nd = new SceneTreeNode("Scene");
+            // make entity tree
+            var ent_one = new EntityTreeNode(_world._enttity_one.Name);
+            ent_one.DrawData = _world._enttity_one._extra_geometry.EntityBox;
+            // make entity mesh
+            MeshTreeNode ent_mesh_nodes = MakeMeshTree(_world._enttity_one, _world._enttity_one._node);
+            // make entity armature
+            //ArmatureTreeNode ent_arma_nodes = MakeArmatureTree(_world._enttity_one, _world._enttity_one._armature);
+            //ent_one.Nodes.Add(ent_arma_nodes);
+            ent_one.Nodes.Add(ent_mesh_nodes);
+            root_nd.Nodes.Add(ent_one);
             // expand nodes until you find one with at least two children
             TreeNode cur_nd = root_nd;
             while (cur_nd.Nodes.Count == 1)
@@ -250,43 +258,35 @@ namespace WinFormAnimation2D
             this.treeView_entity_info.Invalidate();
         }
 
-        /// Render the model stored in EntityScene useing the Graphics object.
-        private TreeNode FillTree(Entity ent)
+        private MeshTreeNode MakeMeshTree(Entity ent, Node nd)
         {
-            var papa = new CustomTreeNode(NodeType.Entity);
-            papa.Name = ent.Name;
-            papa.Text = ent.Name;
-            papa.DrawData = ent._extra_geometry.EntityBox;
-            foreach (int mesh_id in ent._extra_geometry._mesh_id2box.Keys)
+            var current = new MeshTreeNode(nd.Name);
+            foreach (int mesh_id in nd.MeshIndices)
             {
-                AxiAlignedBoundingBox border = ent._extra_geometry._mesh_id2box[mesh_id];
-                var mesh_view_nd = new CustomTreeNode(NodeType.Mesh);
-                papa.Nodes.Add(mesh_view_nd);
-                mesh_view_nd.Text = _world._cur_scene._inner.Meshes[mesh_id].Name;
-                mesh_view_nd.DrawData = border;
+                AxiAlignedBoundingBox aabb = ent._extra_geometry._mesh_id2box[mesh_id];
+                string mesh_name = _world._cur_scene._inner.Meshes[mesh_id].Name;
+                var mesh_view_nd = new MeshTreeNode(mesh_name);
+                mesh_view_nd.DrawData = aabb;
+                current.Nodes.Add(mesh_view_nd);
             }
-            return papa;
+            // get a bounding box that covers all of the meshes assigned to this node
+            current.DrawData = ent._extra_geometry.GetCoveringBoundingBox(
+                current.Nodes.Cast<MeshTreeNode>().Select(mesh_nd => mesh_nd.DrawData)
+            );
+            foreach (var child_nd in nd.Children)
+            {
+                var treeview_child = MakeMeshTree(ent, child_nd);
+                current.Nodes.Add(treeview_child);
+            }
+            return current;
         }
 
         private void HighlightSlectedNode()
         {
-            var view_nd = (CustomTreeNode)this.treeView_entity_info.SelectedNode;
+            var view_nd = (IHighlightableNode)this.treeView_entity_info.SelectedNode;
             if (view_nd != null)
             {
-                if (view_nd.NodeType == NodeType.Entity || view_nd.NodeType == NodeType.Mesh)
-                {
-                    Rectangle draw_data = Rectangle.Round(view_nd.DrawData.Rect);
-                    //draw_data.Inflate(1, 1);
-                    var coords = new Point[]
-                    {
-                        new Point(draw_data.Left, draw_data.Top),
-                        new Point(draw_data.Right, draw_data.Top),
-                        new Point(draw_data.Right, draw_data.Bottom),
-                        new Point(draw_data.Left, draw_data.Bottom),
-                    };
-                    Util.GR.DrawRectangle(Pens.Red, draw_data);
-                    Util.GR.DrawClosedCurve(Pens.Black, coords);
-                }
+                view_nd.Render();
             }
         }
 
@@ -334,5 +334,9 @@ namespace WinFormAnimation2D
             this.pictureBox_main.Invalidate();
         }
 
+        private void treeView_entity_info_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            this.pictureBox_main.Invalidate();
+        }
     }
 }

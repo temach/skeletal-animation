@@ -17,22 +17,64 @@ using System.Runtime.CompilerServices;
 
 namespace WinFormAnimation2D
 {
-    public enum NodeType
+    public enum TreeNodeType
     {
-        Entity = 0,
-        Mesh,
-        TriangleFace,
-        Other,
+        Entity = 0
+        , Mesh
+        , TriangleFace
+        , Other
+        ,
     }
 
-    class CustomTreeNode : TreeNode
+    interface IHighlightableNode
     {
-        public NodeType NodeType;
+        void Render();
+    }
+
+    class SceneTreeNode : TreeNode, IHighlightableNode
+    {
+        public TreeNodeType NodeType = TreeNodeType.Other;
+
+        public void Render()
+        {
+        }
+
+        public SceneTreeNode(string name)
+        {
+            this.Name = name;
+            this.Text = name;
+        }
+    }
+
+    class EntityTreeNode : TreeNode, IHighlightableNode
+    {
+        public TreeNodeType NodeType = TreeNodeType.Entity;
         public AxiAlignedBoundingBox DrawData;
 
-        public CustomTreeNode(NodeType nt)
+        public void Render()
         {
-            this.NodeType = nt;
+            DrawData.Render();
+        }
+        public EntityTreeNode(string name)
+        {
+            this.Name = name;
+            this.Text = name;
+        }
+    }
+
+    class MeshTreeNode : TreeNode, IHighlightableNode
+    {
+        public TreeNodeType NodeType = TreeNodeType.Mesh;
+        public AxiAlignedBoundingBox DrawData;
+
+        public void Render()
+        {
+            DrawData.Render();
+        }
+        public MeshTreeNode(string name)
+        {
+            this.Name = name;
+            this.Text = name;
         }
     }
 
