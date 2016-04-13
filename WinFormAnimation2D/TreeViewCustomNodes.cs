@@ -50,7 +50,7 @@ namespace WinFormAnimation2D
     class EntityTreeNode : TreeNode, IHighlightableNode
     {
         public TreeNodeType NodeType = TreeNodeType.Entity;
-        public AxiAlignedBoundingBox DrawData;
+        public BoundingBox DrawData;
 
         public void Render()
         {
@@ -66,7 +66,7 @@ namespace WinFormAnimation2D
     class MeshTreeNode : TreeNode, IHighlightableNode
     {
         public TreeNodeType NodeType = TreeNodeType.Mesh;
-        public AxiAlignedBoundingBox DrawData;
+        public BoundingBox DrawData;
 
         public void Render()
         {

@@ -72,7 +72,7 @@ namespace WinFormAnimation2D
         }
     }
 
-    class AxiAlignedBoundingBox
+    class BoundingBox
     {
         public Vector3 _zero_near;
         public Vector3 _zero_far;
@@ -95,13 +95,13 @@ namespace WinFormAnimation2D
             }
         }
 
-        public AxiAlignedBoundingBox(Vector3D zero_near, Vector3D zero_far)
+        public BoundingBox(Vector3D zero_near, Vector3D zero_far)
         {
             _zero_far = zero_far.eToOpenTK();
             _zero_near = zero_near.eToOpenTK();
         }
 
-        public AxiAlignedBoundingBox()
+        public BoundingBox()
         {
             _zero_near = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
             _zero_far = new Vector3(float.MinValue, float.MinValue, float.MinValue);
@@ -161,31 +161,28 @@ namespace WinFormAnimation2D
 
     }
 
-    /// Stores info on extra geometry of the entity
-    class Geometry
+    class BoundingBoxGroup
     {
-
-        // public List<TriangularFace> _face_borders = new List<TriangularFace>();
-        public Dictionary<int,AxiAlignedBoundingBox> _mesh_id2box = new Dictionary<int,AxiAlignedBoundingBox>();
-        private AxiAlignedBoundingBox _entity_box = new AxiAlignedBoundingBox();
-        public AxiAlignedBoundingBox EntityBox
+        public List<BoundingBox> Items;
+        public BoundingBox _overall_box = new BoundingBox();
+        public BoundingBox OverallBox
         {
-            get {
+            get
+            {
                 // Update before returning
-                var tmp = GetCoveringBoundingBox(_mesh_id2box.Values);
-                _entity_box._zero_far = tmp._zero_far;
-                _entity_box._zero_near = tmp._zero_near;
-                return _entity_box;
+                var tmp = GetCoveringBoundingBox(Items);
+                _overall_box._zero_near = tmp._zero_near;
+                _overall_box._zero_far = tmp._zero_far;
+                return _overall_box;
             }
         }
 
-        /// Build geometry data for node (usually use only for one of the children of scene.RootNode)
-        public Geometry(IList<Mesh> scene_meshes, Node nd)
+        public BoundingBoxGroup(IEnumerable<BoundingBox> boxes)
         {
-            MakeBoundingBoxes(scene_meshes, nd);
+            Items = boxes.ToList();
         }
 
-        public AxiAlignedBoundingBox GetCoveringBoundingBox(IEnumerable<AxiAlignedBoundingBox> boxes)
+        public BoundingBox GetCoveringBoundingBox(IEnumerable<BoundingBox> boxes)
         {
             Vector3D zero_near = new Vector3D(float.MaxValue, float.MaxValue, float.MaxValue);
             Vector3D zero_far = new Vector3D(float.MinValue, float.MinValue, float.MinValue);
@@ -200,7 +197,27 @@ namespace WinFormAnimation2D
                 zero_far.Y = Math.Max(zero_far.Y, aabb._zero_far.Y);
                 zero_far.Z = Math.Max(zero_far.Z, aabb._zero_far.Z);
             }
-            return new AxiAlignedBoundingBox(zero_near, zero_far);
+            return new BoundingBox(zero_near, zero_far);
+        }
+    }
+
+    /// Stores info on extra geometry of the entity
+    class Geometry
+    {
+
+        // public List<TriangularFace> _face_borders = new List<TriangularFace>();
+        public Dictionary<int,BoundingBox> _mesh_id2box = new Dictionary<int,BoundingBox>();
+        private BoundingBoxGroup _entity_box;
+        public BoundingBox BoundingBox
+        {
+            get { return _entity_box.OverallBox; }
+        }
+
+        /// Build geometry data for node (usually use only for one of the children of scene.RootNode)
+        public Geometry(IList<Mesh> scene_meshes, Node nd)
+        {
+            MakeBoundingBoxes(scene_meshes, nd);
+            _entity_box = new BoundingBoxGroup(_mesh_id2box.Values);
         }
 
         /// For each node calculate the bounding box.
@@ -210,7 +227,7 @@ namespace WinFormAnimation2D
             foreach (int index in node.MeshIndices)
             {
                 Mesh mesh = scene_meshes[index];
-                _mesh_id2box[index] = new AxiAlignedBoundingBox();
+                _mesh_id2box[index] = new BoundingBox();
             }
             for (int i = 0; i < node.ChildCount; i++)
             {
@@ -218,9 +235,9 @@ namespace WinFormAnimation2D
             }
         }
 
-        public AxiAlignedBoundingBox IntersectWithMesh(Vector2 point)
+        public BoundingBox IntersectWithMesh(Vector2 point)
         {
-            foreach (AxiAlignedBoundingBox border in _mesh_id2box.Values)
+            foreach (BoundingBox border in _mesh_id2box.Values)
             {
                 if (border.CheckContainsPoint(point))
                 {
@@ -232,12 +249,12 @@ namespace WinFormAnimation2D
 
         public bool EntityBorderContainsPoint(Vector2 point)
         {
-            return EntityBox.CheckContainsPoint(point);
+            return BoundingBox.CheckContainsPoint(point);
         }
 
         public void RenderEntityBorder()
         {
-            EntityBox.Render();
+            BoundingBox.Render();
         }
 
     }

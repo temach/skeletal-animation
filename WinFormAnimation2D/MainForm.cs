@@ -238,7 +238,7 @@ namespace WinFormAnimation2D
             var scene_nd = new SceneTreeNode("Scene");
             // make entity tree
             var ent_one = new EntityTreeNode(_world._enttity_one.Name);
-            ent_one.DrawData = _world._enttity_one._extra_geometry.EntityBox;
+            ent_one.DrawData = _world._enttity_one._extra_geometry.BoundingBox;
             // make entity mesh
             MeshTreeNode ent_mesh_nodes = MakeMeshTree(_world._enttity_one, _world._enttity_one._node);
             // make entity armature
@@ -261,16 +261,14 @@ namespace WinFormAnimation2D
             var current = new MeshTreeNode(nd.Name);
             foreach (int mesh_id in nd.MeshIndices)
             {
-                AxiAlignedBoundingBox aabb = ent._extra_geometry._mesh_id2box[mesh_id];
+                BoundingBox aabb = ent._extra_geometry._mesh_id2box[mesh_id];
                 string mesh_name = _world._cur_scene._inner.Meshes[mesh_id].Name;
                 var mesh_view_nd = new MeshTreeNode(mesh_name);
                 mesh_view_nd.DrawData = aabb;
                 current.Nodes.Add(mesh_view_nd);
             }
             // get a bounding box that covers all of the meshes assigned to this node
-            current.DrawData = ent._extra_geometry.GetCoveringBoundingBox(
-                current.Nodes.Cast<MeshTreeNode>().Select(mesh_nd => mesh_nd.DrawData)
-            );
+            current.DrawData = ent._extra_geometry.BoundingBox;
             foreach (var child_nd in nd.Children)
             {
                 var treeview_child = MakeMeshTree(ent, child_nd);
