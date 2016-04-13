@@ -62,7 +62,7 @@ namespace WinFormAnimation2D
             _world = new World(this.pictureBox_main);
             try
             {
-                _world.LoadScene(Properties.Resources.triple_fold_3);
+                _world.LoadScene(Properties.Resources.mamonth_3);
             }
             catch (Exception ex)
             {
@@ -252,7 +252,9 @@ namespace WinFormAnimation2D
             // attach and refresh
             this.treeView_entity_info.Nodes.Add(root_nd);
             // show the entity node
-            ent_one.EnsureVisible();
+            // ent_one.EnsureVisible();
+            this.treeView_entity_info.ExpandAll();
+            ent_arma_nodes.EnsureVisible();
             this.treeView_entity_info.Invalidate();
         }
 
@@ -280,16 +282,31 @@ namespace WinFormAnimation2D
         private ArmatureTreeNode MakeArmatureTree(Entity ent, BoneNode nd)
         {
             var current = new ArmatureTreeNode(nd._inner.Name);
-            Vector3 start = nd.Parent != null 
-                ? nd.Parent.GlobalTransform.ExtractTranslation()
-                : Vector3.Zero;
-            Vector3 end = nd.GlobalTransform.ExtractTranslation();
-            VectorBoundingTriangle btri = new VectorBoundingTriangle(start, end);
-            current.DrawData = btri;
-            foreach (var child_nd in nd.Children)
+            Vector3 start = nd.GlobalTransform.ExtractTranslation();
+            //    nd.Parent != null 
+            //    ? nd.Parent.GlobalTransform.ExtractTranslation()
+            //    : Vector3.Zero;
+            if (nd.Children.Count > 0)
             {
-                var treeview_child = MakeArmatureTree(ent, child_nd);
-                current.Nodes.Add(treeview_child);
+                // this bone's end == the beginning of __any__ child bone
+                Vector3 end = nd.Children[0].GlobalTransform.ExtractTranslation();
+                current.DrawData = new VectorBoundingTriangle(start, end);
+                foreach (var child_nd in nd.Children)
+                {
+                    var treeview_child = MakeArmatureTree(ent, child_nd);
+                    current.Nodes.Add(treeview_child);
+                }
+            }
+            else   
+            {
+                // this bone has no children, we don't know where it will end, so we guess.
+                // strategy 1: just set a random sensible value for bone
+                // strategy 2: get geometric center of the vertices that this bone acts on
+                // we have to use the Y-unit vector instead of X because we defined Y_UP 
+                // in the collada.dae file, so all the matrices work such that direct unit vector is unit Y
+                var delta = Vector3.TransformVector(Vector3.UnitY, nd.GlobalTransform);
+                Vector3 end = start + Vector3.Multiply(delta, 70.0f);
+                current.DrawData = new VectorBoundingTriangle(start, end);
             }
             return current;
         }
@@ -318,7 +335,22 @@ namespace WinFormAnimation2D
             // render entity
             _world.RenderWorld();
             // currently selected in tree view
+            //RenderBones(this.treeView_entity_info.Nodes[0]);
             HighlightSlectedNode();
+        }
+
+        private void RenderBones(TreeNode view_nd)
+        {
+            var elem = view_nd as ArmatureTreeNode;
+            if (elem != null)
+            {
+                Point[] tmp = elem.DrawData.Triangle.Select(v => v.eToPoint()).ToArray();
+                Util.GR.DrawLines(Pens.Black, tmp);
+            }
+            foreach (TreeNode child in view_nd.Nodes)
+            {
+                RenderBones(child);
+            }
         }
 
         private void checkBox_breakpoints_on_CheckedChanged(object sender, EventArgs e)
