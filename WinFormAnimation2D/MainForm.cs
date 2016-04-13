@@ -243,18 +243,16 @@ namespace WinFormAnimation2D
             MeshTreeNode ent_mesh_nodes = MakeMeshTree(_world._enttity_one, _world._enttity_one._node);
             // make entity armature
             ArmatureTreeNode ent_arma_nodes = MakeArmatureTree(_world._enttity_one, _world._enttity_one._armature);
-            ent_one.Nodes.Add(ent_arma_nodes);
-            ent_one.Nodes.Add(ent_mesh_nodes);
             root_nd.Nodes.Add(ent_one);
-            // expand nodes until you find one with at least two children
-            TreeNode cur_nd = root_nd;
-            while (cur_nd.Nodes.Count == 1)
-            {
-                cur_nd.Toggle();
-                cur_nd = cur_nd.Nodes[0];
-            }
+            ent_one.Nodes.Add(ent_mesh_nodes);
+            ent_one.Nodes.Add(ent_arma_nodes);
+            ent_arma_nodes.BackColor = Color.LightBlue;
+            ent_mesh_nodes.BackColor = Color.LightGreen;
+            ent_one.BackColor = Color.Gold;
             // attach and refresh
             this.treeView_entity_info.Nodes.Add(root_nd);
+            // show the entity node
+            ent_one.EnsureVisible();
             this.treeView_entity_info.Invalidate();
         }
 
@@ -284,15 +282,9 @@ namespace WinFormAnimation2D
         private ArmatureTreeNode MakeArmatureTree(Entity ent, BoneNode nd)
         {
             var current = new ArmatureTreeNode(nd._inner.Name);
-            Vector3 start;
-            if (nd.Parent != null)
-            {
-                start = nd.Parent.GlobalTransform.ExtractTranslation();
-            }
-            else
-            {
-                start = Vector3.Zero;
-            }
+            Vector3 start = nd.Parent != null 
+                ? nd.Parent.GlobalTransform.ExtractTranslation()
+                : Vector3.Zero;
             Vector3 end = nd.GlobalTransform.ExtractTranslation();
             VectorBoundingTriangle btri = new VectorBoundingTriangle(start, end);
             current.DrawData = btri;

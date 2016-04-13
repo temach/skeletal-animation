@@ -37,7 +37,10 @@ namespace WinFormAnimation2D
         // while in 2D use this Vector3(-1 * _end.Y, 1, 0), so that Z = 0;
         public Vector3 _normal
         {
-            get { return Vector3.Multiply(new Vector3(-1 * _end.Y, 1, 0), 0.2f); }
+            get {
+                var sidevec = new Vector3(-1 * _end.Y, 1, 0);
+                return Vector3.Multiply(Vector3.NormalizeFast(sidevec), 4.2f);
+            }
         }
 
         public VectorBoundingTriangle(Vector3 start, Vector3 end)
