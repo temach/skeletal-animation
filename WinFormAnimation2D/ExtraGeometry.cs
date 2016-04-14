@@ -27,7 +27,7 @@ namespace WinFormAnimation2D
         }
     }
 
-    class VectorBoundingTriangle
+    class BoneBounds
     {
         public Vector3 _start;
         public Vector3 _end;
@@ -38,12 +38,19 @@ namespace WinFormAnimation2D
         public Vector3 _normal
         {
             get {
-                var sidevec = new Vector3(-1 * _end.Y, 1, 0);
-                return Vector3.Multiply(Vector3.NormalizeFast(sidevec), 4.2f);
+                var bone_vec = _end - _start;
+                var sidevec = new Vector3(bone_vec.Y, -1 * bone_vec.X, 0.0f);
+                return Vector3.Multiply(Vector3.NormalizeFast(sidevec), 5.0f);
             }
         }
 
-        public VectorBoundingTriangle(Vector3 start, Vector3 end)
+        public BoneBounds()
+        {
+            _start = Vector3.Zero;
+            _end = Vector3.Zero;
+        }
+
+        public BoneBounds(Vector3 start, Vector3 end)
         {
             _start = start;
             _end = end;
@@ -68,11 +75,10 @@ namespace WinFormAnimation2D
         {
             Point[] tmp = Triangle.Select(v => v.eToPoint()).ToArray();
             Util.GR.DrawLines(Pens.Aqua, tmp);
-            //Util.GR.DrawClosedCurve(Pens.Aqua, tmp);
         }
     }
 
-    class BoundingBox
+    class MeshBounds
     {
         public Vector3 _zero_near;
         public Vector3 _zero_far;
@@ -95,13 +101,13 @@ namespace WinFormAnimation2D
             }
         }
 
-        public BoundingBox(Vector3D zero_near, Vector3D zero_far)
+        public MeshBounds(Vector3D zero_near, Vector3D zero_far)
         {
             _zero_far = zero_far.eToOpenTK();
             _zero_near = zero_near.eToOpenTK();
         }
 
-        public BoundingBox()
+        public MeshBounds()
         {
             _zero_near = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
             _zero_far = new Vector3(float.MinValue, float.MinValue, float.MinValue);
@@ -163,9 +169,9 @@ namespace WinFormAnimation2D
 
     class BoundingBoxGroup
     {
-        public List<BoundingBox> Items;
-        public BoundingBox _overall_box = new BoundingBox();
-        public BoundingBox OverallBox
+        public List<MeshBounds> Items;
+        public MeshBounds _overall_box = new MeshBounds();
+        public MeshBounds OverallBox
         {
             get
             {
@@ -177,12 +183,12 @@ namespace WinFormAnimation2D
             }
         }
 
-        public BoundingBoxGroup(IEnumerable<BoundingBox> boxes)
+        public BoundingBoxGroup(IEnumerable<MeshBounds> boxes)
         {
             Items = boxes.ToList();
         }
 
-        public BoundingBox GetCoveringBoundingBox(IEnumerable<BoundingBox> boxes)
+        public MeshBounds GetCoveringBoundingBox(IEnumerable<MeshBounds> boxes)
         {
             Vector3D zero_near = new Vector3D(float.MaxValue, float.MaxValue, float.MaxValue);
             Vector3D zero_far = new Vector3D(float.MinValue, float.MinValue, float.MinValue);
@@ -197,7 +203,7 @@ namespace WinFormAnimation2D
                 zero_far.Y = Math.Max(zero_far.Y, aabb._zero_far.Y);
                 zero_far.Z = Math.Max(zero_far.Z, aabb._zero_far.Z);
             }
-            return new BoundingBox(zero_near, zero_far);
+            return new MeshBounds(zero_near, zero_far);
         }
     }
 
@@ -205,19 +211,57 @@ namespace WinFormAnimation2D
     class Geometry
     {
 
-        // public List<TriangularFace> _face_borders = new List<TriangularFace>();
-        public Dictionary<int,BoundingBox> _mesh_id2box = new Dictionary<int,BoundingBox>();
-        private BoundingBoxGroup _entity_box;
-        public BoundingBox BoundingBox
-        {
-            get { return _entity_box.OverallBox; }
-        }
+        public Dictionary<int,MeshBounds> _mesh_id2box = new Dictionary<int,MeshBounds>();
+        public Dictionary<string,BoneBounds> _bone_id2triangle = new Dictionary<string,BoneBounds>();
+        public BoundingBoxGroup _entity_box;
 
         /// Build geometry data for node (usually use only for one of the children of scene.RootNode)
-        public Geometry(IList<Mesh> scene_meshes, Node nd)
+        public Geometry(IList<Mesh> scene_meshes, Node nd, BoneNode armature)
         {
             MakeBoundingBoxes(scene_meshes, nd);
+            MakeBoundingTriangles(armature);
+            UpdateBonePositions(armature);
             _entity_box = new BoundingBoxGroup(_mesh_id2box.Values);
+        }
+
+        public void UpdateBonePositions(BoneNode nd)
+        {
+            var triangle = _bone_id2triangle[nd._inner.Name];
+            Vector3 new_start = nd.GlobalTransform.ExtractTranslation();
+            if (nd.Children.Count > 0)
+            {
+                // this bone's end == the beginning of __any__ child bone
+                Vector3 new_end = nd.Children[0].GlobalTransform.ExtractTranslation();
+                triangle._start = new_start;
+                triangle._end = new_end;
+                foreach (var child_nd in nd.Children)
+                {
+                    UpdateBonePositions(child_nd);
+                }
+            }
+            else
+            {
+                // this bone has no children, we don't know where it will end, so we guess.
+                // strategy 1: just set a random sensible value for bone
+                // strategy 2: get geometric center of the vertices that this bone acts on
+                // we have to use the Y-unit vector instead of X because we defined Y_UP 
+                // in the collada.dae file, so all the matrices work such that direct unit vector is unit Y
+                var delta = Vector3.TransformVector(Vector3.UnitY, nd.GlobalTransform);
+                Vector3 new_end = new_start + Vector3.Multiply(delta, 70.0f);
+                triangle._start = new_start;
+                triangle._end = new_end;
+            }
+        }
+
+        // make triangles to draw for each bone
+        private void MakeBoundingTriangles(BoneNode nd)
+        {
+            _bone_id2triangle[nd._inner.Name] = new BoneBounds();
+            for (int i = 0; i < nd._inner.ChildCount; i++)
+            {
+                 MakeBoundingTriangles(nd.Children[i]);
+            }
+
         }
 
         /// For each node calculate the bounding box.
@@ -227,7 +271,7 @@ namespace WinFormAnimation2D
             foreach (int index in node.MeshIndices)
             {
                 Mesh mesh = scene_meshes[index];
-                _mesh_id2box[index] = new BoundingBox();
+                _mesh_id2box[index] = new MeshBounds();
             }
             for (int i = 0; i < node.ChildCount; i++)
             {
@@ -235,9 +279,9 @@ namespace WinFormAnimation2D
             }
         }
 
-        public BoundingBox IntersectWithMesh(Vector2 point)
+        public MeshBounds IntersectWithMesh(Vector2 point)
         {
-            foreach (BoundingBox border in _mesh_id2box.Values)
+            foreach (MeshBounds border in _mesh_id2box.Values)
             {
                 if (border.CheckContainsPoint(point))
                 {
@@ -249,12 +293,12 @@ namespace WinFormAnimation2D
 
         public bool EntityBorderContainsPoint(Vector2 point)
         {
-            return BoundingBox.CheckContainsPoint(point);
+            return _entity_box.OverallBox.CheckContainsPoint(point);
         }
 
         public void RenderEntityBorder()
         {
-            BoundingBox.Render();
+            _entity_box.OverallBox.Render();
         }
 
     }

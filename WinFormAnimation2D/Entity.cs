@@ -61,7 +61,7 @@ namespace WinFormAnimation2D
         {
             _scene = sc;
             _node = mesh;
-            _extra_geometry = new Geometry(sc._inner.Meshes, mesh);
+            _extra_geometry = new Geometry(sc._inner.Meshes, mesh, armature);
             _armature = armature;
             _action = state;
         }
@@ -173,7 +173,7 @@ namespace WinFormAnimation2D
             foreach(int mesh_id in nd.MeshIndices)
             {
                 Mesh cur_mesh = _scene._inner.Meshes[mesh_id];
-                BoundingBox aabb = _extra_geometry._mesh_id2box[mesh_id];
+                MeshBounds aabb = _extra_geometry._mesh_id2box[mesh_id];
                 aabb.SafeStartUpdateNearFar();
                 foreach (Face cur_face in cur_mesh.Faces)
                 {

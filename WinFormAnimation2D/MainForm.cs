@@ -235,10 +235,9 @@ namespace WinFormAnimation2D
             this.treeView_entity_info.Nodes.Clear();
             // make root node and build whole tree
             var root_nd = new SceneTreeNode("root");
-            var scene_nd = new SceneTreeNode("Scene");
             // make entity tree
             var ent_one = new EntityTreeNode(_world._enttity_one.Name);
-            ent_one.DrawData = _world._enttity_one._extra_geometry.BoundingBox;
+            ent_one.DrawMeshBounds = _world._enttity_one._extra_geometry._entity_box;
             // make entity mesh
             MeshTreeNode ent_mesh_nodes = MakeMeshTree(_world._enttity_one, _world._enttity_one._node);
             // make entity armature
@@ -263,14 +262,17 @@ namespace WinFormAnimation2D
             var current = new MeshTreeNode(nd.Name);
             foreach (int mesh_id in nd.MeshIndices)
             {
-                BoundingBox aabb = ent._extra_geometry._mesh_id2box[mesh_id];
+                MeshBounds aabb = ent._extra_geometry._mesh_id2box[mesh_id];
                 string mesh_name = _world._cur_scene._inner.Meshes[mesh_id].Name;
                 var mesh_view_nd = new MeshTreeNode(mesh_name);
-                mesh_view_nd.DrawData = aabb;
+                var list = new List<MeshBounds>() { aabb };
+                mesh_view_nd.DrawData = new BoundingBoxGroup(list);
                 current.Nodes.Add(mesh_view_nd);
             }
             // get a bounding box that covers all of the meshes assigned to this node
-            current.DrawData = ent._extra_geometry.BoundingBox;
+            current.DrawData = new BoundingBoxGroup(
+                current.Nodes.Cast<MeshTreeNode>().Select(mesh_nd => mesh_nd.DrawData.OverallBox)
+            );
             foreach (var child_nd in nd.Children)
             {
                 var treeview_child = MakeMeshTree(ent, child_nd);
@@ -282,31 +284,11 @@ namespace WinFormAnimation2D
         private ArmatureTreeNode MakeArmatureTree(Entity ent, BoneNode nd)
         {
             var current = new ArmatureTreeNode(nd._inner.Name);
-            Vector3 start = nd.GlobalTransform.ExtractTranslation();
-            //    nd.Parent != null 
-            //    ? nd.Parent.GlobalTransform.ExtractTranslation()
-            //    : Vector3.Zero;
-            if (nd.Children.Count > 0)
+            current.DrawData = ent._extra_geometry._bone_id2triangle[nd._inner.Name];
+            foreach (var child_nd in nd.Children)
             {
-                // this bone's end == the beginning of __any__ child bone
-                Vector3 end = nd.Children[0].GlobalTransform.ExtractTranslation();
-                current.DrawData = new VectorBoundingTriangle(start, end);
-                foreach (var child_nd in nd.Children)
-                {
-                    var treeview_child = MakeArmatureTree(ent, child_nd);
-                    current.Nodes.Add(treeview_child);
-                }
-            }
-            else   
-            {
-                // this bone has no children, we don't know where it will end, so we guess.
-                // strategy 1: just set a random sensible value for bone
-                // strategy 2: get geometric center of the vertices that this bone acts on
-                // we have to use the Y-unit vector instead of X because we defined Y_UP 
-                // in the collada.dae file, so all the matrices work such that direct unit vector is unit Y
-                var delta = Vector3.TransformVector(Vector3.UnitY, nd.GlobalTransform);
-                Vector3 end = start + Vector3.Multiply(delta, 70.0f);
-                current.DrawData = new VectorBoundingTriangle(start, end);
+                var treeview_child = MakeArmatureTree(ent, child_nd);
+                current.Nodes.Add(treeview_child);
             }
             return current;
         }
@@ -335,21 +317,20 @@ namespace WinFormAnimation2D
             // render entity
             _world.RenderWorld();
             // currently selected in tree view
-            //RenderBones(this.treeView_entity_info.Nodes[0]);
+            if (_current != null)
+            {
+                _current._extra_geometry.UpdateBonePositions(_current._armature);
+                RenderBones(_current);
+            }
             HighlightSlectedNode();
         }
 
-        private void RenderBones(TreeNode view_nd)
+        private void RenderBones(Entity ent)
         {
-            var elem = view_nd as ArmatureTreeNode;
-            if (elem != null)
+            foreach (var bounds in ent._extra_geometry._bone_id2triangle.Values)
             {
-                Point[] tmp = elem.DrawData.Triangle.Select(v => v.eToPoint()).ToArray();
+                Point[] tmp = bounds.Triangle.Select(v => v.eToPoint()).ToArray();
                 Util.GR.DrawLines(Pens.Black, tmp);
-            }
-            foreach (TreeNode child in view_nd.Nodes)
-            {
-                RenderBones(child);
             }
         }
 
