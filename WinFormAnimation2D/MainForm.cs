@@ -237,7 +237,7 @@ namespace WinFormAnimation2D
             var root_nd = new SceneTreeNode("root");
             // make entity tree
             var ent_one = new EntityTreeNode(_world._enttity_one.Name);
-            ent_one.DrawMeshBounds = _world._enttity_one._extra_geometry._entity_box;
+            ent_one.DrawMeshBounds = new BoundingBoxGroup(_world._enttity_one._extra_geometry._mesh_id2box.Values);
             // make entity mesh
             MeshTreeNode ent_mesh_nodes = MakeMeshTree(_world._enttity_one, _world._enttity_one._node);
             // make entity armature
@@ -260,19 +260,33 @@ namespace WinFormAnimation2D
         private MeshTreeNode MakeMeshTree(Entity ent, Node nd)
         {
             var current = new MeshTreeNode(nd.Name);
-            foreach (int mesh_id in nd.MeshIndices)
+            var child_boxes = new List<MeshBounds>();
+            if (nd.MeshCount > 1)
             {
-                MeshBounds aabb = ent._extra_geometry._mesh_id2box[mesh_id];
-                string mesh_name = _world._cur_scene._inner.Meshes[mesh_id].Name;
-                var mesh_view_nd = new MeshTreeNode(mesh_name);
-                var list = new List<MeshBounds>() { aabb };
-                mesh_view_nd.DrawData = new BoundingBoxGroup(list);
-                current.Nodes.Add(mesh_view_nd);
+                foreach (int mesh_id in nd.MeshIndices)
+                {
+                    MeshBounds aabb = ent._extra_geometry._mesh_id2box[mesh_id];
+                    string mesh_name = _world._cur_scene._inner.Meshes[mesh_id].Name;
+                    var mesh_view_nd = new MeshTreeNode(mesh_name);
+                    var list = new List<MeshBounds>() { aabb };
+                    mesh_view_nd.DrawData = ent._extra_geometry.GetCoveringGroup(list);
+                    mesh_view_nd.Lookup = ent._extra_geometry;
+                    //mesh_view_nd.DrawData = new BoundingBoxGroup(list);
+                    child_boxes.Add(aabb);
+                    current.Nodes.Add(mesh_view_nd);
+                }
+                // get a bounding box that covers all of the meshes assigned to this node
+                current.Lookup = ent._extra_geometry;
+                current.DrawData = ent._extra_geometry.GetCoveringGroup(child_boxes);
             }
-            // get a bounding box that covers all of the meshes assigned to this node
-            current.DrawData = new BoundingBoxGroup(
-                current.Nodes.Cast<MeshTreeNode>().Select(mesh_nd => mesh_nd.DrawData.OverallBox)
-            );
+            else
+            {
+                // Place the bounding box of mesh as self bounding box
+                MeshBounds aabb = ent._extra_geometry._mesh_id2box[nd.MeshIndices[0]];
+                var list = new List<MeshBounds>() { aabb };
+                current.DrawData = ent._extra_geometry.GetCoveringGroup(list);
+                current.Lookup = ent._extra_geometry;
+            }
             foreach (var child_nd in nd.Children)
             {
                 var treeview_child = MakeMeshTree(ent, child_nd);
@@ -284,7 +298,8 @@ namespace WinFormAnimation2D
         private ArmatureTreeNode MakeArmatureTree(Entity ent, BoneNode nd)
         {
             var current = new ArmatureTreeNode(nd._inner.Name);
-            current.DrawData = ent._extra_geometry._bone_id2triangle[nd._inner.Name];
+            current.Lookup = ent._extra_geometry;
+            current.BoneName = nd._inner.Name;
             foreach (var child_nd in nd.Children)
             {
                 var treeview_child = MakeArmatureTree(ent, child_nd);
@@ -329,8 +344,7 @@ namespace WinFormAnimation2D
         {
             foreach (var bounds in ent._extra_geometry._bone_id2triangle.Values)
             {
-                Point[] tmp = bounds.Triangle.Select(v => v.eToPoint()).ToArray();
-                Util.GR.DrawLines(Pens.Black, tmp);
+                ent._extra_geometry.RenderBone(bounds, Pens.Black);
             }
         }
 

@@ -66,11 +66,13 @@ namespace WinFormAnimation2D
     class MeshTreeNode : TreeNode, IHighlightableNode
     {
         public TreeNodeType NodeType = TreeNodeType.Mesh;
-        public BoundingBoxGroup DrawData;
+        public Guid DrawData;
+        public Geometry Lookup;
 
         public void Render()
         {
-            DrawData.OverallBox.Render();
+            Lookup.RenderBoxGroup(Lookup._mesh_groups[DrawData]);
+            //DrawData.OverallBox.Render();
         }
         public MeshTreeNode(string name)
         {
@@ -82,11 +84,12 @@ namespace WinFormAnimation2D
     class ArmatureTreeNode : TreeNode, IHighlightableNode
     {
         public TreeNodeType NodeType = TreeNodeType.Armature;
-        public BoneBounds DrawData;
+        public string BoneName;
+        public Geometry Lookup;
 
         public void Render()
         {
-            DrawData.Render();
+            Lookup.RenderBone(Lookup._bone_id2triangle[BoneName]);
         }
         public ArmatureTreeNode(string name)
         {
