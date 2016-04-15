@@ -32,6 +32,21 @@ namespace WinFormAnimation2D
         public EventHandler StepAll;
         public EventHandler DynamicTimeBlend;
 
+        private IEnumerable<MethodInfo> _commands = null;
+        public IEnumerable<MethodInfo> Commands
+        {
+            get
+            {
+                if (_commands == null)
+                {
+                    _commands = this.GetType()
+                        .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                        .Where(f => char.IsLower(f.Name[0]));
+                }
+                return _commands;
+            }
+        }
+
         // time of animation frame that was just rendered and time right now
         public Stopwatch anim_frame_time = new Stopwatch();
 
@@ -59,6 +74,7 @@ namespace WinFormAnimation2D
             }
         }
 
+        // jump to time directly
         public void jumpt(double seconds)
         {
             if (_current == null)
@@ -72,6 +88,7 @@ namespace WinFormAnimation2D
             _window.Invalidate();
         }
 
+        // change the keyframe interval to go in reverse direction (back-play of animation)
         public void bkf()
         {
             if (_current == null)
@@ -82,6 +99,7 @@ namespace WinFormAnimation2D
             _debug["from frame"] = _current._action.OriginKeyframe.ToString();
         }
 
+        // change the keyframe interval to the next one
         public void fkf()
         {
             if (_current == null)
@@ -103,7 +121,7 @@ namespace WinFormAnimation2D
             _debug["blend"] = _current._action.KfBlend.ToString();
         }
 
-        // applies the animation to the armature
+        // force applies animation to armature and causes a redraw
         public void applyanim()
         {
             if (_current == null)
@@ -115,6 +133,8 @@ namespace WinFormAnimation2D
             _window.Invalidate();
         }
 
+        // increment blend by time value proportional to delay from last frame
+        // automatically advance to next keyframe
         public void dynamic_step_time()
         {
             if (_current == null)
@@ -142,6 +162,7 @@ namespace WinFormAnimation2D
             _form.SetAnimTime(_current._action.TimeCursorInTicks);
         }
 
+        // start the timer to play througth all keyframes with correct time
         public void playall(bool on)
         {
             if (_current == null)
@@ -163,10 +184,12 @@ namespace WinFormAnimation2D
             else
             {
                 _current._action.Loop = false;
-                _timer.Tick -= StepAll;
+                _timer.Tick -=  DynamicTimeBlend;
             }
         }
 
+        // start the timer to step in 0.1 blend size througth the current interval
+        // don't go to next keyframe
         public void playinterval()
         {
             if (_current == null)
@@ -180,6 +203,7 @@ namespace WinFormAnimation2D
             }
         }
 
+        // step through all animation with 0.1 blend interval
         public void stepall()
         {
             if (_current == null)
@@ -201,6 +225,7 @@ namespace WinFormAnimation2D
             _form.SetAnimTime(_current._action.TimeCursorInTicks);
         }
 
+        // step in 0.1 blend interval, don't overflow to next keyframe
         public void stepf()
         {
             if (_current == null)
@@ -217,9 +242,10 @@ namespace WinFormAnimation2D
             _form.SetAnimTime(_current._action.TimeCursorInTicks);
         }
 
+
         public void help()
         {
-            _debug["help"] = string.Join(", ", this.GetType().GetMethods().Select(f => f.Name));
+            _debug["help"] = string.Join(", ", Commands.Select(f => f.Name));
             ShowDebug();
         }
 
@@ -235,11 +261,10 @@ namespace WinFormAnimation2D
             int qty_args = tokens.Count() - 1;
             string fname = tokens.First();
             // find the function
-            MethodInfo cmdinfo = this.GetType()
-                .GetMethod((string)fname, BindingFlags.Public | BindingFlags.Instance);
+            MethodInfo cmdinfo = Commands.Single(f => f.Name == (string)fname);
             if (cmdinfo == null)
             {
-                SetError("cmd wrong name");
+                SetError("command not found");
                 help();
                 return;
             }
@@ -248,7 +273,7 @@ namespace WinFormAnimation2D
                 .Select(p => TypeDescriptor.GetConverter(p.ParameterType));
             if (qty_args < arg_converters.Count())
             {
-                SetError("cmd takes " + arg_converters.Count() + " args");
+                SetError("command takes " + arg_converters.Count() + " args");
                 return;
             }
             // for converted output
@@ -266,4 +291,5 @@ namespace WinFormAnimation2D
             ShowDebug();
         }
     }
+
 }
