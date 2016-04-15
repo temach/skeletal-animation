@@ -242,7 +242,10 @@ namespace WinFormAnimation2D
             foreach (var aabb in geom._mesh_id2box.Values)
             {
                 aabb.EndUpdateNearFar();
-                //aabb.Render();
+                if (Properties.Settings.Default.RenderAllMeshBounds)
+                {
+                    aabb.Render();
+                }
             }
             //_extra_geometry.RenderEntityBorder();
         }

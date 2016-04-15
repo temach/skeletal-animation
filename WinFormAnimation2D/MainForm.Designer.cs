@@ -55,6 +55,10 @@
             this.label1 = new System.Windows.Forms.Label();
             this.listBox_display = new System.Windows.Forms.ListBox();
             this.button_RunCli = new System.Windows.Forms.Button();
+            this.checkBox_renderBones = new System.Windows.Forms.CheckBox();
+            this.checkBox_render_boxes = new System.Windows.Forms.CheckBox();
+            this.checkBox_triangulate = new System.Windows.Forms.CheckBox();
+            this.checkBox4 = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).BeginInit();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_time)).BeginInit();
@@ -308,11 +312,58 @@
             this.button_RunCli.UseVisualStyleBackColor = true;
             this.button_RunCli.Click += new System.EventHandler(this.button_RunCli_Click);
             // 
+            // checkBox_renderBones
+            // 
+            this.checkBox_renderBones.AutoSize = true;
+            this.checkBox_renderBones.Location = new System.Drawing.Point(743, 152);
+            this.checkBox_renderBones.Name = "checkBox_renderBones";
+            this.checkBox_renderBones.Size = new System.Drawing.Size(94, 17);
+            this.checkBox_renderBones.TabIndex = 43;
+            this.checkBox_renderBones.Text = "Render Bones";
+            this.checkBox_renderBones.UseVisualStyleBackColor = true;
+            this.checkBox_renderBones.CheckedChanged += new System.EventHandler(this.checkBox_renderBones_CheckedChanged);
+            // 
+            // checkBox_render_boxes
+            // 
+            this.checkBox_render_boxes.AutoSize = true;
+            this.checkBox_render_boxes.Location = new System.Drawing.Point(856, 152);
+            this.checkBox_render_boxes.Name = "checkBox_render_boxes";
+            this.checkBox_render_boxes.Size = new System.Drawing.Size(93, 17);
+            this.checkBox_render_boxes.TabIndex = 44;
+            this.checkBox_render_boxes.Text = "Render Boxes";
+            this.checkBox_render_boxes.UseVisualStyleBackColor = true;
+            this.checkBox_render_boxes.CheckedChanged += new System.EventHandler(this.checkBox_render_boxes_CheckedChanged);
+            // 
+            // checkBox_triangulate
+            // 
+            this.checkBox_triangulate.AutoSize = true;
+            this.checkBox_triangulate.Location = new System.Drawing.Point(743, 176);
+            this.checkBox_triangulate.Name = "checkBox_triangulate";
+            this.checkBox_triangulate.Size = new System.Drawing.Size(108, 17);
+            this.checkBox_triangulate.TabIndex = 45;
+            this.checkBox_triangulate.Text = "Triangulate Mesh";
+            this.checkBox_triangulate.UseVisualStyleBackColor = true;
+            this.checkBox_triangulate.CheckedChanged += new System.EventHandler(this.checkBox_triangulate_CheckedChanged);
+            // 
+            // checkBox4
+            // 
+            this.checkBox4.AutoSize = true;
+            this.checkBox4.Location = new System.Drawing.Point(856, 176);
+            this.checkBox4.Name = "checkBox4";
+            this.checkBox4.Size = new System.Drawing.Size(80, 17);
+            this.checkBox4.TabIndex = 46;
+            this.checkBox4.Text = "checkBox4";
+            this.checkBox4.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(958, 528);
+            this.Controls.Add(this.checkBox4);
+            this.Controls.Add(this.checkBox_triangulate);
+            this.Controls.Add(this.checkBox_render_boxes);
+            this.Controls.Add(this.checkBox_renderBones);
             this.Controls.Add(this.button_RunCli);
             this.Controls.Add(this.listBox_display);
             this.Controls.Add(this.label1);
@@ -371,6 +422,10 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ListBox listBox_display;
         private System.Windows.Forms.Button button_RunCli;
+        private System.Windows.Forms.CheckBox checkBox_renderBones;
+        private System.Windows.Forms.CheckBox checkBox_render_boxes;
+        private System.Windows.Forms.CheckBox checkBox_triangulate;
+        private System.Windows.Forms.CheckBox checkBox4;
     }
 }
 

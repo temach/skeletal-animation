@@ -242,6 +242,22 @@ namespace WinFormAnimation2D
             _form.SetAnimTime(_current._action.TimeCursorInTicks);
         }
 
+        public void set(string name, string value)
+        {
+            var possible = Properties.Settings.Default.GetType().GetProperties(BindingFlags.Public);
+            PropertyInfo prop = possible.First(p => p.Name == name);
+            if (prop != null)
+            {
+                // get converter for value
+                var conv = TypeDescriptor.GetConverter(prop.PropertyType);
+                // for converted output
+                if (! conv.IsValid(value))
+                {
+                    return;
+                }
+                prop.SetValue(Properties.Settings.Default, conv.ConvertFromString(value));
+            }
+        }
 
         public void help()
         {

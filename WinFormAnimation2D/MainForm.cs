@@ -335,7 +335,10 @@ namespace WinFormAnimation2D
             if (_current != null)
             {
                 _current._extra_geometry.UpdateBonePositions(_current._armature);
-                RenderBones(_current);
+                if (Properties.Settings.Default.RenderAllBoneBounds)
+                {
+                    RenderBones(_current);
+                }
             }
             HighlightSlectedNode();
         }
@@ -377,6 +380,22 @@ namespace WinFormAnimation2D
         private void treeView_entity_info_AfterSelect(object sender, TreeViewEventArgs e)
         {
             this.pictureBox_main.Invalidate();
+        }
+
+        private void checkBox_renderBones_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.RenderAllBoneBounds = !Properties.Settings.Default.RenderAllBoneBounds;
+            //this._cmd.RunCmd("set RenderAllBoneBounds True");
+        }
+
+        private void checkBox_render_boxes_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.RenderAllMeshBounds = !Properties.Settings.Default.RenderAllMeshBounds;
+        }
+
+        private void checkBox_triangulate_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.TriangulateMesh = !Properties.Settings.Default.TriangulateMesh;
         }
     }
 }

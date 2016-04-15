@@ -80,6 +80,10 @@ namespace WinFormAnimation2D
 
             return () =>
             {
+                if (Properties.Settings.Default.TriangulateMesh == false)
+                {
+                    return Brushes.Green;
+                }
                 // cache this variable
                 _iter_nextbrush++;
                 switch (_iter_nextbrush % 3)
