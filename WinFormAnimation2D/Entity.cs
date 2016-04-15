@@ -42,7 +42,12 @@ namespace WinFormAnimation2D
         public SceneWrapper _scene;
         public Geometry _extra_geometry;
         public DrawConfig _draw_conf;
-        public Matrix4 _matrix = Matrix4.Identity;
+        public Matrix4 Matrix
+        {
+            get { return _extra_geometry._matrix; }
+            set { _extra_geometry._matrix = value; }
+        }
+
         private readonly float _motion_speed = 10.0f;
         public Dictionary<Vector3D,Matrix4x4> _vertex2matrix = new Dictionary<Vector3D, Matrix4x4>();
 
@@ -53,7 +58,7 @@ namespace WinFormAnimation2D
         }
         public Vector2 GetTranslation
         {
-            get { return _matrix.ExtractTranslation().eTo2D(); }
+            get { return Matrix.ExtractTranslation().eTo2D(); }
         }
 
         // the only public constructor
@@ -69,7 +74,7 @@ namespace WinFormAnimation2D
         public void RotateBy(double angle_degrees)
         {
             float angle_radians = (float)(angle_degrees * Math.PI / 180.0);
-            _matrix = Matrix4.CreateRotationZ(angle_radians) * _matrix;
+            Matrix = Matrix4.CreateRotationZ(angle_radians) * Matrix;
         }
 
         public void RotateByKey(KeyEventArgs e)
@@ -91,7 +96,7 @@ namespace WinFormAnimation2D
         // x,y are direction parameters one of {-1, 0, 1}
         public void MoveBy(int x, int y)
         {
-            _matrix = Matrix4.CreateTranslation((_motion_speed * x), (_motion_speed * y), 0.0f) * _matrix;
+            Matrix = Matrix4.CreateTranslation((_motion_speed * x), (_motion_speed * y), 0.0f) * Matrix;
         }
 
         public void MoveByKey(KeyEventArgs e)
@@ -121,7 +126,7 @@ namespace WinFormAnimation2D
             // modify the point so it is in entity space
             // var tmp = ;
             Vector3 tmp = new Vector3(p.X, p.Y, 0.0f);
-            tmp = Vector3.Transform(tmp, Matrix4.Invert(_matrix));
+            tmp = Vector3.Transform(tmp, Matrix4.Invert(Matrix));
             return _extra_geometry.EntityBorderContainsPoint(tmp.eTo2D());
         }
         
@@ -137,7 +142,7 @@ namespace WinFormAnimation2D
                 Util.GR.SmoothingMode = SmoothingMode.AntiAlias;
             }
             // first pass: calculate a matrix for each vertex
-            RecursiveTransformVertices(_node, _matrix.eToAssimp());
+            RecursiveTransformVertices(_node, Matrix.eToAssimp());
             // second pass: render with this matrix
             RecursiveRenderSystemDrawing(_node);
             // apply the matrix to graphics just to draw the rectangle

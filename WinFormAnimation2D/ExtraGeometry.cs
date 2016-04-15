@@ -214,6 +214,7 @@ namespace WinFormAnimation2D
         public Dictionary<int,MeshBounds> _mesh_id2box = new Dictionary<int,MeshBounds>();
         public Dictionary<string,BoneBounds> _bone_id2triangle = new Dictionary<string,BoneBounds>();
         public BoundingBoxGroup _entity_box;
+        public Matrix4 _matrix = Matrix4.Identity;
 
         /// Build geometry data for node (usually use only for one of the children of scene.RootNode)
         public Geometry(IList<Mesh> scene_meshes, Node nd, BoneNode armature)
