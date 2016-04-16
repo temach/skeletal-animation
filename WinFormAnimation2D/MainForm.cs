@@ -58,6 +58,8 @@ namespace WinFormAnimation2D
             ClearScreen = delegate { this.pictureBox_main.Invalidate(); };
             Matrix4 init_camera = Matrix4.Identity;
             _camera = new Drawing2DCamera(init_camera);
+            _camera.shift_x = (float)(this.pictureBox_main.Width / 2.0);
+            _camera.shift_y = (float)(this.pictureBox_main.Height / 2.0);
             // manually register the mousewheel event handler.
             this.MouseWheel += new MouseEventHandler(this.pictureBox_main_MouseMove);
             tm.Interval = 1;

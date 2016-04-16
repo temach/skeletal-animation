@@ -28,6 +28,10 @@ namespace WinFormAnimation2D
         private readonly float _motion_speed = 10.0f;
         private Matrix4 _cam_mat;
 
+        // just for debug, we need half the size of picture box
+        public float shift_x = 360.5f;
+        public float shift_y = 233f;
+
         public Vector2 GetTranslation
         {
             get { return _cam_mat.ExtractTranslation().eTo2D(); }
@@ -72,10 +76,10 @@ namespace WinFormAnimation2D
             // we would remove the translation in OpenGL because its screen center is at (0,0,0)
             // in 2D camera screen center is at (Width/2.0, Height/2.0)
             // so translate to screen center 
-            _cam_mat = Matrix4.CreateTranslation(360.5f, 233f, 0.0f) * _cam_mat;
+            _cam_mat = Matrix4.CreateTranslation(shift_x, shift_y, 0.0f) * _cam_mat;
             _cam_mat = Matrix4.CreateRotationZ(angle_radians) * _cam_mat;
             // translate back
-            _cam_mat = Matrix4.CreateTranslation(-360.5f, -233f, 0.0f) * _cam_mat;
+            _cam_mat = Matrix4.CreateTranslation(-shift_x, -shift_y, 0.0f) * _cam_mat;
         }
 
         public void RotateByKey(KeyEventArgs e)

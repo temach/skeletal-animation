@@ -59,6 +59,7 @@
             this.checkBox_render_boxes = new System.Windows.Forms.CheckBox();
             this.checkBox_triangulate = new System.Windows.Forms.CheckBox();
             this.checkBox4 = new System.Windows.Forms.CheckBox();
+            this.glControl1 = new OpenTK.GLControl();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).BeginInit();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_time)).BeginInit();
@@ -79,9 +80,9 @@
             this.pictureBox_main.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox_main.Location = new System.Drawing.Point(12, 37);
+            this.pictureBox_main.Location = new System.Drawing.Point(403, 37);
             this.pictureBox_main.Name = "pictureBox_main";
-            this.pictureBox_main.Size = new System.Drawing.Size(721, 466);
+            this.pictureBox_main.Size = new System.Drawing.Size(330, 466);
             this.pictureBox_main.TabIndex = 1;
             this.pictureBox_main.TabStop = false;
             this.pictureBox_main.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox_main_Paint);
@@ -253,16 +254,16 @@
             // 
             // trackBar_time
             // 
-            this.trackBar_time.Location = new System.Drawing.Point(377, 9);
+            this.trackBar_time.Location = new System.Drawing.Point(91, 4);
             this.trackBar_time.Name = "trackBar_time";
-            this.trackBar_time.Size = new System.Drawing.Size(104, 45);
+            this.trackBar_time.Size = new System.Drawing.Size(390, 45);
             this.trackBar_time.TabIndex = 36;
             this.trackBar_time.ValueChanged += new System.EventHandler(this.trackBar_AnimationTime_ValueChanged);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(298, 9);
+            this.label3.Location = new System.Drawing.Point(12, 9);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(73, 13);
             this.label3.TabIndex = 37;
@@ -355,11 +356,21 @@
             this.checkBox4.Text = "checkBox4";
             this.checkBox4.UseVisualStyleBackColor = true;
             // 
+            // glControl1
+            // 
+            this.glControl1.BackColor = System.Drawing.Color.Black;
+            this.glControl1.Location = new System.Drawing.Point(12, 35);
+            this.glControl1.Name = "glControl1";
+            this.glControl1.Size = new System.Drawing.Size(385, 466);
+            this.glControl1.TabIndex = 47;
+            this.glControl1.VSync = false;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(958, 528);
+            this.Controls.Add(this.glControl1);
             this.Controls.Add(this.checkBox4);
             this.Controls.Add(this.checkBox_triangulate);
             this.Controls.Add(this.checkBox_render_boxes);
@@ -426,6 +437,7 @@
         private System.Windows.Forms.CheckBox checkBox_render_boxes;
         private System.Windows.Forms.CheckBox checkBox_triangulate;
         private System.Windows.Forms.CheckBox checkBox4;
+        private OpenTK.GLControl glControl1;
     }
 }
 
