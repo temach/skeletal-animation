@@ -19,11 +19,13 @@ using Matrix4 = OpenTK.Matrix4;
 
 namespace WinFormAnimation2D
 {
+
     /// <summary>
     /// This class knows what argumets to pass to NodeInterpolator 
     /// </summary>
-    class ActionState
+    class ActionState : BaseForEventDriven
     {
+
         public Animation _action;
 
         // index of keyframe maps to its time in ticks
@@ -56,14 +58,6 @@ namespace WinFormAnimation2D
             {
                 double interval_ticks = (KeyframeTimes[TargetKeyframe] - KeyframeTimes[OriginKeyframe]);
                 return KeyframeTimes[OriginKeyframe] + interval_ticks * KfBlend;
-            }
-        }
-
-        public double TimeCursorSeconds
-        {
-            get
-            {
-                return TimeCursorInTicks / TickPerSec;
             }
         }
 
@@ -120,7 +114,11 @@ namespace WinFormAnimation2D
         public double KfBlend
         {
             get { return _kf_blend; }
-            set { _kf_blend = Math.Min(Math.Max(0, value), 1.0); }
+            set
+            {
+                _kf_blend = Math.Min(Math.Max(0, value), 1.0);
+                NotifyPropertyChanged();
+            }
         }
 
         public bool _loop;
@@ -135,6 +133,7 @@ namespace WinFormAnimation2D
                 {
                     SetTime(0);
                 }
+                NotifyPropertyChanged();
             }
         }
 

@@ -21,16 +21,16 @@ namespace WinFormAnimation2D
     {
 
         public World _world;
-        public PictureBox _window;
         public Timer _timer;
         public MainForm _form;
         public Entity _current;
         public ListBox _box_debug;
 
         public EventHandler StepInterval;
-        public EventHandler ClearScreen;
         public EventHandler StepAll;
         public EventHandler DynamicTimeBlend;
+
+        public bool NeedWindowRedraw;
 
         private IEnumerable<MethodInfo> _commands = null;
         public IEnumerable<MethodInfo> Commands
@@ -54,15 +54,13 @@ namespace WinFormAnimation2D
 
         public CommandLine(PictureBox window, World world, Timer tm, ListBox debug, MainForm form)
         {
-            _window = window;
             _world = world;
-            _timer = tm;
+            _timer = new Timer();
             _box_debug = debug;
             _form = form;
-            ClearScreen = delegate { _window.Invalidate(); };
             StepInterval = delegate { this.stepf(); };
             StepAll = delegate { this.stepall(); };
-            DynamicTimeBlend = delegate { this.dynamic_step_time(); };
+            DynamicTimeBlend = delegate { this.DynamicStepTime(); };
         }
 
         public void ShowDebug()
@@ -83,9 +81,8 @@ namespace WinFormAnimation2D
             }
             _current._action.SetTime(seconds);
             _form.SetAnimTime(seconds);
-            _world._action_one.ApplyAnimation(_current._armature
-                , _current._action);
-            _window.Invalidate();
+            _world._action_one.ApplyAnimation(_current._armature, _current._action);
+            NeedWindowRedraw = true;
         }
 
         // change the keyframe interval to go in reverse direction (back-play of animation)
@@ -128,14 +125,13 @@ namespace WinFormAnimation2D
             {
                 return;
             }
-            _world._action_one.ApplyAnimation(_current._armature
-                , _current._action);
-            _window.Invalidate();
+            _world._action_one.ApplyAnimation(_current._armature, _current._action);
+            NeedWindowRedraw = true;
         }
 
         // increment blend by time value proportional to delay from last frame
         // automatically advance to next keyframe
-        public void dynamic_step_time()
+        public void DynamicStepTime()
         {
             if (_current == null)
             {
@@ -156,9 +152,8 @@ namespace WinFormAnimation2D
                 _current._action.KfBlend = 0.0;
                 _current._action.NextInterval();
             }
-            _world._action_one.ApplyAnimation(_current._armature
-                , _current._action);
-            _window.Invalidate();
+            _world._action_one.ApplyAnimation(_current._armature, _current._action);
+            NeedWindowRedraw = true;
             _form.SetAnimTime(_current._action.TimeCursorInTicks);
         }
 
@@ -221,7 +216,7 @@ namespace WinFormAnimation2D
             }
             _world._action_one.ApplyAnimation(_current._armature
                 , _current._action);
-            _window.Invalidate();
+            NeedWindowRedraw = true;
             _form.SetAnimTime(_current._action.TimeCursorInTicks);
         }
 
@@ -238,7 +233,7 @@ namespace WinFormAnimation2D
             }
             _world._action_one.ApplyAnimation(_current._armature
                 , _current._action);
-            _window.Invalidate();
+            NeedWindowRedraw = true;
             _form.SetAnimTime(_current._action.TimeCursorInTicks);
         }
 

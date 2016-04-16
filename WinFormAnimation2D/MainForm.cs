@@ -50,10 +50,12 @@ namespace WinFormAnimation2D
             }
         }
 
+        public EventHandler ClearScreen;
 
         public MainForm()
         {
             InitializeComponent();
+            ClearScreen = delegate { this.pictureBox_main.Invalidate(); };
             Matrix4 init_camera = Matrix4.Identity;
             _camera = new Drawing2DCamera(init_camera);
             // manually register the mousewheel event handler.
@@ -152,7 +154,7 @@ namespace WinFormAnimation2D
         private void button_start_Click(object sender, EventArgs e)
         {
             pictureBox_main.Invalidate();
-            tm.Tick += _cmd.ClearScreen;
+            tm.Tick += ClearScreen;
             if (tm.Enabled == false)
             {
                 tm.Start();
@@ -160,7 +162,7 @@ namespace WinFormAnimation2D
         }
         private void button_stop_colors_Click(object sender, EventArgs e)
         {
-            tm.Tick -= _cmd.ClearScreen;
+            tm.Tick -= ClearScreen;
         }
 
         private void pictureBox_main_MouseUp(object sender, MouseEventArgs e)
@@ -361,6 +363,10 @@ namespace WinFormAnimation2D
         private void button_RunCli_Click(object sender, EventArgs e)
         {
             this._cmd.RunCmd(this.textBox_cli.Text);
+            if (this._cmd.NeedWindowRedraw)
+            {
+                this.pictureBox_main.Invalidate();
+            }
         }
 
         private void trackBar_AnimationTime_ValueChanged(object sender, EventArgs e)
