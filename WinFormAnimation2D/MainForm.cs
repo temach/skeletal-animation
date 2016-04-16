@@ -384,18 +384,17 @@ namespace WinFormAnimation2D
 
         private void checkBox_renderBones_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.RenderAllBoneBounds = !Properties.Settings.Default.RenderAllBoneBounds;
-            //this._cmd.RunCmd("set RenderAllBoneBounds True");
+            this._cmd.RunCmd("set RenderAllBoneBounds " + this.checkBox_renderBones.Checked);
         }
 
         private void checkBox_render_boxes_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.RenderAllMeshBounds = !Properties.Settings.Default.RenderAllMeshBounds;
+            this._cmd.RunCmd("set RenderAllMeshBounds " + this.checkBox_render_boxes.Checked);
         }
 
         private void checkBox_triangulate_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.TriangulateMesh = !Properties.Settings.Default.TriangulateMesh;
+            this._cmd.RunCmd("set TriangulateMesh " + this.checkBox_triangulate.Checked);
         }
     }
 }

@@ -72,8 +72,8 @@ namespace WinFormAnimation2D
         public void Render()
         {
             Lookup.RenderBoxGroup(Lookup._mesh_groups[DrawData]);
-            //DrawData.OverallBox.Render();
         }
+
         public MeshTreeNode(string name)
         {
             this.Name = name;

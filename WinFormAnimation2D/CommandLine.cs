@@ -244,7 +244,7 @@ namespace WinFormAnimation2D
 
         public void set(string name, string value)
         {
-            var possible = Properties.Settings.Default.GetType().GetProperties(BindingFlags.Public);
+            PropertyInfo[] possible = Properties.Settings.Default.GetType().GetProperties();
             PropertyInfo prop = possible.First(p => p.Name == name);
             if (prop != null)
             {
