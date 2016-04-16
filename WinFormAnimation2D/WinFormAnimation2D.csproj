@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionState.cs" />
     <Compile Include="Animator.cs" />
     <Compile Include="ArmatureEntity.cs" />
     <Compile Include="AssimpMatrixExtensions.cs" />
