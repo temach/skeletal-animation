@@ -11,6 +11,7 @@ using System.Drawing;
 using System.IO;        // for MemoryStream
 using System.Reflection;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
 using System.Diagnostics;
 using Quaternion = Assimp.Quaternion;
 
@@ -162,7 +163,7 @@ namespace WinFormAnimation2D
             // update frame max
             _zero_far.X = Math.Max(_zero_far.X, vertex.X);
             _zero_far.Y = Math.Max(_zero_far.Y, vertex.Y);
-            _zero_far.Z = Math.Min(_zero_far.Z, vertex.Z);
+            _zero_far.Z = Math.Max(_zero_far.Z, vertex.Z);
         }
 
     }

@@ -68,11 +68,12 @@ namespace WinFormAnimation2D
             GL.LoadIdentity();
             // set a proper perspective matrix for rendering
             float aspectRatio = ((float)width)/height;
-            Matrix4 perspective = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, aspectRatio, 0.001f, 100.0f);
+            Matrix4 perspective = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, aspectRatio, 0.1f, 1000.0f);
             GL.LoadMatrix(ref perspective);
+            // now Model view matrix
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadIdentity();
-	}
+        }
 
         public void DrawEmptyEntitySplash()
         {

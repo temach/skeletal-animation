@@ -368,8 +368,10 @@ namespace WinFormAnimation2D
             GL.Light(LightName.Light0, LightParameter.Ambient, new float[] { col.X, col.Y, col.Z, 1 });
 
             // TEST CODE to visualize mid point (pivot) and origin
-            var view = Matrix4.LookAt(0, 4, 50, 0, 0, 0, 0, 1, 0);
+            var view = Matrix4.LookAt(0, 4, 500, 0, 0, 0, 0, 1, 0);
             GL.LoadMatrix(ref view);
+
+            var ent_box = _world._enttity_one._extra_geometry._mesh_groups[_world._enttity_one._extra_geometry._ent_box_id];
 
             GL.Normal3(0, 0, 1);
             // Important points to remember:
@@ -377,22 +379,34 @@ namespace WinFormAnimation2D
             // Must be clock wise vertex draw order
             // The x-axis is accross the screen, so the Z-axis triangle must have component along X: +-1
             // since look at looks towards the center, we need to offset it a bit to see the Z axis.
+            int shift = 5;
             GL.Begin(BeginMode.Triangles);
             // x axis
             GL.Color3(1.0f, 0.0f, 0.0f);
             GL.Vertex3(0,0,0);
-            GL.Vertex3(20,-1,0);
-            GL.Vertex3(20,1,0);
+            GL.Vertex3(20,-shift,0);
+            GL.Vertex3(20,shift,0);
             // y axis
             GL.Color3(0.0f, 1.0f, 0.0f);
             GL.Vertex3(0,0,0);
-            GL.Vertex3(1,20,0);
-            GL.Vertex3(-1,20,0);
+            GL.Vertex3(shift,20,0);
+            GL.Vertex3(-shift,20,0);
             // z axis
             GL.Color3(0.0f, 0.0f, 1.0f);
             GL.Vertex3(0,0,0);
-            GL.Vertex3(-1,0,20);
-            GL.Vertex3(1,0,20);
+            GL.Vertex3(-shift,0,20);
+            GL.Vertex3(shift,0,20);
+            // to near
+            GL.Color3(1.0f, 1.0f, 0.0f);
+            GL.Vertex3(shift,-shift,0);
+            GL.Vertex3(shift,shift,0);
+            GL.Vertex3(ent_box.OverallBox._zero_near);
+            // to far
+            GL.Color3(0.0f, 1.0f, 1.0f);
+            GL.Vertex3(shift,shift,0);
+            GL.Vertex3(shift,-shift,0);
+            GL.Vertex3(ent_box.OverallBox._zero_far);
+            GL.End();
             glControl1.SwapBuffers();
         }
 
