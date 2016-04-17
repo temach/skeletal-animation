@@ -51,18 +51,20 @@ namespace WinFormAnimation2D
         }
 
         public EventHandler ClearScreen;
+        public EventHandler RedrawIfAnimUpdate;
 
         public MainForm()
         {
             InitializeComponent();
             ClearScreen = delegate { this.pictureBox_main.Invalidate(); };
+            RedrawIfAnimUpdate = delegate { if (this._cmd.NeedWindowRedraw == true) this.pictureBox_main.Invalidate(); };
             Matrix4 init_camera = Matrix4.Identity;
             _camera = new Drawing2DCamera(init_camera);
             _camera.shift_x = (float)(this.pictureBox_main.Width / 2.0);
             _camera.shift_y = (float)(this.pictureBox_main.Height / 2.0);
             // manually register the mousewheel event handler.
             this.MouseWheel += new MouseEventHandler(this.pictureBox_main_MouseMove);
-            tm.Interval = 1;
+            tm.Interval = 20;
             _world = new World(this.pictureBox_main);
             try
             {
@@ -74,6 +76,8 @@ namespace WinFormAnimation2D
             }
             _cmd = new CommandLine(this.pictureBox_main, _world, tm, this.listBox_display, this);
             InitFillTreeFromWorldSingleEntity();
+            tm.Tick += RedrawIfAnimUpdate;
+            tm.Start();
         }
 
         public void SetAnimTime(double val)

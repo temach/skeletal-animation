@@ -32,18 +32,18 @@ namespace WinFormAnimation2D
 
         public bool NeedWindowRedraw;
 
-        private IEnumerable<MethodInfo> _commands = null;
+        private IEnumerable<MethodInfo> _commands_cached = null;
         public IEnumerable<MethodInfo> Commands
         {
             get
             {
-                if (_commands == null)
+                if (_commands_cached == null)
                 {
-                    _commands = this.GetType()
+                    _commands_cached = this.GetType()
                         .GetMethods(BindingFlags.Public | BindingFlags.Instance)
                         .Where(f => char.IsLower(f.Name[0]));
                 }
-                return _commands;
+                return _commands_cached;
             }
         }
 
@@ -56,6 +56,7 @@ namespace WinFormAnimation2D
         {
             _world = world;
             _timer = new Timer();
+            _timer.Interval = 50;
             _box_debug = debug;
             _form = form;
             StepInterval = delegate { this.stepf(); };
