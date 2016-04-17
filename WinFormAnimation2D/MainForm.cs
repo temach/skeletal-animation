@@ -330,12 +330,23 @@ namespace WinFormAnimation2D
 
         private void pictureBox_main_Paint(object sender, PaintEventArgs e)
         {
-            GL.LoadIdentity();
             // guard if GLControl has not loaded yet
             if (! LoadOpenGLDone)
             {
                 return;
             }
+            GL.LoadIdentity();
+            // TEST CODE to visualize mid point (pivot) and origin
+            var view = Matrix4.LookAt(0, 50, 500, 0, 0, 0, 0, 1, 0);
+            GL.LoadMatrix(ref view);
+            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+            // light color
+            var col = new Vector3(1, 1, 1);
+            col *= (0.25f + 1.5f * 10 / 100.0f) * 1.5f;
+            //GL.Light(LightName.Light0, LightParameter.Diffuse, new float[] { col.X, col.Y, col.Z, 1 });
+            //GL.Light(LightName.Light0, LightParameter.Specular, new float[] { col.X, col.Y, col.Z, 1 });
+            GL.Light(LightName.Light0, LightParameter.Ambient, new float[] { col.X, col.Y, col.Z, 1 });
+
             this.toolStripStatusLabel_mouse_coords.Text = _m_status.InnerWorldPos.ToString();
             // Set GR field so that we can use Sysem.Drawing2D as if it was like OpenGL
             Util.GR = e.Graphics;
@@ -359,20 +370,7 @@ namespace WinFormAnimation2D
             }
             HighlightSlectedNode();
 
-            // light color
-            var col = new Vector3(1, 1, 1);
-            col *= (0.25f + 1.5f * 10 / 100.0f) * 1.5f;
-
-            //GL.Light(LightName.Light0, LightParameter.Diffuse, new float[] { col.X, col.Y, col.Z, 1 });
-            //GL.Light(LightName.Light0, LightParameter.Specular, new float[] { col.X, col.Y, col.Z, 1 });
-            GL.Light(LightName.Light0, LightParameter.Ambient, new float[] { col.X, col.Y, col.Z, 1 });
-
-            // TEST CODE to visualize mid point (pivot) and origin
-            var view = Matrix4.LookAt(0, 4, 500, 0, 0, 0, 0, 1, 0);
-            GL.LoadMatrix(ref view);
-
-            var ent_box = _world._enttity_one._extra_geometry._mesh_groups[_world._enttity_one._extra_geometry._ent_box_id];
-
+            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
             GL.Normal3(0, 0, 1);
             // Important points to remember:
             // Set normals.
@@ -396,6 +394,7 @@ namespace WinFormAnimation2D
             GL.Vertex3(0,0,0);
             GL.Vertex3(-shift,0,20);
             GL.Vertex3(shift,0,20);
+            var ent_box = _world._enttity_one._extra_geometry._mesh_groups[_world._enttity_one._extra_geometry._ent_box_id];
             // to near
             GL.Color3(1.0f, 1.0f, 0.0f);
             GL.Vertex3(shift,-shift,0);
