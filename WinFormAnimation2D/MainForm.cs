@@ -330,6 +330,7 @@ namespace WinFormAnimation2D
 
         private void pictureBox_main_Paint(object sender, PaintEventArgs e)
         {
+            GL.LoadIdentity();
             // guard if GLControl has not loaded yet
             if (! LoadOpenGLDone)
             {
@@ -357,6 +358,41 @@ namespace WinFormAnimation2D
                 }
             }
             HighlightSlectedNode();
+
+            // light color
+            var col = new Vector3(1, 1, 1);
+            col *= (0.25f + 1.5f * 10 / 100.0f) * 1.5f;
+
+            //GL.Light(LightName.Light0, LightParameter.Diffuse, new float[] { col.X, col.Y, col.Z, 1 });
+            //GL.Light(LightName.Light0, LightParameter.Specular, new float[] { col.X, col.Y, col.Z, 1 });
+            GL.Light(LightName.Light0, LightParameter.Ambient, new float[] { col.X, col.Y, col.Z, 1 });
+
+            // TEST CODE to visualize mid point (pivot) and origin
+            var view = Matrix4.LookAt(0, 4, 50, 0, 0, 0, 0, 1, 0);
+            GL.LoadMatrix(ref view);
+
+            GL.Normal3(0, 0, 1);
+            // Important points to remember:
+            // Set normals.
+            // Must be clock wise vertex draw order
+            // The x-axis is accross the screen, so the Z-axis triangle must have component along X: +-1
+            // since look at looks towards the center, we need to offset it a bit to see the Z axis.
+            GL.Begin(BeginMode.Triangles);
+            // x axis
+            GL.Color3(1.0f, 0.0f, 0.0f);
+            GL.Vertex3(0,0,0);
+            GL.Vertex3(20,-1,0);
+            GL.Vertex3(20,1,0);
+            // y axis
+            GL.Color3(0.0f, 1.0f, 0.0f);
+            GL.Vertex3(0,0,0);
+            GL.Vertex3(1,20,0);
+            GL.Vertex3(-1,20,0);
+            // z axis
+            GL.Color3(0.0f, 0.0f, 1.0f);
+            GL.Vertex3(0,0,0);
+            GL.Vertex3(-1,0,20);
+            GL.Vertex3(1,0,20);
             glControl1.SwapBuffers();
         }
 

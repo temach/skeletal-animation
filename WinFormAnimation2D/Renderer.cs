@@ -58,7 +58,7 @@ namespace WinFormAnimation2D
             GL.Hint(HintTarget.PerspectiveCorrectionHint, HintMode.Nicest);
             // lights
             GL.Enable(EnableCap.Light0);
-            GL.Light(LightName.Light0, LightParameter.Position, new float[] { 5, 10, 2, 0 });
+            GL.Light(LightName.Light0, LightParameter.Position, new float[] { 0, 0, 10, 0 });
         }
 
         public void ResizeOpenGL(int width, int height)
