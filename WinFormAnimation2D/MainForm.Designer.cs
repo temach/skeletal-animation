@@ -363,7 +363,8 @@
             this.glControl1.Name = "glControl1";
             this.glControl1.Size = new System.Drawing.Size(385, 466);
             this.glControl1.TabIndex = 47;
-            this.glControl1.VSync = false;
+            this.glControl1.VSync = true;
+            this.glControl1.Load += new System.EventHandler(this.glControl1_Load);
             // 
             // MainForm
             // 

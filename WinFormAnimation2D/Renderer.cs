@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 using System.Drawing.Drawing2D;
 using System.Drawing;
 using System.Windows.Forms;
-
+using OpenTK.Graphics.OpenGL;
+using OpenTK;
 
 namespace WinFormAnimation2D
 {
@@ -37,8 +38,41 @@ namespace WinFormAnimation2D
             // update viewport 
             var w = (double)RenderResolution.Width;
             var h = (double)RenderResolution.Height;
+            // 2d
             Util.GR.Clear(Color.DarkGray);
+            // 3d
+            GL.DepthMask(true);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
+
+        public void InitOpenGL()
+        {
+            // enable stuff
+            GL.Enable(EnableCap.ColorMaterial);
+            GL.Enable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.Lighting);
+            GL.Enable(EnableCap.CullFace);
+            // other settings
+            GL.ShadeModel(ShadingModel.Flat);
+            GL.ClearColor(Color.DarkGray);
+            GL.Hint(HintTarget.PerspectiveCorrectionHint, HintMode.Nicest);
+            // lights
+            GL.Enable(EnableCap.Light0);
+            GL.Light(LightName.Light0, LightParameter.Position, new float[] { 5, 10, 2, 0 });
+        }
+
+        public void ResizeOpenGL(int width, int height)
+        {
+            GL.Viewport(0, 0, width, height);
+            GL.MatrixMode(MatrixMode.Projection);
+            GL.LoadIdentity();
+            // set a proper perspective matrix for rendering
+            float aspectRatio = ((float)width)/height;
+            Matrix4 perspective = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, aspectRatio, 0.001f, 100.0f);
+            GL.LoadMatrix(ref perspective);
+            GL.MatrixMode(MatrixMode.Modelview);
+            GL.LoadIdentity();
+	}
 
         public void DrawEmptyEntitySplash()
         {

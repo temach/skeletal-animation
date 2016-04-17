@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
 
 namespace WinFormAnimation2D
 {
@@ -25,6 +26,8 @@ namespace WinFormAnimation2D
 
         private World _world;
         private Timer tm = new Timer();
+
+        private bool LoadOpenGLDone;
 
         // State of the camera currently. We can affect this with buttons.
         private GUIConfig _gui_conf = new GUIConfig();
@@ -327,6 +330,11 @@ namespace WinFormAnimation2D
 
         private void pictureBox_main_Paint(object sender, PaintEventArgs e)
         {
+            // guard if GLControl has not loaded yet
+            if (! LoadOpenGLDone)
+            {
+                return;
+            }
             this.toolStripStatusLabel_mouse_coords.Text = _m_status.InnerWorldPos.ToString();
             // Set GR field so that we can use Sysem.Drawing2D as if it was like OpenGL
             Util.GR = e.Graphics;
@@ -349,6 +357,7 @@ namespace WinFormAnimation2D
                 }
             }
             HighlightSlectedNode();
+            glControl1.SwapBuffers();
         }
 
         private void RenderBones(Entity ent)
@@ -407,6 +416,13 @@ namespace WinFormAnimation2D
         private void checkBox_triangulate_CheckedChanged(object sender, EventArgs e)
         {
             this._cmd.RunCmd("set TriangulateMesh " + this.checkBox_triangulate.Checked);
+        }
+
+        private void glControl1_Load(object sender, EventArgs e)
+        {
+            _world._renderer.InitOpenGL();
+            _world._renderer.ResizeOpenGL(this.glControl1.Width, this.glControl1.Height);
+            LoadOpenGLDone = true;
         }
     }
 }
