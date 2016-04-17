@@ -11,6 +11,7 @@ using System.Drawing;
 using System.IO;        // for MemoryStream
 using System.Reflection;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
 using System.Diagnostics;
 using Quaternion = Assimp.Quaternion;
 
@@ -182,6 +183,9 @@ namespace WinFormAnimation2D
                 aabb.SafeStartUpdateNearFar();
                 foreach (Face cur_face in cur_mesh.Faces)
                 {
+                    GL.Normal3(0, 0, 1);
+                    GL.Color3(Util.GetNextColor());
+                    GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.Triangles);
                     foreach (var vert_id in cur_face.Indices)
                     {
                         // we must get the new vertex position here
@@ -190,8 +194,12 @@ namespace WinFormAnimation2D
                         Vector3 trans;
                         Vector3.Transform(ref default_pose, ref delta, out trans);
                         aabb.UpdateNearFar(trans);
+                        // 2d
                         RenderVertex(trans.eTo2D());
+                        // 3d
+                        GL.Vertex3(trans.X, trans.Y, trans.Z);
                     }
+                    GL.End();
                 }
             }
             foreach (Node child in nd.Children)
@@ -210,7 +218,6 @@ namespace WinFormAnimation2D
         // to the vertex, then we send the vertex to OpenGL
         public void RecursiveTransformVertices(Node nd, Matrix4x4 current)
         {
-            Matrix4x4 push_matrix = current;
             Matrix4x4 current_node = current * nd.Transform;
             foreach(int mesh_id in nd.MeshIndices)
             {

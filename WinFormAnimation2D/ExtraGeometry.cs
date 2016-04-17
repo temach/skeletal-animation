@@ -126,7 +126,26 @@ namespace WinFormAnimation2D
 
         public void Render()
         {
+            RenderDrawing2D();
+            RenderGL();
+        }
+
+        public void RenderDrawing2D()
+        {
             Util.GR.DrawRectangle(Util.pp4, Rectangle.Round(this.Rect));
+        }
+
+        public void RenderGL()
+        {
+            GL.Color3(Util.cc4);
+            GL.Normal3(0, 1, 1);
+            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+            GL.Begin(BeginMode.Quads);
+            GL.Vertex3(Rect.Location.X, Rect.Location.Y, 1.0);
+            GL.Vertex3(Rect.Location.X + Rect.Width, Rect.Location.Y, 1.0);
+            GL.Vertex3(Rect.Location.X + Rect.Width, Rect.Location.Y + Rect.Height, 0.0);
+            GL.Vertex3(Rect.Location.X, Rect.Location.Y + Rect.Height, 0.0);
+            GL.End();
         }
 
         public BoundingVectors GetNearFar()
