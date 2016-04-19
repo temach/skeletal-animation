@@ -44,7 +44,7 @@ namespace WinFormAnimation2D
         }
 
         // camera related stuff
-        private Drawing2DCamera _camera;
+        private CameraDevice _camera;
         private Point PictureBoxCenterPoint
         {
             get
@@ -61,10 +61,8 @@ namespace WinFormAnimation2D
             InitializeComponent();
             ClearScreen = delegate { this.pictureBox_main.Invalidate(); };
             RedrawIfAnimUpdate = delegate { if (this._cmd.NeedWindowRedraw == true) this.pictureBox_main.Invalidate(); };
-            Matrix4 init_camera = Matrix4.Identity;
-            _camera = new Drawing2DCamera(init_camera);
-            _camera.shift_x = (float)(this.pictureBox_main.Width / 2.0);
-            _camera.shift_y = (float)(this.pictureBox_main.Height / 2.0);
+            Matrix4 opengl_camera_init = Matrix4.LookAt(0, 50, 500, 0, 0, 0, 0, 1, 0).Inverted();
+            _camera = new CameraDevice(Matrix4.Identity, this.pictureBox_main.Size, opengl_camera_init);
             // manually register the mousewheel event handler.
             this.MouseWheel += new MouseEventHandler(this.pictureBox_main_MouseMove);
             tm.Interval = 20;
@@ -337,8 +335,10 @@ namespace WinFormAnimation2D
             }
             GL.LoadIdentity();
             // TEST CODE to visualize mid point (pivot) and origin
-            var view = Matrix4.LookAt(0, 50, 500, 0, 0, 0, 0, 1, 0);
-            GL.LoadMatrix(ref view);
+            // var view = Matrix4.LookAt(0, 50, 500, 0, 0, 0, 0, 1, 0);
+            //GL.LoadMatrix(ref view);
+            Matrix4 cam_mat_inv = _camera.MatrixToOpenGL();
+            GL.LoadMatrix(ref cam_mat_inv);
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
             // light color
             var col = new Vector3(1, 1, 1);
