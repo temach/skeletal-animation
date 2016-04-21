@@ -28,13 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button_start = new System.Windows.Forms.Button();
             this.pictureBox_main = new System.Windows.Forms.PictureBox();
             this.button_up = new System.Windows.Forms.Button();
             this.button_down = new System.Windows.Forms.Button();
             this.button_left = new System.Windows.Forms.Button();
             this.button_right = new System.Windows.Forms.Button();
-            this.button_stop_colors = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -58,22 +56,13 @@
             this.checkBox_renderBones = new System.Windows.Forms.CheckBox();
             this.checkBox_render_boxes = new System.Windows.Forms.CheckBox();
             this.checkBox_triangulate = new System.Windows.Forms.CheckBox();
-            this.checkBox4 = new System.Windows.Forms.CheckBox();
+            this.checkBox_moveCamera = new System.Windows.Forms.CheckBox();
             this.glControl1 = new OpenTK.GLControl();
+            this.checkBox_forceFrameRedraw = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).BeginInit();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_time)).BeginInit();
             this.SuspendLayout();
-            // 
-            // button_start
-            // 
-            this.button_start.Location = new System.Drawing.Point(871, 271);
-            this.button_start.Name = "button_start";
-            this.button_start.Size = new System.Drawing.Size(75, 23);
-            this.button_start.TabIndex = 0;
-            this.button_start.Text = "Start colors";
-            this.button_start.UseVisualStyleBackColor = true;
-            this.button_start.Click += new System.EventHandler(this.button_start_Click);
             // 
             // pictureBox_main
             // 
@@ -93,7 +82,7 @@
             // button_up
             // 
             this.button_up.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_up.Location = new System.Drawing.Point(772, 209);
+            this.button_up.Location = new System.Drawing.Point(771, 232);
             this.button_up.Name = "button_up";
             this.button_up.Size = new System.Drawing.Size(52, 23);
             this.button_up.TabIndex = 9;
@@ -104,7 +93,7 @@
             // button_down
             // 
             this.button_down.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_down.Location = new System.Drawing.Point(772, 265);
+            this.button_down.Location = new System.Drawing.Point(771, 288);
             this.button_down.Name = "button_down";
             this.button_down.Size = new System.Drawing.Size(52, 23);
             this.button_down.TabIndex = 10;
@@ -115,7 +104,7 @@
             // button_left
             // 
             this.button_left.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_left.Location = new System.Drawing.Point(751, 236);
+            this.button_left.Location = new System.Drawing.Point(741, 259);
             this.button_left.Name = "button_left";
             this.button_left.Size = new System.Drawing.Size(52, 23);
             this.button_left.TabIndex = 11;
@@ -126,23 +115,13 @@
             // button_right
             // 
             this.button_right.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button_right.Location = new System.Drawing.Point(809, 236);
+            this.button_right.Location = new System.Drawing.Point(799, 259);
             this.button_right.Name = "button_right";
             this.button_right.Size = new System.Drawing.Size(52, 23);
             this.button_right.TabIndex = 12;
             this.button_right.Text = "right";
             this.button_right.UseVisualStyleBackColor = true;
             this.button_right.Click += new System.EventHandler(this.button_right_Click);
-            // 
-            // button_stop_colors
-            // 
-            this.button_stop_colors.Location = new System.Drawing.Point(871, 300);
-            this.button_stop_colors.Name = "button_stop_colors";
-            this.button_stop_colors.Size = new System.Drawing.Size(75, 23);
-            this.button_stop_colors.TabIndex = 19;
-            this.button_stop_colors.Text = "Stop colors";
-            this.button_stop_colors.UseVisualStyleBackColor = true;
-            this.button_stop_colors.Click += new System.EventHandler(this.button_stop_colors_Click);
             // 
             // label2
             // 
@@ -244,7 +223,7 @@
             // checkBox_breakpoints_on
             // 
             this.checkBox_breakpoints_on.AutoSize = true;
-            this.checkBox_breakpoints_on.Location = new System.Drawing.Point(743, 293);
+            this.checkBox_breakpoints_on.Location = new System.Drawing.Point(840, 288);
             this.checkBox_breakpoints_on.Name = "checkBox_breakpoints_on";
             this.checkBox_breakpoints_on.Size = new System.Drawing.Size(118, 17);
             this.checkBox_breakpoints_on.TabIndex = 27;
@@ -271,7 +250,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(871, 230);
+            this.button1.Location = new System.Drawing.Point(871, 242);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 35);
             this.button1.TabIndex = 38;
@@ -346,15 +325,16 @@
             this.checkBox_triangulate.UseVisualStyleBackColor = true;
             this.checkBox_triangulate.CheckedChanged += new System.EventHandler(this.checkBox_triangulate_CheckedChanged);
             // 
-            // checkBox4
+            // checkBox_moveCamera
             // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.Location = new System.Drawing.Point(856, 176);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(80, 17);
-            this.checkBox4.TabIndex = 46;
-            this.checkBox4.Text = "checkBox4";
-            this.checkBox4.UseVisualStyleBackColor = true;
+            this.checkBox_moveCamera.AutoSize = true;
+            this.checkBox_moveCamera.Location = new System.Drawing.Point(856, 176);
+            this.checkBox_moveCamera.Name = "checkBox_moveCamera";
+            this.checkBox_moveCamera.Size = new System.Drawing.Size(91, 17);
+            this.checkBox_moveCamera.TabIndex = 46;
+            this.checkBox_moveCamera.Text = "Move camera";
+            this.checkBox_moveCamera.UseVisualStyleBackColor = true;
+            this.checkBox_moveCamera.CheckedChanged += new System.EventHandler(this.checkBox_moveCamera_CheckedChanged);
             // 
             // glControl1
             // 
@@ -366,13 +346,25 @@
             this.glControl1.VSync = true;
             this.glControl1.Load += new System.EventHandler(this.glControl1_Load);
             // 
+            // checkBox_forceFrameRedraw
+            // 
+            this.checkBox_forceFrameRedraw.AutoSize = true;
+            this.checkBox_forceFrameRedraw.Location = new System.Drawing.Point(856, 199);
+            this.checkBox_forceFrameRedraw.Name = "checkBox_forceFrameRedraw";
+            this.checkBox_forceFrameRedraw.Size = new System.Drawing.Size(104, 17);
+            this.checkBox_forceFrameRedraw.TabIndex = 48;
+            this.checkBox_forceFrameRedraw.Text = "Forced Redraws";
+            this.checkBox_forceFrameRedraw.UseVisualStyleBackColor = true;
+            this.checkBox_forceFrameRedraw.CheckedChanged += new System.EventHandler(this.checkBox_forceFrameRedraw_CheckedChanged);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(958, 528);
+            this.Controls.Add(this.checkBox_forceFrameRedraw);
             this.Controls.Add(this.glControl1);
-            this.Controls.Add(this.checkBox4);
+            this.Controls.Add(this.checkBox_moveCamera);
             this.Controls.Add(this.checkBox_triangulate);
             this.Controls.Add(this.checkBox_render_boxes);
             this.Controls.Add(this.checkBox_renderBones);
@@ -386,13 +378,11 @@
             this.Controls.Add(this.treeView_entity_info);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.button_stop_colors);
             this.Controls.Add(this.button_right);
             this.Controls.Add(this.button_left);
             this.Controls.Add(this.button_down);
             this.Controls.Add(this.button_up);
             this.Controls.Add(this.pictureBox_main);
-            this.Controls.Add(this.button_start);
             this.Controls.Add(this.trackBar_time);
             this.Name = "MainForm";
             this.Text = "Form1";
@@ -406,14 +396,11 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Button button_start;
         private System.Windows.Forms.PictureBox pictureBox_main;
         private System.Windows.Forms.Button button_up;
         private System.Windows.Forms.Button button_down;
         private System.Windows.Forms.Button button_left;
         private System.Windows.Forms.Button button_right;
-        private System.Windows.Forms.Button button_stop_colors;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_is_selected;
@@ -437,8 +424,9 @@
         private System.Windows.Forms.CheckBox checkBox_renderBones;
         private System.Windows.Forms.CheckBox checkBox_render_boxes;
         private System.Windows.Forms.CheckBox checkBox_triangulate;
-        private System.Windows.Forms.CheckBox checkBox4;
+        private System.Windows.Forms.CheckBox checkBox_moveCamera;
         private OpenTK.GLControl glControl1;
+        private System.Windows.Forms.CheckBox checkBox_forceFrameRedraw;
     }
 }
 

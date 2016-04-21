@@ -50,6 +50,7 @@ namespace WinFormAnimation2D
 
         public void Log(string message)
         {
+            // add default verbosity level
             Log(Level.Info, message);
         }
 

@@ -100,13 +100,13 @@ namespace WinFormAnimation2D
             {
                 case Keys.I:
                 case Keys.O:
-                    if (Current == null)
+                    if (! Properties.Settings.Default.MoveCamera && Current != null)
                     {
-                        _camera.RotateByKey(new KeyEventArgs(keyData));
+                        Current.RotateByKey(new KeyEventArgs(keyData));
                     }
                     else
-                    { 
-                        Current.RotateByKey(new KeyEventArgs(keyData));
+                    {
+                        _camera.RotateByKey(new KeyEventArgs(keyData));
                     }
                     this.pictureBox_main.Invalidate();
                     return true;
@@ -114,14 +114,14 @@ namespace WinFormAnimation2D
                 case Keys.D:
                 case Keys.S:
                 case Keys.W:
-                    if (Current == null)
+                    if (! Properties.Settings.Default.MoveCamera && Current != null)
                     {
-                        _camera.MoveByKey(new KeyEventArgs(keyData));
-                        this.toolStripStatusLabel_camera_position.Text = _camera.GetTranslation.ToString();
+                        Current.MoveByKey(new KeyEventArgs(keyData));
                     }
                     else
                     {
-                        Current.MoveByKey(new KeyEventArgs(keyData));
+                        _camera.MoveByKey(new KeyEventArgs(keyData));
+                        this.toolStripStatusLabel_camera_position.Text = _camera.GetTranslation.ToString();
                     }
                     this.pictureBox_main.Invalidate();
                     return true; // hide this key event from other controls
@@ -156,20 +156,6 @@ namespace WinFormAnimation2D
         private void button_resetzoom_Click(object sender, EventArgs e)
         {
             //_camera.CamMatrix = _camera.CamMatrix.eSnapScale(1.0);
-        }
-
-        private void button_start_Click(object sender, EventArgs e)
-        {
-            pictureBox_main.Invalidate();
-            tm.Tick += ClearScreen;
-            if (tm.Enabled == false)
-            {
-                tm.Start();
-            }
-        }
-        private void button_stop_colors_Click(object sender, EventArgs e)
-        {
-            tm.Tick -= ClearScreen;
         }
 
         private void pictureBox_main_MouseUp(object sender, MouseEventArgs e)
@@ -454,17 +440,26 @@ namespace WinFormAnimation2D
 
         private void checkBox_renderBones_CheckedChanged(object sender, EventArgs e)
         {
-            this._cmd.RunCmd("set RenderAllBoneBounds " + this.checkBox_renderBones.Checked);
+            Properties.Settings.Default.RenderAllBoneBounds = this.checkBox_renderBones.Checked;
+            // this._cmd.RunCmd("set RenderAllBoneBounds " + this.checkBox_renderBones.Checked);
         }
 
         private void checkBox_render_boxes_CheckedChanged(object sender, EventArgs e)
         {
-            this._cmd.RunCmd("set RenderAllMeshBounds " + this.checkBox_render_boxes.Checked);
+            Properties.Settings.Default.RenderAllMeshBounds = this.checkBox_render_boxes.Checked;
+            // this._cmd.RunCmd("set RenderAllMeshBounds " + this.checkBox_render_boxes.Checked);
         }
 
         private void checkBox_triangulate_CheckedChanged(object sender, EventArgs e)
         {
-            this._cmd.RunCmd("set TriangulateMesh " + this.checkBox_triangulate.Checked);
+            Properties.Settings.Default.TriangulateMesh = this.checkBox_triangulate.Checked;
+            // this._cmd.RunCmd("set TriangulateMesh " + this.checkBox_triangulate.Checked);
+        }
+
+        private void checkBox_moveCamera_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.MoveCamera = this.checkBox_moveCamera.Checked;
+            // this._cmd.RunCmd("set MoveCamera " + this.checkBox_triangulate.Checked);
         }
 
         private void glControl1_Load(object sender, EventArgs e)
@@ -472,6 +467,23 @@ namespace WinFormAnimation2D
             _world._renderer.InitOpenGL();
             _world._renderer.ResizeOpenGL(this.glControl1.Width, this.glControl1.Height);
             LoadOpenGLDone = true;
+        }
+
+        private void checkBox_forceFrameRedraw_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.ForceFrameRedraws = this.checkBox_forceFrameRedraw.Checked;
+            if (this.checkBox_forceFrameRedraw.Checked)
+            {
+                tm.Tick += ClearScreen;
+                if (! tm.Enabled)
+                {
+                    tm.Start();
+                }
+            }
+            else
+            {
+                tm.Tick -= ClearScreen;
+            }
         }
     }
 }

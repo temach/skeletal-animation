@@ -58,5 +58,29 @@ namespace WinFormAnimation2D.Properties {
                 this["RenderAllMeshBounds"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MoveCamera {
+            get {
+                return ((bool)(this["MoveCamera"]));
+            }
+            set {
+                this["MoveCamera"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ForceFrameRedraws {
+            get {
+                return ((bool)(this["ForceFrameRedraws"]));
+            }
+            set {
+                this["ForceFrameRedraws"] = value;
+            }
+        }
     }
 }
