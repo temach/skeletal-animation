@@ -76,7 +76,7 @@ namespace WinFormAnimation2D
             _extra_geometry = new Geometry(sc._inner.Meshes, mesh, armature);
             _armature = armature;
             _action = state;
-            _transform = new TransformState();
+            _transform = new TransformState(Matrix4.Identity, 10, 17);
         }
 
         public void RotateBy(double angle_degrees)

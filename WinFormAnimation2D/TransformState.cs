@@ -34,19 +34,26 @@ namespace WinFormAnimation2D
         // x,y,z should be direction parameters, one of {-1, 0, 1}
         // void MoveBy(Vector3 direction);
         void MoveBy2D(int x, int y);
-        void MoveByKey(KeyEventArgs e);
+        void MoveByKey2D(KeyEventArgs e);
     }
 
     class TransformState
     {
-        public float _move_speed = 10;
-        public float _roto_speed_degrees = 17;
+        public float _move_speed;
+        public float _roto_speed_degrees;
 
         public Matrix4 _matrix = Matrix4.Identity;
         public Matrix4x4 _ai_matrix
         {
             get { return _matrix.eToAssimp(); }
             set { _matrix = value.eToOpenTK(); }
+        }
+
+        public TransformState(Matrix4 init_matrix, double motion_speed, double rotation_speed_degrees)
+        {
+            _matrix = init_matrix;
+            _move_speed = (float)motion_speed;
+            _roto_speed_degrees = (float)rotation_speed_degrees;
         }
 
         public Vector3 GetTranslation

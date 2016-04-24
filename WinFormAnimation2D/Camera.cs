@@ -68,13 +68,13 @@ namespace WinFormAnimation2D
         public void RotateBy(double angle_degrees)
         {
             _2d_camera.RotateBy(angle_degrees);
-            _3d_camera.RotateBy(angle_degrees);
+            _3d_camera.RotateBy2D(angle_degrees);
         }
 
         public void RotateByKey(KeyEventArgs e)
         {
             _2d_camera.RotateByKey(e);
-            _3d_camera.RotateByKey(e);
+            _3d_camera.RotateByKey2D(e);
         }
 
         public void ProcessMouse(int x, int y)
@@ -87,52 +87,43 @@ namespace WinFormAnimation2D
         public void MoveBy(int x, int y)
         {
             _2d_camera.MoveBy(x, y);
-            _3d_camera.MoveBy(x, y);
+            _3d_camera.MoveBy2D(x, y);
         }
 
         public void MoveByKey(KeyEventArgs e)
         {
             _2d_camera.MoveByKey(e);
-            _3d_camera.MoveByKey(e);
+            _3d_camera.MoveByKey2D(e);
         }
 
     }
 
-    class OpenGLCamera
+    class OpenGLCamera : ITransformState
     {
-        private readonly float _rotation_speed = 1.5f;
-        private readonly float _motion_speed = 10.0f;
-        private Matrix4 _opengl_mat;
-
-        // just for debug, we need half the size of picture box
-        public float shift_x = 360.5f;
-        public float shift_y = 233f;
-
-        public Vector2 GetTranslation
+        public TransformState _transform;
+        public TransformState Transform
         {
-            get { return _opengl_mat.ExtractTranslation().eTo2D(); }
+            get { return _transform; }
         }
 
-        /// <summary>
-        /// Get the mouse position and calculate the world coordinates based on the screen coordinates.
-        /// </summary>
-        /// <param name="e"></param>
-        /// <returns></returns>
-        public PointF ConvertScreen2WorldCoordinates(PointF screen_coords)
+        public Vector3 GetTranslation
         {
-            Vector3 tmp = new Vector3(screen_coords.X, screen_coords.Y, 0.0f);
-            tmp = Vector3.Transform(tmp, _opengl_mat);
-            return new PointF(tmp.X, tmp.Y);
+            get { return _transform.GetTranslation; }
+        }
+
+        public Vector2 GetTranslation2D
+        {
+            get { return _transform.GetTranslation2D; }
         }
 
         public Matrix4 CamMatrix
         {
-            get { return _opengl_mat; }
+            get { return _transform._matrix; }
         }
 
         public OpenGLCamera(Matrix4 opengl_init_mat)
         {
-            _opengl_mat = opengl_init_mat;
+            _transform = new TransformState(opengl_init_mat, 10, 1.5);
         }
 
         /// <summary>
@@ -140,31 +131,9 @@ namespace WinFormAnimation2D
         /// </summary>
         public Matrix4 MatrixToOpenGL()
         {
-            Matrix4 opengl_cam_inverted = _opengl_mat;
+            Matrix4 opengl_cam_inverted = _transform._matrix;
             opengl_cam_inverted.Invert();
             return opengl_cam_inverted;
-        }
-
-        public void RotateBy(double angle_degrees)
-        {
-            float angle_radians = (float)(angle_degrees * Math.PI / 180.0);
-            _opengl_mat = Matrix4.CreateRotationZ(angle_radians) * _opengl_mat;
-        }
-
-        public void RotateByKey(KeyEventArgs e)
-        {
-            switch (e.KeyData)
-            {
-                case Keys.I:
-                    RotateBy(-10);
-                    break;
-                case Keys.O:
-                    RotateBy(10);
-                    break;
-                default:
-                    Debug.Assert(false);
-                    break;
-            }
         }
 
         public void ProcessMouse(int x, int y)
@@ -172,36 +141,36 @@ namespace WinFormAnimation2D
             // when user pulls mouse to the right (x > 0) we perform a clockwise rotation.
             if (x != 0)
             {
-                RotateBy(x * _rotation_speed);
+                RotateBy2D(x * _transform._roto_speed_degrees);
             }
         }
 
-        // x,y are direction parameters one of {-1, 0, 1}
-        public void MoveBy(int x, int y)
+        /// <summary>
+        /// Get the mouse position and calculate the world coordinates based on the screen coordinates.
+        /// </summary>
+        public PointF ConvertScreen2WorldCoordinates(PointF screen_coords)
         {
-            _opengl_mat = Matrix4.CreateTranslation((_motion_speed * x), (_motion_speed * y), 0.0f) * _opengl_mat;
+            Vector3 tmp = new Vector3(screen_coords.X, screen_coords.Y, 0.0f);
+            tmp = Vector3.Transform(tmp, _transform._matrix);
+            return new PointF(tmp.X, tmp.Y);
         }
 
-        public void MoveByKey(KeyEventArgs e)
+        public void RotateBy2D(double angle_degrees)
         {
-            switch (e.KeyData)
-            {
-                case Keys.A:
-                    MoveBy(1, 0);
-                    break;
-                case Keys.W:
-                    MoveBy(0, 1);
-                    break;
-                case Keys.D:
-                    MoveBy(-1, 0);
-                    break;
-                case Keys.S:
-                    MoveBy(0, -1);
-                    break;
-                default:
-                    Debug.Assert(false);
-                    break;
-            }
+            _transform.RotateBy(angle_degrees, Vector3.UnitZ);
+        }
+        public void RotateByKey2D(KeyEventArgs e)
+        {
+            _transform.RotateByKey2D(e);
+        }
+        public void MoveBy2D(int x, int y)
+        {
+            // x,y are direction parameters one of {-1, 0, 1}
+            _transform.MoveBy2D(x, y);
+        }
+        public void MoveByKey2D(KeyEventArgs e)
+        {
+            _transform.MoveByKey(e);
         }
 
     }
