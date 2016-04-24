@@ -125,9 +125,7 @@ namespace WinFormAnimation2D
         public bool ContainsPoint(Vector2 p)
         {
             // modify the point so it is in entity space
-            // var tmp = ;
             Vector3 tmp = new Vector3(p.X, p.Y, 0.0f);
-            tmp = Vector3.Transform(tmp, Matrix4.Invert(Matrix));
             return _extra_geometry.EntityBorderContainsPoint(tmp.eTo2D());
         }
         
