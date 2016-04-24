@@ -201,10 +201,6 @@ namespace WinFormAnimation2D
                 this.toolStripStatusLabel_is_selected.Text = "___empty___";
             }
 
-            if (Math.Abs(e.Delta) >= 1)
-            {
-                _camera.ProcessScroll(e.Delta);
-            }
             // Process mouse motion only if it is pressed
             if (! _m_status.IsPressed) {
                 return;

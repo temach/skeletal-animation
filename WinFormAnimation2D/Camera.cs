@@ -96,23 +96,10 @@ namespace WinFormAnimation2D
             _3d_camera.MoveByKey(e);
         }
 
-        /// Scrolls along the camera z axis. In and out of the scene.
-        public void ProcessScroll(int z)
-        {
-            _3d_camera.ProcessScroll(z);
-        }
-
     }
 
     class OpenGLCamera
     {
-        private readonly float _zoom_speed = 1.00105f;
-        private readonly float _zoom_close_limit = 0.9f;
-        private readonly float _zoom_far_limit = 10.0f;
-        // this is like an initial zoom factor. In OpenGL zoom is
-        // done by moving objects closer/further
-        // in Drawing2D it is done by scaling. 
-        // Actually in OpenGL we can use scaling as well. No? interesting idea....
         private readonly float _rotation_speed = 1.5f;
         private readonly float _motion_speed = 10.0f;
         private Matrix4 _opengl_mat;
@@ -215,16 +202,6 @@ namespace WinFormAnimation2D
                     Debug.Assert(false);
                     break;
             }
-        }
-
-        /// <summary>
-        /// Scrolls along the camera z axis. In and out of the scene.
-        /// </summary>
-        /// <param name="z">Scroll factor.</param>
-        public void ProcessScroll(int z)
-        {
-            float factor = Math.Max((float)Math.Pow(_zoom_speed, z), _zoom_close_limit);
-            //_cam_mat.Scale(factor, factor);
         }
 
     }
