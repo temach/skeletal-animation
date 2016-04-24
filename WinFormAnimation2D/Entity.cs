@@ -43,13 +43,19 @@ namespace WinFormAnimation2D
         public SceneWrapper _scene;
         public Geometry _extra_geometry;
         public DrawConfig _draw_conf;
+        public TransformState _transform;
         public Matrix4 Matrix
         {
-            get { return _extra_geometry._matrix; }
-            set { _extra_geometry._matrix = value; }
+            get {
+                _transform._matrix = _extra_geometry._matrix;
+                return _extra_geometry._matrix;
+            }
+            set {
+                _extra_geometry._matrix = value;
+                _transform._matrix = _extra_geometry._matrix;
+            }
         }
 
-        private readonly float _motion_speed = 10.0f;
         public Dictionary<Vector3D,Matrix4x4> _vertex2matrix = new Dictionary<Vector3D, Matrix4x4>();
 
         public string Name
@@ -70,56 +76,32 @@ namespace WinFormAnimation2D
             _extra_geometry = new Geometry(sc._inner.Meshes, mesh, armature);
             _armature = armature;
             _action = state;
+            _transform = new TransformState();
         }
 
         public void RotateBy(double angle_degrees)
         {
-            float angle_radians = (float)(angle_degrees * Math.PI / 180.0);
-            Matrix = Matrix4.CreateRotationZ(angle_radians) * Matrix;
+            _transform.RotateBy2D(angle_degrees);
+            _extra_geometry._matrix = _transform._matrix;
         }
 
         public void RotateByKey(KeyEventArgs e)
         {
-            switch (e.KeyData)
-            {
-                case Keys.I:
-                    RotateBy(17);
-                    break;
-                case Keys.O:
-                    RotateBy(-17);
-                    break;
-                default:
-                    Debug.Assert(false);
-                    break;
-            }
+            _transform.RotateByKey2D(e);
+            _extra_geometry._matrix = _transform._matrix;
         }
 
         // x,y are direction parameters one of {-1, 0, 1}
         public void MoveBy(int x, int y)
         {
-            Matrix = Matrix4.CreateTranslation((_motion_speed * x), (_motion_speed * y), 0.0f) * Matrix;
+            _transform.MoveBy2D(x, y);
+            _extra_geometry._matrix = _transform._matrix;
         }
 
-        public void MoveByKey(KeyEventArgs e)
+        public void MoveByKey2D(KeyEventArgs e)
         {
-            switch (e.KeyData)
-            {
-                case Keys.A:
-                    MoveBy(-1, 0);
-                    break;
-                case Keys.W:
-                    MoveBy(0, -1);
-                    break;
-                case Keys.D:
-                    MoveBy(1, 0);
-                    break;
-                case Keys.S:
-                    MoveBy(0, 1);
-                    break;
-                default:
-                    Debug.Assert(false);
-                    break;
-            }
+            _transform.MoveByKey(e);
+            _extra_geometry._matrix = _transform._matrix;
         }
 
         public bool ContainsPoint(Vector2 p)

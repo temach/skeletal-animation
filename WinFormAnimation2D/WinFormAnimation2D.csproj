@@ -80,6 +80,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SceneWrapper.cs" />
+    <Compile Include="TransformState.cs" />
     <Compile Include="TreeViewCustomNodes.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="MainForm.cs">

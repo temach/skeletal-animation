@@ -116,7 +116,7 @@ namespace WinFormAnimation2D
                 case Keys.W:
                     if (! Properties.Settings.Default.MoveCamera && Current != null)
                     {
-                        Current.MoveByKey(new KeyEventArgs(keyData));
+                        Current.MoveByKey2D(new KeyEventArgs(keyData));
                     }
                     else
                     {
