@@ -233,8 +233,7 @@ namespace WinFormAnimation2D
 
         public Dictionary<int,MeshBounds> _mesh_id2box = new Dictionary<int,MeshBounds>();
         public Dictionary<string,BoneBounds> _bone_id2triangle = new Dictionary<string,BoneBounds>();
-        public Dictionary<Guid,BoundingBoxGroup> _mesh_groups = new Dictionary<Guid,BoundingBoxGroup>();
-        public Guid _ent_box_id;
+        public BoundingBoxGroup EntityBox;
         public Matrix4 _matrix = Matrix4.Identity;
 
         /// Build geometry data for node (usually use only for one of the children of scene.RootNode)
@@ -243,31 +242,7 @@ namespace WinFormAnimation2D
             MakeBoundingBoxes(scene_meshes, nd);
             MakeBoundingTriangles(armature);
             UpdateBonePositions(armature);
-            _ent_box_id = GetCoveringGroup(_mesh_id2box.Values);
-        }
-
-        public Guid GetCoveringGroup(IEnumerable<MeshBounds> boxes)
-        {
-            BoundingBoxGroup tmp = new BoundingBoxGroup(boxes);
-            Guid id = Guid.NewGuid();
-            _mesh_groups[id] = tmp;
-            return id;
-        }
-
-        public void RenderBoxGroup(BoundingBoxGroup gr)
-        {
-            Util.PushMatrix();
-            //Util.GR.MultiplyTransform(_matrix.eTo3x2());
-            gr.OverallBox.Render();
-            Util.PopMatrix();
-        }
-
-        public void RenderBone(BoneBounds b, Pen p = null)
-        {
-            Util.PushMatrix();
-            // Util.GR.MultiplyTransform(_matrix.eTo3x2());
-            b.Render(p);
-            Util.PopMatrix();
+            EntityBox = new BoundingBoxGroup(_mesh_id2box.Values);
         }
 
         public void UpdateBonePositions(BoneNode nd)
@@ -338,7 +313,7 @@ namespace WinFormAnimation2D
 
         public bool EntityBorderContainsPoint(Vector2 point)
         {
-            return _mesh_groups[_ent_box_id].OverallBox.CheckContainsPoint(point);
+            return EntityBox.OverallBox.CheckContainsPoint(point);
         }
 
     }
