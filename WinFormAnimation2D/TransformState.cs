@@ -76,20 +76,23 @@ namespace WinFormAnimation2D
             _matrix = Matrix4.CreateFromAxisAngle(axis, angle_radians) * _matrix;
         }
 
-        public void RotateByKey2D(KeyEventArgs e)
+        public double GetAngleDegreesFromKeyEventArg(KeyEventArgs e)
         {
             switch (e.KeyData)
             {
                 case Keys.I:
-                    RotateBy2D(_roto_speed_degrees);
-                    break;
+                    return _roto_speed_degrees;
                 case Keys.O:
-                    RotateBy2D(-1 * _roto_speed_degrees);
-                    break;
+                    return -1 * _roto_speed_degrees;
                 default:
                     Debug.Assert(false);
                     break;
             }
+            return double.NaN;
+        }
+
+        public void RotateByKey2D(KeyEventArgs e)
+        {
         }
 
         // x,y,z should be direction parameters, one of {-1, 0, 1}

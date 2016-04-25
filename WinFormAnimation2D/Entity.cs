@@ -87,7 +87,8 @@ namespace WinFormAnimation2D
 
         public void RotateByKey(KeyEventArgs e)
         {
-            _transform.RotateByKey2D(e);
+            double angle_degrees = _transform.GetAngleDegreesFromKeyEventArg(e);
+            _transform.RotateBy2D(angle_degrees);
             _extra_geometry._matrix = _transform._matrix;
         }
 
