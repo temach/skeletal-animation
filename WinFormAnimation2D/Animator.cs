@@ -72,7 +72,12 @@ namespace WinFormAnimation2D
         public void ApplyAnimation(BoneNode armature, ActionState st)
         {
             ChangeLocalFixedDataBlend(st);
-            ReCalculateGlobalTransform(armature);
+            var root_node = armature;
+            root_node.GlobalTransform = root_node.LocalTransform * st.GlobalTransform ;
+            foreach (var child in root_node.Children)
+            {
+                ReCalculateGlobalTransform(child);
+            }
         }
 
         /// <summary>
@@ -110,15 +115,7 @@ namespace WinFormAnimation2D
         // Updates global transforms by walking the hierarchy 
         private void ReCalculateGlobalTransform(BoneNode nd)
         {
-            if (nd.Parent != null)
-            {
-                nd.GlobalTransform = nd.LocalTransform * nd.Parent.GlobalTransform;
-            }
-            else
-            {
-                // only armature root bone has parent == null
-                nd.GlobalTransform = nd.LocalTransform;
-            }
+            nd.GlobalTransform = nd.LocalTransform * nd.Parent.GlobalTransform;
             foreach (var child in nd.Children)
             {
                 ReCalculateGlobalTransform(child);

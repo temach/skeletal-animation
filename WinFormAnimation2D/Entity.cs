@@ -124,7 +124,7 @@ namespace WinFormAnimation2D
                 Util.GR.SmoothingMode = SmoothingMode.AntiAlias;
             }
             // first pass: calculate a matrix for each vertex
-            RecursiveTransformVertices(_node, Matrix.eToAssimp());
+            RecursiveTransformVertices(_node, Matrix4.Identity.eToAssimp());
             // second pass: render with this matrix
             RecursiveRenderSystemDrawing(_node);
             // apply the matrix to graphics just to draw the rectangle

@@ -28,6 +28,16 @@ namespace WinFormAnimation2D
 
         public Animation _action;
 
+        // owner = only used to get the global transform matrix for root bone
+        public Entity _owner;
+        public Matrix4 GlobalTransform
+        {
+            get {
+                Debug.Assert(_owner != null);
+                return _owner._transform._matrix;
+            }
+        }
+
         // index of keyframe maps to its time in ticks
         public List<double> KeyframeTimes;
         public int KeyframeCount

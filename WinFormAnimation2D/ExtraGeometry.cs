@@ -265,7 +265,7 @@ namespace WinFormAnimation2D
         public void RenderBone(BoneBounds b, Pen p = null)
         {
             Util.PushMatrix();
-            Util.GR.MultiplyTransform(_matrix.eTo3x2());
+            // Util.GR.MultiplyTransform(_matrix.eTo3x2());
             b.Render(p);
             Util.PopMatrix();
         }
@@ -307,7 +307,6 @@ namespace WinFormAnimation2D
             {
                  MakeBoundingTriangles(nd.Children[i]);
             }
-
         }
 
         /// For each node calculate the bounding box.
