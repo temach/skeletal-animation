@@ -46,14 +46,8 @@ namespace WinFormAnimation2D
         public TransformState _transform;
         public Matrix4 Matrix
         {
-            get {
-                _transform._matrix = _extra_geometry._matrix;
-                return _extra_geometry._matrix;
-            }
-            set {
-                _extra_geometry._matrix = value;
-                _transform._matrix = _extra_geometry._matrix;
-            }
+            get { return _transform._matrix; }
+            set { _transform._matrix = value; }
         }
 
         public Dictionary<Vector3D,Matrix4x4> _vertex2matrix = new Dictionary<Vector3D, Matrix4x4>();
@@ -82,27 +76,23 @@ namespace WinFormAnimation2D
         public void RotateBy(double angle_degrees)
         {
             _transform.RotateBy2D(angle_degrees);
-            _extra_geometry._matrix = _transform._matrix;
         }
 
         public void RotateByKey(KeyEventArgs e)
         {
             double angle_degrees = _transform.GetAngleDegreesFromKeyEventArg(e);
             _transform.RotateBy2D(angle_degrees);
-            _extra_geometry._matrix = _transform._matrix;
         }
 
         // x,y are direction parameters one of {-1, 0, 1}
         public void MoveBy(int x, int y)
         {
             _transform.MoveBy2D(x, y);
-            _extra_geometry._matrix = _transform._matrix;
         }
 
         public void MoveByKey2D(KeyEventArgs e)
         {
             _transform.MoveByKey(e);
-            _extra_geometry._matrix = _transform._matrix;
         }
 
         public bool ContainsPoint(Vector2 p)
