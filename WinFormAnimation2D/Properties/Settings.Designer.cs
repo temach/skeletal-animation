@@ -82,5 +82,17 @@ namespace WinFormAnimation2D.Properties {
                 this["ForceFrameRedraws"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool FixCameraPlane {
+            get {
+                return ((bool)(this["FixCameraPlane"]));
+            }
+            set {
+                this["FixCameraPlane"] = value;
+            }
+        }
     }
 }

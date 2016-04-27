@@ -59,6 +59,7 @@
             this.checkBox_moveCamera = new System.Windows.Forms.CheckBox();
             this.glControl1 = new OpenTK.GLControl();
             this.checkBox_forceFrameRedraw = new System.Windows.Forms.CheckBox();
+            this.checkBox_FixCameraPlane = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).BeginInit();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_time)).BeginInit();
@@ -357,11 +358,23 @@
             this.checkBox_forceFrameRedraw.UseVisualStyleBackColor = true;
             this.checkBox_forceFrameRedraw.CheckedChanged += new System.EventHandler(this.checkBox_forceFrameRedraw_CheckedChanged);
             // 
+            // checkBox_FixCameraPlane
+            // 
+            this.checkBox_FixCameraPlane.AutoSize = true;
+            this.checkBox_FixCameraPlane.Location = new System.Drawing.Point(743, 199);
+            this.checkBox_FixCameraPlane.Name = "checkBox_FixCameraPlane";
+            this.checkBox_FixCameraPlane.Size = new System.Drawing.Size(108, 17);
+            this.checkBox_FixCameraPlane.TabIndex = 49;
+            this.checkBox_FixCameraPlane.Text = "Fix Camera Plane";
+            this.checkBox_FixCameraPlane.UseVisualStyleBackColor = true;
+            this.checkBox_FixCameraPlane.CheckedChanged += new System.EventHandler(this.checkBox_FixCameraPlane_CheckedChanged);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(958, 528);
+            this.Controls.Add(this.checkBox_FixCameraPlane);
             this.Controls.Add(this.checkBox_forceFrameRedraw);
             this.Controls.Add(this.glControl1);
             this.Controls.Add(this.checkBox_moveCamera);
@@ -427,6 +440,7 @@
         private System.Windows.Forms.CheckBox checkBox_moveCamera;
         private OpenTK.GLControl glControl1;
         private System.Windows.Forms.CheckBox checkBox_forceFrameRedraw;
+        private System.Windows.Forms.CheckBox checkBox_FixCameraPlane;
     }
 }
 
