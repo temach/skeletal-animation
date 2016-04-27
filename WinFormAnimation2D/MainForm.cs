@@ -43,6 +43,8 @@ namespace WinFormAnimation2D
             }
         }
 
+        private KeyboardInput _kbd;
+
         // camera related stuff
         private CameraDevice _camera;
         private Point PictureBoxCenterPoint
@@ -59,6 +61,7 @@ namespace WinFormAnimation2D
         public MainForm()
         {
             InitializeComponent();
+            _kbd = new KeyboardInput(this.textBox_cli);
             ClearScreen = delegate { this.pictureBox_main.Invalidate(); };
             RedrawIfAnimUpdate = delegate { if (this._cmd.NeedWindowRedraw == true) this.pictureBox_main.Invalidate(); };
             Matrix4 opengl_camera_init = Matrix4.LookAt(0, 50, 500, 0, 0, 0, 0, 1, 0).Inverted();
@@ -88,52 +91,47 @@ namespace WinFormAnimation2D
 
         /// <summary>
         /// Intercept arrow keys to send input to the picture box.
+        /// (for the active control to see the keypress, return false)
         /// </summary>
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (this.textBox_cli.Focused == true)
+            KeyboardAction action = _kbd.ProcessKeydown(keyData);
+            if (action == KeyboardAction.DoRotation)
+            {
+                double rotation_direction = _kbd.GetRotationDirection(_kbd.RecentKey);
+                Vector3 rotation_axis = _kbd.GetRotationAxis(_kbd.RecentKey);
+                if (! Properties.Settings.Default.MoveCamera && Current != null)
+                {
+                    // Current.RotateBy(rotation_direction);
+                }
+                else
+                {
+                    _camera.RotateBy(rotation_direction, rotation_axis);
+                }
+                this.pictureBox_main.Invalidate();
+                return true;
+            }
+            else if (action == KeyboardAction.DoMotion)
+            {
+                Vector3 direction = _kbd.GetDirectionNormalized(_kbd.RecentKey);
+                if (!Properties.Settings.Default.MoveCamera && Current != null)
+                {
+                    // Current.MoveBy((int)direction.X, (int)direction.Y);
+                }
+                else
+                {
+                    _camera.MoveBy(direction);
+                    this.toolStripStatusLabel_camera_position.Text = _camera.GetTranslation.ToString();
+                }
+                this.pictureBox_main.Invalidate();
+                return true; // hide this key event from other controls
+            }
+            else if (action == KeyboardAction.None)
             {
                 return base.ProcessCmdKey(ref msg, keyData);
             }
-            //for the active control to see the keypress, return false
-            switch (keyData)
-            {
-                case Keys.I:
-                case Keys.O:
-                case Keys.K:
-                case Keys.L:
-                case Keys.Oemcomma:
-                case Keys.OemPeriod:
-                    if (! Properties.Settings.Default.MoveCamera && Current != null)
-                    {
-                        Current.RotateByKey(new KeyEventArgs(keyData));
-                    }
-                    else
-                    {
-                        _camera.RotateByKey(new KeyEventArgs(keyData));
-                    }
-                    this.pictureBox_main.Invalidate();
-                    return true;
-                case Keys.A:
-                case Keys.D:
-                case Keys.S:
-                case Keys.W:
-                case Keys.E:
-                case Keys.Q:
-                    if (! Properties.Settings.Default.MoveCamera && Current != null)
-                    {
-                        Current.MoveByKey2D(new KeyEventArgs(keyData));
-                    }
-                    else
-                    {
-                        _camera.MoveByKey(new KeyEventArgs(keyData));
-                        this.toolStripStatusLabel_camera_position.Text = _camera.GetTranslation.ToString();
-                    }
-                    this.pictureBox_main.Invalidate();
-                    return true; // hide this key event from other controls
-                default:
-                    return base.ProcessCmdKey(ref msg, keyData);
-            }
+            Debug.Assert(false, "You forgot to handle some keyboard action");
+            return false;
         }
 
         // change the tranbslation part of the matrix to all zeros

@@ -29,12 +29,9 @@ namespace WinFormAnimation2D
 
         // void RotateBy(double angle_degrees, Vector3 axis);
         void RotateBy(double angle_degrees);
-        void RotateByKey(KeyEventArgs e);
 
         // x,y,z should be direction parameters, one of {-1, 0, 1}
-        // void MoveBy(int x, int y);
         void MoveBy(Vector3 direction);
-        void MoveByKey(KeyEventArgs e);
     }
 
     class TransformState
@@ -67,55 +64,13 @@ namespace WinFormAnimation2D
 
         public void Rotate(double angle_degrees)
         {
+            // we must use global vectors here, becasue we pre-multiply the camera matrix and then invert it
             RotateAroundAxis(angle_degrees, Vector3.UnitX);
         }
         public void RotateAroundAxis(double angle_degrees, Vector3 axis)
         {
             float angle_radians = (float)(angle_degrees * Math.PI / 180.0);
             _matrix = Matrix4.CreateFromAxisAngle(axis, angle_radians) * _matrix;
-        }
-
-        public double GetAngleDegreesFromKeyEventArg(KeyEventArgs e)
-        {
-            switch (e.KeyData)
-            {
-                case Keys.I:
-                case Keys.K:
-                case Keys.Oemcomma:
-                    return RotateSpeedDegrees;
-                case Keys.O:
-                case Keys.L:
-                case Keys.OemPeriod:
-                    return -1 * RotateSpeedDegrees;
-                default:
-                    Debug.Assert(false);
-                    break;
-            }
-            return double.NaN;
-        }
-
-        public Vector3 GetRotationAxisFromKeys(KeyEventArgs e)
-        {
-            // we must use global vectors here, becasue we pre-multiply the cmarea matrix and then invert it
-            switch (e.KeyData)
-            {
-                case Keys.I:
-                case Keys.O:
-                    // return _local_x;
-                    return Vector3.UnitX;
-                case Keys.K:
-                case Keys.L:
-                    // return _local_y;
-                    return Vector3.UnitY;
-                case Keys.Oemcomma:
-                case Keys.OemPeriod:
-                    // return _local_z;
-                    return Vector3.UnitZ;
-                default:
-                    Debug.Assert(false);
-                    break;
-            }
-            return new Vector3(float.NaN, float.NaN, float.NaN);
         }
 
         // x,y,z should be direction parameters, one of {-1, 0, 1}
@@ -145,29 +100,6 @@ namespace WinFormAnimation2D
         {
             Vector3 trans = TranslationFromDirection(direction);
             ApplyTranslation(trans);
-        }
-
-        public Vector3 GetDirectionNormalizedFromKey(KeyEventArgs e)
-        {
-            switch (e.KeyData)
-            {
-                case Keys.A:
-                    return new Vector3(-1, 0, 0);
-                case Keys.D:
-                    return new Vector3(1, 0, 0);
-                case Keys.W:
-                    return new Vector3(0, -1, 0);
-                case Keys.S:
-                    return new Vector3(0, 1, 0);
-                case Keys.E:
-                    return new Vector3(0, 0, -1);
-                case Keys.Q:
-                    return new Vector3(0, 0, 1);
-                default:
-                    Debug.Assert(false);
-                    break;
-            }
-            return new Vector3(float.NaN, float.NaN, float.NaN);
         }
 
     } 

@@ -68,6 +68,7 @@
     <Compile Include="Drawing2dGraphicsExtensions.cs" />
     <Compile Include="DrawSettings.cs" />
     <Compile Include="ExtraGeometry.cs" />
+    <Compile Include="KeyboardInput.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="MouseState.cs" />
     <Compile Include="OpentkMatrixExtensions.cs" />

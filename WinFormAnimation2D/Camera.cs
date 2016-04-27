@@ -65,16 +65,10 @@ namespace WinFormAnimation2D
             return _3d_camera.MatrixToOpenGL();
         }
 
-        public void RotateBy(double angle_degrees)
+        public void RotateBy(double angle_degrees, Vector3 axis)
         {
             _2d_camera.RotateAroundScreenCenter2D(angle_degrees);
-            _3d_camera.RotateBy(angle_degrees);
-        }
-
-        public void RotateByKey(KeyEventArgs e)
-        {
-            _2d_camera.RotateByKey(e);
-            _3d_camera.RotateByKey(e);
+            _3d_camera.RotateByAxis(angle_degrees, axis);
         }
 
         public void ProcessMouse(int x, int y)
@@ -84,16 +78,10 @@ namespace WinFormAnimation2D
         }
 
         // x,y are direction parameters one of {-1, 0, 1}
-        public void MoveBy(int x, int y)
+        public void MoveBy(Vector3 direction)
         {
-            _2d_camera.MoveBy(x, y);
-            _3d_camera.MoveBy(new Vector3(x,y,0));
-        }
-
-        public void MoveByKey(KeyEventArgs e)
-        {
-            _2d_camera.MoveByKey(e);
-            _3d_camera.MoveByKey(e);
+            _2d_camera.MoveBy(direction);
+            _3d_camera.MoveBy(direction);
         }
 
     }
@@ -158,25 +146,11 @@ namespace WinFormAnimation2D
 
         public void RotateBy(double angle_degrees)
         {
-            if (Properties.Settings.Default.FixCameraPlane)
-            {
-                _transform.Rotate(angle_degrees);
-            }
+            RotateByAxis(angle_degrees, Vector3.UnitX);
         }
-
-        public void RotateByKey(KeyEventArgs e)
+        public void RotateByAxis(double angle_degrees, Vector3 axis)
         {
-            double angle_degrees = _transform.GetAngleDegreesFromKeyEventArg(e);
-            if (Properties.Settings.Default.FixCameraPlane)
-            {
-                _transform.Rotate(angle_degrees);
-            }
-            else
-            {
-                // arbitrary rotation
-                Vector3 axis = _transform.GetRotationAxisFromKeys(e);
-                _transform.RotateAroundAxis(angle_degrees, axis);
-            }
+            _transform.RotateAroundAxis(angle_degrees, axis);
         }
 
         // x,y,z are direction parameters one of {-1, 0, 1}
@@ -191,11 +165,6 @@ namespace WinFormAnimation2D
             {
                 _transform.MoveBy(dir);
             }
-        }
-        public void MoveByKey(KeyEventArgs e)
-        {
-            Vector3 dir = _transform.GetDirectionNormalizedFromKey(e);
-            _transform.MoveBy(dir);
         }
 
     }
@@ -251,32 +220,15 @@ namespace WinFormAnimation2D
         {
             RotateAroundScreenCenter2D(angle_degrees);
         }
-        public void RotateByKey(KeyEventArgs e)
-        {
-            double angle_degrees = _transform.GetAngleDegreesFromKeyEventArg(e);
-            RotateAroundScreenCenter2D(angle_degrees);
-        }
-        public void MoveBy(int x, int y)
-        {
-            // x,y are direction parameters one of {-1, 0, 1}
-            var translate = _transform.TranslationFromDirection(new Vector3(x, y, 0));
-            _transform.ApplyTranslation(translate);
-        }
-        public void MoveByKey(KeyEventArgs e)
-        {
-            Vector3 dir = _transform.GetDirectionNormalizedFromKey(e);
-            dir.Z = 0; // this is 2D camera, don't need Z coords
-            if (dir.eIsZero())
-            {
-                // nothing to do
-                return;
-            }
-            _transform.MoveBy(dir);
-        }
+
         public void MoveBy(Vector3 direction)
         {
             // x,y are direction parameters one of {-1, 0, 1}
             direction.Z = 0;
+            if (direction.eIsZero())
+            {
+                return;
+            }
             var translate = _transform.TranslationFromDirection(direction);
             _transform.ApplyTranslation(translate);
         }
