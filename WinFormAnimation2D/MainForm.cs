@@ -100,6 +100,10 @@ namespace WinFormAnimation2D
             {
                 case Keys.I:
                 case Keys.O:
+                case Keys.K:
+                case Keys.L:
+                case Keys.Oemcomma:
+                case Keys.OemPeriod:
                     if (! Properties.Settings.Default.MoveCamera && Current != null)
                     {
                         Current.RotateByKey(new KeyEventArgs(keyData));
@@ -114,6 +118,8 @@ namespace WinFormAnimation2D
                 case Keys.D:
                 case Keys.S:
                 case Keys.W:
+                case Keys.E:
+                case Keys.Q:
                     if (! Properties.Settings.Default.MoveCamera && Current != null)
                     {
                         Current.MoveByKey2D(new KeyEventArgs(keyData));
@@ -475,6 +481,11 @@ namespace WinFormAnimation2D
             {
                 tm.Tick -= ClearScreen;
             }
+        }
+
+        private void checkBox_FixCameraPlane_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.FixCameraPlane = this.checkBox_FixCameraPlane.Checked;
         }
     }
 }

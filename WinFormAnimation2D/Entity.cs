@@ -75,24 +75,25 @@ namespace WinFormAnimation2D
 
         public void RotateBy(double angle_degrees)
         {
-            _transform.RotateBy2D(angle_degrees);
+            _transform.Rotate(angle_degrees);
         }
 
         public void RotateByKey(KeyEventArgs e)
         {
             double angle_degrees = _transform.GetAngleDegreesFromKeyEventArg(e);
-            _transform.RotateBy2D(angle_degrees);
+            _transform.Rotate(angle_degrees);
         }
 
         // x,y are direction parameters one of {-1, 0, 1}
         public void MoveBy(int x, int y)
         {
-            _transform.MoveBy2D(x, y);
+            var translate = _transform.TranslationFromDirection(new Vector3(x, y, 0));
+            _transform.ApplyTranslation(translate);
         }
 
         public void MoveByKey2D(KeyEventArgs e)
         {
-            _transform.MoveByKey(e);
+            _transform.GetDirectionNormalizedFromKey(e);
         }
 
         public bool ContainsPoint(Vector2 p)

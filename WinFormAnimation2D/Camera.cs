@@ -68,13 +68,13 @@ namespace WinFormAnimation2D
         public void RotateBy(double angle_degrees)
         {
             _2d_camera.RotateAroundScreenCenter2D(angle_degrees);
-            _3d_camera.RotateBy2D(angle_degrees);
+            _3d_camera.RotateBy(angle_degrees);
         }
 
         public void RotateByKey(KeyEventArgs e)
         {
-            _2d_camera.RotateByKey2D(e);
-            _3d_camera.RotateByKey2D(e);
+            _2d_camera.RotateByKey(e);
+            _3d_camera.RotateByKey(e);
         }
 
         public void ProcessMouse(int x, int y)
@@ -86,14 +86,14 @@ namespace WinFormAnimation2D
         // x,y are direction parameters one of {-1, 0, 1}
         public void MoveBy(int x, int y)
         {
-            _2d_camera.MoveBy2D(x, y);
-            _3d_camera.MoveBy2D(x, y);
+            _2d_camera.MoveBy(x, y);
+            _3d_camera.MoveBy(new Vector3(x,y,0));
         }
 
         public void MoveByKey(KeyEventArgs e)
         {
-            _2d_camera.MoveByKey2D(e);
-            _3d_camera.MoveByKey2D(e);
+            _2d_camera.MoveByKey(e);
+            _3d_camera.MoveByKey(e);
         }
 
     }
@@ -136,15 +136,6 @@ namespace WinFormAnimation2D
             return opengl_cam_inverted;
         }
 
-        public void ProcessMouse(int x, int y)
-        {
-            // when user pulls mouse to the right (x > 0) we perform a clockwise rotation.
-            if (x != 0)
-            {
-                RotateBy2D(x * _transform._roto_speed_degrees);
-            }
-        }
-
         /// <summary>
         /// Get the mouse position and calculate the world coordinates based on the screen coordinates.
         /// </summary>
@@ -155,23 +146,56 @@ namespace WinFormAnimation2D
             return new PointF(tmp.X, tmp.Y);
         }
 
-        public void RotateBy2D(double angle_degrees)
+        // Movement in ZY plane
+        public void ProcessMouse(int x, int y)
         {
-            _transform.RotateBy(angle_degrees, Vector3.UnitZ);
+            // when user pulls mouse to the right (x > 0) we perform a clockwise rotation.
+            if (x != 0)
+            {
+                _transform.Rotate(x * _transform.RotateSpeedDegrees);
+            }
         }
-        public void RotateByKey2D(KeyEventArgs e)
+
+        public void RotateBy(double angle_degrees)
+        {
+            if (Properties.Settings.Default.FixCameraPlane)
+            {
+                _transform.Rotate(angle_degrees);
+            }
+        }
+
+        public void RotateByKey(KeyEventArgs e)
         {
             double angle_degrees = _transform.GetAngleDegreesFromKeyEventArg(e);
-            _transform.RotateBy2D(angle_degrees);
+            if (Properties.Settings.Default.FixCameraPlane)
+            {
+                _transform.Rotate(angle_degrees);
+            }
+            else
+            {
+                // arbitrary rotation
+                Vector3 axis = _transform.GetRotationAxisFromKeys(e);
+                _transform.RotateAroundAxis(angle_degrees, axis);
+            }
         }
-        public void MoveBy2D(int x, int y)
+
+        // x,y,z are direction parameters one of {-1, 0, 1}
+        public void MoveBy(Vector3 dir)
         {
-            // x,y are direction parameters one of {-1, 0, 1}
-            _transform.MoveBy2D(x, y);
+            if (Properties.Settings.Default.FixCameraPlane)
+            {
+                var translate = _transform.TranslationFromDirectionInPlaneYZ(dir.Xy);
+                _transform.ApplyTranslation(translate);
+            }
+            else
+            {
+                _transform.MoveBy(dir);
+            }
         }
-        public void MoveByKey2D(KeyEventArgs e)
+        public void MoveByKey(KeyEventArgs e)
         {
-            _transform.MoveByKey(e);
+            Vector3 dir = _transform.GetDirectionNormalizedFromKey(e);
+            _transform.MoveBy(dir);
         }
 
     }
@@ -209,7 +233,7 @@ namespace WinFormAnimation2D
             // when user pulls mouse to the right (x > 0) we perform a clockwise rotation.
             if (x != 0)
             {
-                RotateBy2D(x * _transform._roto_speed_degrees);
+                RotateBy(x * _transform.RotateSpeedDegrees);
             }
         }
 
@@ -223,23 +247,38 @@ namespace WinFormAnimation2D
             return new PointF(tmp.X, tmp.Y);
         }
 
-        public void RotateBy2D(double angle_degrees)
+        public void RotateBy(double angle_degrees)
         {
             RotateAroundScreenCenter2D(angle_degrees);
         }
-        public void RotateByKey2D(KeyEventArgs e)
+        public void RotateByKey(KeyEventArgs e)
         {
             double angle_degrees = _transform.GetAngleDegreesFromKeyEventArg(e);
             RotateAroundScreenCenter2D(angle_degrees);
         }
-        public void MoveBy2D(int x, int y)
+        public void MoveBy(int x, int y)
         {
             // x,y are direction parameters one of {-1, 0, 1}
-            _transform.MoveBy2D(x, y);
+            var translate = _transform.TranslationFromDirection(new Vector3(x, y, 0));
+            _transform.ApplyTranslation(translate);
         }
-        public void MoveByKey2D(KeyEventArgs e)
+        public void MoveByKey(KeyEventArgs e)
         {
-            _transform.MoveByKey(e);
+            Vector3 dir = _transform.GetDirectionNormalizedFromKey(e);
+            dir.Z = 0; // this is 2D camera, don't need Z coords
+            if (dir.eIsZero())
+            {
+                // nothing to do
+                return;
+            }
+            _transform.MoveBy(dir);
+        }
+        public void MoveBy(Vector3 direction)
+        {
+            // x,y are direction parameters one of {-1, 0, 1}
+            direction.Z = 0;
+            var translate = _transform.TranslationFromDirection(direction);
+            _transform.ApplyTranslation(translate);
         }
 
         public Drawing2DCamera(Matrix4 draw2d_init_mat, Size window_size)
