@@ -58,5 +58,19 @@ namespace WinFormAnimation2D
         {
             return new tk.Vector2(v.X, v.Y);
         }
+
+        /// <summary>
+        /// Checks if the vector has all values close to zero.
+        /// </summary>
+        public static bool eIsZero(this tk.Vector3 v)
+        {
+            if (Math.Abs(v.X) < Util.epsilon
+                && Math.Abs(v.Y) < Util.epsilon
+                && Math.Abs(v.Z) < Util.epsilon)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }
