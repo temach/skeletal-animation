@@ -23,6 +23,7 @@ namespace WinFormAnimation2D
             None
             , DoRotation
             , DoMotion
+            , RunCommand
     }
 
     class KeyboardInput
@@ -30,7 +31,7 @@ namespace WinFormAnimation2D
 
         public Keys RecentKey;
 
-        public TextBox _cmd_line_control;
+        private TextBox _cmd_line_control;
         public bool CmdHasFocus
         {
             get { return _cmd_line_control.Focused; }
@@ -46,6 +47,11 @@ namespace WinFormAnimation2D
             RecentKey = key;
             if (CmdHasFocus)
             {
+                if (key == Keys.Enter)
+                {
+                    return KeyboardAction.RunCommand;
+                }
+                // otherwise do not do anything while the user is typing
                 return KeyboardAction.None;
             }
             // else the user is talking to the 3D viewport

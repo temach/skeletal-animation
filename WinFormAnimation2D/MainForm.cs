@@ -126,6 +126,14 @@ namespace WinFormAnimation2D
                 this.pictureBox_main.Invalidate();
                 return true; // hide this key event from other controls
             }
+            else if (action == KeyboardAction.RunCommand)
+            {
+                _cmd.RunCmd(this.textBox_cli.Text);
+                if (_cmd.NeedWindowRedraw)
+                {
+                    this.pictureBox_main.Invalidate();
+                }
+            }
             else if (action == KeyboardAction.None)
             {
                 return base.ProcessCmdKey(ref msg, keyData);
