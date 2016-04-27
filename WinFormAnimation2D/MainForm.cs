@@ -136,24 +136,6 @@ namespace WinFormAnimation2D
             }
         }
 
-        // functions to move the world objects left/right/up/down on 2D canvas
-        private void button_up_Click(object sender, EventArgs e) {
-            _camera.MoveBy(0, -1);
-            pictureBox_main.Invalidate();
-        }
-        private void button_left_Click(object sender, EventArgs e) {
-            _camera.MoveBy(-1, 0);
-            pictureBox_main.Invalidate();
-        }
-        private void button_right_Click(object sender, EventArgs e) {
-            _camera.MoveBy(1, 0);
-            pictureBox_main.Invalidate();
-        }
-        private void button_down_Click(object sender, EventArgs e) {
-            _camera.MoveBy(0, 1);
-            pictureBox_main.Invalidate();
-        }
-
         // change the tranbslation part of the matrix to all zeros
         private void button_resetpos_Click(object sender, EventArgs e)
         {
