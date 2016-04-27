@@ -22,15 +22,6 @@ namespace WinFormAnimation2D
         public Drawing2DCamera _2d_camera;
         public OpenGLCamera _3d_camera;
 
-        private Matrix4 _cam_mat
-        {
-            get { return _2d_camera.CamMatrix; }
-        }
-        private Matrix4 _opengl_mat
-        {
-            get { return _3d_camera.CamMatrix; }
-        }
-
         public Vector2 GetTranslation
         {
             get { return _2d_camera.GetTranslation2D; }
@@ -40,11 +31,6 @@ namespace WinFormAnimation2D
         public PointF ConvertScreen2WorldCoordinates(PointF screen_coords)
         {
             return _2d_camera.ConvertScreen2WorldCoordinates(screen_coords);
-        }
-
-        public Matrix4 CamMatrix
-        {
-            get { return _cam_mat; }
         }
 
         public CameraDevice(Matrix4 draw2d_init_mat, Size window_size, Matrix4 opengl_init_mat)
