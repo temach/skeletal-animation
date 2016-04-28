@@ -32,7 +32,7 @@ namespace WinFormAnimation2D
 
         public bool NeedWindowRedraw;
 
-        private IEnumerable<MethodInfo> _commands_cached = null;
+        private IList<MethodInfo> _commands_cached = null;
         public IEnumerable<MethodInfo> Commands
         {
             get
@@ -41,7 +41,7 @@ namespace WinFormAnimation2D
                 {
                     _commands_cached = this.GetType()
                         .GetMethods(BindingFlags.Public | BindingFlags.Instance)
-                        .Where(f => char.IsLower(f.Name[0]));
+                        .Where(f => char.IsLower(f.Name[0])).ToList();
                 }
                 return _commands_cached;
             }

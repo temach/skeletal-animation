@@ -133,6 +133,7 @@ namespace WinFormAnimation2D
                 {
                     this.pictureBox_main.Invalidate();
                 }
+                return true;
             }
             else if (action == KeyboardAction.None)
             {
@@ -474,6 +475,12 @@ namespace WinFormAnimation2D
         private void checkBox_FixCameraPlane_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.FixCameraPlane = this.checkBox_FixCameraPlane.Checked;
+        }
+
+        private void MainForm_ResizeEnd(object sender, EventArgs e)
+        {
+            _world._renderer.ResizeOpenGL(this.glControl1.Width, this.glControl1.Height);
+            this.pictureBox_main.Invalidate();
         }
     }
 }

@@ -56,19 +56,26 @@
             this.glControl1 = new OpenTK.GLControl();
             this.checkBox_forceFrameRedraw = new System.Windows.Forms.CheckBox();
             this.checkBox_FixCameraPlane = new System.Windows.Forms.CheckBox();
+            this.tabControl_panel = new System.Windows.Forms.TabControl();
+            this.tabPage_TreeView = new System.Windows.Forms.TabPage();
+            this.tabPage_RenderOptions = new System.Windows.Forms.TabPage();
+            this.tabPage_CmdLine = new System.Windows.Forms.TabPage();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).BeginInit();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_time)).BeginInit();
+            this.tabControl_panel.SuspendLayout();
+            this.tabPage_TreeView.SuspendLayout();
+            this.tabPage_RenderOptions.SuspendLayout();
+            this.tabPage_CmdLine.SuspendLayout();
             this.SuspendLayout();
             // 
             // pictureBox_main
             // 
-            this.pictureBox_main.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox_main.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.pictureBox_main.Location = new System.Drawing.Point(403, 37);
             this.pictureBox_main.Name = "pictureBox_main";
-            this.pictureBox_main.Size = new System.Drawing.Size(330, 466);
+            this.pictureBox_main.Size = new System.Drawing.Size(330, 464);
             this.pictureBox_main.TabIndex = 1;
             this.pictureBox_main.TabStop = false;
             this.pictureBox_main.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox_main_Paint);
@@ -79,7 +86,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(739, 313);
+            this.label2.Location = new System.Drawing.Point(6, 3);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(122, 13);
             this.label2.TabIndex = 22;
@@ -167,16 +174,19 @@
             // 
             // treeView_entity_info
             // 
-            this.treeView_entity_info.Location = new System.Drawing.Point(742, 329);
+            this.treeView_entity_info.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.treeView_entity_info.Location = new System.Drawing.Point(6, 19);
             this.treeView_entity_info.Name = "treeView_entity_info";
-            this.treeView_entity_info.Size = new System.Drawing.Size(194, 172);
+            this.treeView_entity_info.Size = new System.Drawing.Size(199, 413);
             this.treeView_entity_info.TabIndex = 26;
             this.treeView_entity_info.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView_entity_info_AfterSelect);
             // 
             // checkBox_breakpoints_on
             // 
             this.checkBox_breakpoints_on.AutoSize = true;
-            this.checkBox_breakpoints_on.Location = new System.Drawing.Point(840, 288);
+            this.checkBox_breakpoints_on.Location = new System.Drawing.Point(19, 52);
             this.checkBox_breakpoints_on.Name = "checkBox_breakpoints_on";
             this.checkBox_breakpoints_on.Size = new System.Drawing.Size(118, 17);
             this.checkBox_breakpoints_on.TabIndex = 27;
@@ -188,7 +198,7 @@
             // 
             this.trackBar_time.Location = new System.Drawing.Point(91, 4);
             this.trackBar_time.Name = "trackBar_time";
-            this.trackBar_time.Size = new System.Drawing.Size(390, 45);
+            this.trackBar_time.Size = new System.Drawing.Size(555, 45);
             this.trackBar_time.TabIndex = 36;
             this.trackBar_time.ValueChanged += new System.EventHandler(this.trackBar_AnimationTime_ValueChanged);
             // 
@@ -203,7 +213,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(871, 242);
+            this.button1.Location = new System.Drawing.Point(19, 11);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 35);
             this.button1.TabIndex = 38;
@@ -212,15 +222,17 @@
             // 
             // textBox_cli
             // 
-            this.textBox_cli.Location = new System.Drawing.Point(585, 11);
+            this.textBox_cli.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox_cli.Location = new System.Drawing.Point(6, 42);
             this.textBox_cli.Name = "textBox_cli";
-            this.textBox_cli.Size = new System.Drawing.Size(280, 20);
+            this.textBox_cli.Size = new System.Drawing.Size(202, 20);
             this.textBox_cli.TabIndex = 39;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(502, 14);
+            this.label1.Location = new System.Drawing.Point(3, 18);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(77, 13);
             this.label1.TabIndex = 40;
@@ -228,18 +240,21 @@
             // 
             // listBox_display
             // 
+            this.listBox_display.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.listBox_display.FormattingEnabled = true;
             this.listBox_display.HorizontalScrollbar = true;
-            this.listBox_display.Location = new System.Drawing.Point(743, 50);
+            this.listBox_display.Location = new System.Drawing.Point(6, 77);
             this.listBox_display.Name = "listBox_display";
-            this.listBox_display.Size = new System.Drawing.Size(203, 95);
+            this.listBox_display.Size = new System.Drawing.Size(202, 355);
             this.listBox_display.TabIndex = 41;
             // 
             // button_RunCli
             // 
-            this.button_RunCli.Location = new System.Drawing.Point(871, 9);
+            this.button_RunCli.Location = new System.Drawing.Point(86, 13);
             this.button_RunCli.Name = "button_RunCli";
-            this.button_RunCli.Size = new System.Drawing.Size(75, 23);
+            this.button_RunCli.Size = new System.Drawing.Size(61, 23);
             this.button_RunCli.TabIndex = 42;
             this.button_RunCli.Text = "Run";
             this.button_RunCli.UseVisualStyleBackColor = true;
@@ -248,7 +263,7 @@
             // checkBox_renderBones
             // 
             this.checkBox_renderBones.AutoSize = true;
-            this.checkBox_renderBones.Location = new System.Drawing.Point(743, 152);
+            this.checkBox_renderBones.Location = new System.Drawing.Point(19, 140);
             this.checkBox_renderBones.Name = "checkBox_renderBones";
             this.checkBox_renderBones.Size = new System.Drawing.Size(94, 17);
             this.checkBox_renderBones.TabIndex = 43;
@@ -259,7 +274,7 @@
             // checkBox_render_boxes
             // 
             this.checkBox_render_boxes.AutoSize = true;
-            this.checkBox_render_boxes.Location = new System.Drawing.Point(856, 152);
+            this.checkBox_render_boxes.Location = new System.Drawing.Point(19, 117);
             this.checkBox_render_boxes.Name = "checkBox_render_boxes";
             this.checkBox_render_boxes.Size = new System.Drawing.Size(93, 17);
             this.checkBox_render_boxes.TabIndex = 44;
@@ -270,7 +285,7 @@
             // checkBox_triangulate
             // 
             this.checkBox_triangulate.AutoSize = true;
-            this.checkBox_triangulate.Location = new System.Drawing.Point(743, 176);
+            this.checkBox_triangulate.Location = new System.Drawing.Point(19, 164);
             this.checkBox_triangulate.Name = "checkBox_triangulate";
             this.checkBox_triangulate.Size = new System.Drawing.Size(108, 17);
             this.checkBox_triangulate.TabIndex = 45;
@@ -281,16 +296,18 @@
             // checkBox_moveCamera
             // 
             this.checkBox_moveCamera.AutoSize = true;
-            this.checkBox_moveCamera.Location = new System.Drawing.Point(856, 176);
+            this.checkBox_moveCamera.Location = new System.Drawing.Point(19, 221);
             this.checkBox_moveCamera.Name = "checkBox_moveCamera";
-            this.checkBox_moveCamera.Size = new System.Drawing.Size(91, 17);
+            this.checkBox_moveCamera.Size = new System.Drawing.Size(113, 17);
             this.checkBox_moveCamera.TabIndex = 46;
-            this.checkBox_moveCamera.Text = "Move camera";
+            this.checkBox_moveCamera.Text = "Move only camera";
             this.checkBox_moveCamera.UseVisualStyleBackColor = true;
             this.checkBox_moveCamera.CheckedChanged += new System.EventHandler(this.checkBox_moveCamera_CheckedChanged);
             // 
             // glControl1
             // 
+            this.glControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.glControl1.BackColor = System.Drawing.Color.Black;
             this.glControl1.Location = new System.Drawing.Point(12, 35);
             this.glControl1.Name = "glControl1";
@@ -302,7 +319,7 @@
             // checkBox_forceFrameRedraw
             // 
             this.checkBox_forceFrameRedraw.AutoSize = true;
-            this.checkBox_forceFrameRedraw.Location = new System.Drawing.Point(856, 199);
+            this.checkBox_forceFrameRedraw.Location = new System.Drawing.Point(19, 88);
             this.checkBox_forceFrameRedraw.Name = "checkBox_forceFrameRedraw";
             this.checkBox_forceFrameRedraw.Size = new System.Drawing.Size(104, 17);
             this.checkBox_forceFrameRedraw.TabIndex = 48;
@@ -313,7 +330,7 @@
             // checkBox_FixCameraPlane
             // 
             this.checkBox_FixCameraPlane.AutoSize = true;
-            this.checkBox_FixCameraPlane.Location = new System.Drawing.Point(743, 199);
+            this.checkBox_FixCameraPlane.Location = new System.Drawing.Point(19, 198);
             this.checkBox_FixCameraPlane.Name = "checkBox_FixCameraPlane";
             this.checkBox_FixCameraPlane.Size = new System.Drawing.Size(108, 17);
             this.checkBox_FixCameraPlane.TabIndex = 49;
@@ -321,36 +338,88 @@
             this.checkBox_FixCameraPlane.UseVisualStyleBackColor = true;
             this.checkBox_FixCameraPlane.CheckedChanged += new System.EventHandler(this.checkBox_FixCameraPlane_CheckedChanged);
             // 
+            // tabControl_panel
+            // 
+            this.tabControl_panel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl_panel.Controls.Add(this.tabPage_TreeView);
+            this.tabControl_panel.Controls.Add(this.tabPage_RenderOptions);
+            this.tabControl_panel.Controls.Add(this.tabPage_CmdLine);
+            this.tabControl_panel.Location = new System.Drawing.Point(739, 37);
+            this.tabControl_panel.Name = "tabControl_panel";
+            this.tabControl_panel.SelectedIndex = 0;
+            this.tabControl_panel.Size = new System.Drawing.Size(219, 464);
+            this.tabControl_panel.TabIndex = 50;
+            // 
+            // tabPage_TreeView
+            // 
+            this.tabPage_TreeView.Controls.Add(this.label2);
+            this.tabPage_TreeView.Controls.Add(this.treeView_entity_info);
+            this.tabPage_TreeView.Location = new System.Drawing.Point(4, 22);
+            this.tabPage_TreeView.Name = "tabPage_TreeView";
+            this.tabPage_TreeView.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage_TreeView.Size = new System.Drawing.Size(211, 438);
+            this.tabPage_TreeView.TabIndex = 0;
+            this.tabPage_TreeView.Text = "Tree";
+            this.tabPage_TreeView.UseVisualStyleBackColor = true;
+            // 
+            // tabPage_RenderOptions
+            // 
+            this.tabPage_RenderOptions.Controls.Add(this.checkBox_moveCamera);
+            this.tabPage_RenderOptions.Controls.Add(this.checkBox_FixCameraPlane);
+            this.tabPage_RenderOptions.Controls.Add(this.checkBox_breakpoints_on);
+            this.tabPage_RenderOptions.Controls.Add(this.checkBox_forceFrameRedraw);
+            this.tabPage_RenderOptions.Controls.Add(this.button1);
+            this.tabPage_RenderOptions.Controls.Add(this.checkBox_renderBones);
+            this.tabPage_RenderOptions.Controls.Add(this.checkBox_render_boxes);
+            this.tabPage_RenderOptions.Controls.Add(this.checkBox_triangulate);
+            this.tabPage_RenderOptions.Location = new System.Drawing.Point(4, 22);
+            this.tabPage_RenderOptions.Name = "tabPage_RenderOptions";
+            this.tabPage_RenderOptions.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage_RenderOptions.Size = new System.Drawing.Size(211, 438);
+            this.tabPage_RenderOptions.TabIndex = 1;
+            this.tabPage_RenderOptions.Text = "Render";
+            this.tabPage_RenderOptions.UseVisualStyleBackColor = true;
+            // 
+            // tabPage_CmdLine
+            // 
+            this.tabPage_CmdLine.Controls.Add(this.listBox_display);
+            this.tabPage_CmdLine.Controls.Add(this.label1);
+            this.tabPage_CmdLine.Controls.Add(this.button_RunCli);
+            this.tabPage_CmdLine.Controls.Add(this.textBox_cli);
+            this.tabPage_CmdLine.Location = new System.Drawing.Point(4, 22);
+            this.tabPage_CmdLine.Name = "tabPage_CmdLine";
+            this.tabPage_CmdLine.Size = new System.Drawing.Size(211, 438);
+            this.tabPage_CmdLine.TabIndex = 2;
+            this.tabPage_CmdLine.Text = "Cmd Line";
+            this.tabPage_CmdLine.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(958, 528);
-            this.Controls.Add(this.checkBox_FixCameraPlane);
-            this.Controls.Add(this.checkBox_forceFrameRedraw);
+            this.Controls.Add(this.tabControl_panel);
             this.Controls.Add(this.glControl1);
-            this.Controls.Add(this.checkBox_moveCamera);
-            this.Controls.Add(this.checkBox_triangulate);
-            this.Controls.Add(this.checkBox_render_boxes);
-            this.Controls.Add(this.checkBox_renderBones);
-            this.Controls.Add(this.button_RunCli);
-            this.Controls.Add(this.listBox_display);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.textBox_cli);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.checkBox_breakpoints_on);
-            this.Controls.Add(this.treeView_entity_info);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.pictureBox_main);
             this.Controls.Add(this.trackBar_time);
             this.Name = "MainForm";
             this.Text = "Form1";
+            this.ResizeEnd += new System.EventHandler(this.MainForm_ResizeEnd);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_time)).EndInit();
+            this.tabControl_panel.ResumeLayout(false);
+            this.tabPage_TreeView.ResumeLayout(false);
+            this.tabPage_TreeView.PerformLayout();
+            this.tabPage_RenderOptions.ResumeLayout(false);
+            this.tabPage_RenderOptions.PerformLayout();
+            this.tabPage_CmdLine.ResumeLayout(false);
+            this.tabPage_CmdLine.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -385,6 +454,10 @@
         private OpenTK.GLControl glControl1;
         private System.Windows.Forms.CheckBox checkBox_forceFrameRedraw;
         private System.Windows.Forms.CheckBox checkBox_FixCameraPlane;
+        private System.Windows.Forms.TabControl tabControl_panel;
+        private System.Windows.Forms.TabPage tabPage_TreeView;
+        private System.Windows.Forms.TabPage tabPage_RenderOptions;
+        private System.Windows.Forms.TabPage tabPage_CmdLine;
     }
 }
 
