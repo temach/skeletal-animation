@@ -65,13 +65,12 @@ namespace WinFormAnimation2D
         {
             InitializeComponent();
             _kbd = new KeyboardInput(this.textBox_cli);
-            ClearScreen = delegate { this.pictureBox_main.Invalidate(); };
-            RedrawIfAnimUpdate = delegate { if (this._cmd.NeedWindowRedraw == true) this.pictureBox_main.Invalidate(); };
+            ClearScreen = delegate { }; // this.pictureBox_main.Invalidate(); };
             Matrix4 opengl_camera_init = Matrix4.LookAt(0, 50, 500, 0, 0, 0, 0, 1, 0).Inverted();
             _camera = new CameraDevice(Matrix4.Identity, this.pictureBox_main.Size, opengl_camera_init);
             // manually register the mousewheel event handler.
             this.MouseWheel += new MouseEventHandler(this.pictureBox_main_MouseMove);
-            tm.Interval = 20;
+            tm.Interval = 30;
             _world = new World(this.pictureBox_main);
             try
             {
@@ -83,8 +82,7 @@ namespace WinFormAnimation2D
             }
             _cmd = new CommandLine(this.pictureBox_main, _world, tm, this.listBox_display, this);
             InitFillTreeFromWorldSingleEntity();
-            tm.Tick += RedrawIfAnimUpdate;
-            tm.Start();
+            // tm.Start();
         }
 
         public void SetAnimTime(double val)
@@ -110,7 +108,6 @@ namespace WinFormAnimation2D
                 {
                     _camera.RotateAround(rotation_axis);
                 }
-                this.pictureBox_main.Invalidate();
                 return true;
             }
             else if (action == KeyboardAction.DoMotion)
@@ -125,16 +122,11 @@ namespace WinFormAnimation2D
                     _camera.MoveBy(direction);
                     this.toolStripStatusLabel_camera_position.Text = _camera.GetTranslation.ToString();
                 }
-                this.pictureBox_main.Invalidate();
                 return true; // hide this key event from other controls
             }
             else if (action == KeyboardAction.RunCommand)
             {
                 _cmd.RunCmd(this.textBox_cli.Text);
-                if (_cmd.NeedWindowRedraw)
-                {
-                    this.pictureBox_main.Invalidate();
-                }
                 return true;
             }
             else if (action == KeyboardAction.None)
@@ -286,35 +278,17 @@ namespace WinFormAnimation2D
             }
         }
 
-        private void pictureBox_main_Paint(object sender, PaintEventArgs e)
+        private void PrepareOpenGLRenderFrame()
         {
             // guard if GLControl has not loaded yet
             if (! LoadOpenGLDone)
             {
                 return;
             }
-            // Set GR field so that we can use Sysem.Drawing2D as if it was like OpenGL
-            Util.GR = e.Graphics;
-            // update logic
-            UpdateFrame();
-            // do rendering
             _world._renderer.ClearOpenglFrameForRender(_camera.MatrixToOpenGL());
-            _world._renderer.ClearDrawign2DFrameForRender(_camera.MatrixToDrawing2D().eTo3x2());
-            // axis and other random stuff
             _world._renderer.DrawAxis3D();
-            _world._renderer.DrawAxis2D(_mouse.InnerWorldPos.eToPointFloat());
-            // render entity
-            _world.RenderWorld();
-            if (_current != null)
-            {
-                _current._extra_geometry.UpdateBonePositions(_current._armature);
-                if (Properties.Settings.Default.RenderAllBoneBounds)
-                {
-                    RenderBones(_current);
-                }
-            }
-            // currently selected in tree view
-            HighlightSlectedNode();
+
+            UpdateFrame();
 
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
             GL.Normal3(0, 0, 1);
@@ -337,7 +311,6 @@ namespace WinFormAnimation2D
             GL.Vertex3(shift,-shift,0);
             GL.Vertex3(ent_group.OverallBox._zero_far);
             GL.End();
-            glControl1.SwapBuffers();
         }
 
         private void RenderBones(Entity ent)
@@ -358,10 +331,6 @@ namespace WinFormAnimation2D
         private void button_RunCli_Click(object sender, EventArgs e)
         {
             this._cmd.RunCmd(this.textBox_cli.Text);
-            if (this._cmd.NeedWindowRedraw)
-            {
-                this.pictureBox_main.Invalidate();
-            }
         }
 
         private void trackBar_AnimationTime_ValueChanged(object sender, EventArgs e)
@@ -375,12 +344,11 @@ namespace WinFormAnimation2D
             Current._action.SetTime(time_seconds);
             _world._action_one.ApplyAnimation(Current._armature
                 , Current._action);
-            this.pictureBox_main.Invalidate();
         }
 
         private void treeView_entity_info_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            this.pictureBox_main.Invalidate();
+            // this.pictureBox_main.Invalidate();
         }
 
         private void checkBox_renderBones_CheckedChanged(object sender, EventArgs e)
@@ -405,13 +373,6 @@ namespace WinFormAnimation2D
         {
             Properties.Settings.Default.MoveCamera = this.checkBox_moveCamera.Checked;
             // this._cmd.RunCmd("set MoveCamera " + this.checkBox_triangulate.Checked);
-        }
-
-        private void glControl1_Load(object sender, EventArgs e)
-        {
-            _world._renderer.InitOpenGL();
-            _world._renderer.ResizeOpenGL(this.glControl1.Width, this.glControl1.Height);
-            LoadOpenGLDone = true;
         }
 
         private void checkBox_forceFrameRedraw_CheckedChanged(object sender, EventArgs e)
@@ -439,7 +400,55 @@ namespace WinFormAnimation2D
         private void MainForm_ResizeEnd(object sender, EventArgs e)
         {
             _world._renderer.ResizeOpenGL(this.glControl1.Width, this.glControl1.Height);
-            this.pictureBox_main.Invalidate();
+            // this.pictureBox_main.Invalidate();
+        }
+
+        private void glControl1_Load(object sender, EventArgs e)
+        {
+            _world._renderer.InitOpenGL();
+            _world._renderer.ResizeOpenGL(this.glControl1.Width, this.glControl1.Height);
+            LoadOpenGLDone = true;
+            // register Idle event so we get regular callbacks for drawing
+            Application.Idle += ApplicationIdle;
+        }
+
+        private void ApplicationIdle(object sender, EventArgs e)
+        {           
+            if(this.IsDisposed)
+            {
+                return;
+            }
+            while (glControl1.IsIdle)
+            {
+                UpdateFrame();
+                RenderFrame();
+            }
+        }
+
+        private void RenderFrame()
+        {
+            // Set GR field so that we can use Sysem.Drawing2D as if it was like OpenGL
+            Util.GR = this.pictureBox_main.CreateGraphics();
+            // set up rendering stuff
+            Util.GR = this.button1.CreateGraphics();
+            PrepareOpenGLRenderFrame();
+            // render entity
+            _world.RenderWorld();
+            // currently selected in tree view
+            if (_current != null)
+            {
+                _current._extra_geometry.UpdateBonePositions(_current._armature);
+                if (Properties.Settings.Default.RenderAllBoneBounds)
+                {
+                    RenderBones(_current);
+                }
+            }
+            HighlightSlectedNode();
+            glControl1.SwapBuffers();
+            this.glControl1.Invalidate();
+            // picture box was not made for such fast updates, we will update it with a timer
+            // enable to see the slow speed of OpenGL update
+            // glControl1.SwapBuffers();
         }
 
         private void UpdateFrame()
