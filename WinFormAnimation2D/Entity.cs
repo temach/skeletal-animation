@@ -91,7 +91,7 @@ namespace WinFormAnimation2D
             Vector3 tmp = new Vector3(p.X, p.Y, 0.0f);
             return _extra_geometry.EntityBorderContainsPoint(tmp.eTo2D());
         }
-        
+
         /// Render the model stored in EntityScene useing the Graphics object.
         public void RenderModel(DrawConfig settings)
         {
@@ -103,8 +103,6 @@ namespace WinFormAnimation2D
                 Util.GR.InterpolationMode = InterpolationMode.HighQualityBilinear;
                 Util.GR.SmoothingMode = SmoothingMode.AntiAlias;
             }
-            // first pass: calculate a matrix for each vertex
-            RecursiveTransformVertices(_node, Matrix4.Identity.eToAssimp());
             // second pass: render with this matrix
             RecursiveRenderSystemDrawing(_node);
             // apply the matrix to graphics just to draw the rectangle
@@ -169,6 +167,25 @@ namespace WinFormAnimation2D
             }
         }
 
+        public void RenderBoundingBoxes(Geometry geom)
+        {
+            foreach (var aabb in geom._mesh_id2box.Values)
+            {
+                aabb.EndUpdateNearFar();
+                if (Properties.Settings.Default.RenderAllMeshBounds)
+                {
+                    aabb.Render();
+                }
+            }
+            //_extra_geometry.RenderEntityBorder();
+        }
+
+        public void UpdateModel(double dt_ms)
+        {
+            // first pass: calculate a matrix for each vertex
+            RecursiveTransformVertices(_node, Matrix4.Identity.eToAssimp());
+        }
+
         // First pass: transform all vertices in a mesh according to bone
         // here we must associate a matrix with each bone (maybe with each vertex_id??)
         // then we multiply the current_bone matrix with the one we had before 
@@ -203,19 +220,6 @@ namespace WinFormAnimation2D
             {
                  RecursiveTransformVertices(child, current_node);
             }
-        }
-
-        public void RenderBoundingBoxes(Geometry geom)
-        {
-            foreach (var aabb in geom._mesh_id2box.Values)
-            {
-                aabb.EndUpdateNearFar();
-                if (Properties.Settings.Default.RenderAllMeshBounds)
-                {
-                    aabb.Render();
-                }
-            }
-            //_extra_geometry.RenderEntityBorder();
         }
 
     } // end of class

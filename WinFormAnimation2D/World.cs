@@ -188,6 +188,12 @@ namespace WinFormAnimation2D
             return cur_scene;
         }
 
+        // dt = delta time since last frame in milliseconds
+        public void Update(double dt_millisecs)
+        {
+            _enttity_one.UpdateModel(dt_millisecs);
+        }
+
         /// <summary>
         /// Render the model stored in EntityScene useing the Graphics object.
         /// </summary>

@@ -27,6 +27,9 @@ namespace WinFormAnimation2D
         private World _world;
         private Timer tm = new Timer();
 
+        private Stopwatch _last_frame_sw = new Stopwatch();
+        private double LastFrameDelay;
+
         private bool LoadOpenGLDone;
 
         // State of the camera currently. We can affect this with buttons.
@@ -305,6 +308,9 @@ namespace WinFormAnimation2D
             {
                 return;
             }
+
+            UpdateFrame();
+
             GL.LoadIdentity();
             // TEST CODE to visualize mid point (pivot) and origin
             // var view = Matrix4.LookAt(0, 50, 500, 0, 0, 0, 0, 1, 0);
@@ -481,6 +487,15 @@ namespace WinFormAnimation2D
         {
             _world._renderer.ResizeOpenGL(this.glControl1.Width, this.glControl1.Height);
             this.pictureBox_main.Invalidate();
+        }
+
+
+        private void UpdateFrame()
+        {          
+            this.toolStripStatusLabel_mouse_coords.Text = _m_status.InnerWorldPos.ToString();
+            LastFrameDelay = _last_frame_sw.ElapsedMilliseconds;
+            _last_frame_sw.Restart();
+            _world.Update(LastFrameDelay);
         }
     }
 }
