@@ -308,36 +308,18 @@ namespace WinFormAnimation2D
             {
                 return;
             }
-
-            UpdateFrame();
-
-            GL.LoadIdentity();
-            // TEST CODE to visualize mid point (pivot) and origin
-            // var view = Matrix4.LookAt(0, 50, 500, 0, 0, 0, 0, 1, 0);
-            //GL.LoadMatrix(ref view);
-            Matrix4 cam_mat_inv = _camera.MatrixToOpenGL();
-            GL.LoadMatrix(ref cam_mat_inv);
-            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
-            // light color
-            var col = new Vector3(1, 1, 1);
-            col *= (0.25f + 1.5f * 10 / 100.0f) * 1.5f;
-            //GL.Light(LightName.Light0, LightParameter.Diffuse, new float[] { col.X, col.Y, col.Z, 1 });
-            //GL.Light(LightName.Light0, LightParameter.Specular, new float[] { col.X, col.Y, col.Z, 1 });
-            GL.Light(LightName.Light0, LightParameter.Ambient, new float[] { col.X, col.Y, col.Z, 1 });
-
-            this.toolStripStatusLabel_mouse_coords.Text = _m_status.InnerWorldPos.ToString();
             // Set GR field so that we can use Sysem.Drawing2D as if it was like OpenGL
             Util.GR = e.Graphics;
-            _world._renderer.SetupRender(Util.GR);
-            // change to world (i.e. camera) coordinates
-            Util.GR.MultiplyTransform(_camera.MatrixToDrawing2D().eTo3x2());
-            // center
-            Util.GR.eDrawCircle(Util.pp2, new Point(0,0), 3);
-            // mouse position, big-green-circle should be under the mouse arrow
-            Util.GR.eDrawBigPoint(_m_status.InnerWorldPos);
+            // update logic
+            UpdateFrame();
+            // do rendering
+            _world._renderer.ClearOpenglFrameForRender(_camera.MatrixToOpenGL());
+            _world._renderer.ClearDrawign2DFrameForRender(_camera.MatrixToDrawing2D().eTo3x2());
+            // axis and other random stuff
+            _world._renderer.DrawAxis3D();
+            _world._renderer.DrawAxis2D(_m_status.InnerWorldPos);
             // render entity
             _world.RenderWorld();
-            // currently selected in tree view
             if (_current != null)
             {
                 _current._extra_geometry.UpdateBonePositions(_current._armature);
@@ -346,6 +328,7 @@ namespace WinFormAnimation2D
                     RenderBones(_current);
                 }
             }
+            // currently selected in tree view
             HighlightSlectedNode();
 
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
@@ -357,21 +340,6 @@ namespace WinFormAnimation2D
             // since look at looks towards the center, we need to offset it a bit to see the Z axis.
             int shift = 5;
             GL.Begin(BeginMode.Triangles);
-            // x axis
-            GL.Color3(1.0f, 0.0f, 0.0f);
-            GL.Vertex3(0,0,0);
-            GL.Vertex3(20,-shift,0);
-            GL.Vertex3(20,shift,0);
-            // y axis
-            GL.Color3(0.0f, 1.0f, 0.0f);
-            GL.Vertex3(0,0,0);
-            GL.Vertex3(shift,20,0);
-            GL.Vertex3(-shift,20,0);
-            // z axis
-            GL.Color3(0.0f, 0.0f, 1.0f);
-            GL.Vertex3(0,0,0);
-            GL.Vertex3(-shift,0,20);
-            GL.Vertex3(shift,0,20);
             var ent_group = _world._enttity_one._extra_geometry.EntityBox;
             // to near
             GL.Color3(1.0f, 1.0f, 0.0f);

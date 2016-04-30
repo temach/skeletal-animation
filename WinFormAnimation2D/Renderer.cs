@@ -33,16 +33,8 @@ namespace WinFormAnimation2D
             _canvas = targetcanvas;
         }
 
-        public void SetupRender(Graphics g)
+        public void ClearFrameBuffer()
         {
-            // update viewport 
-            var w = (double)RenderResolution.Width;
-            var h = (double)RenderResolution.Height;
-            // 2d
-            Util.GR.Clear(Color.DarkGray);
-            // 3d
-            GL.DepthMask(true);
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
 
         public void InitOpenGL()
@@ -75,13 +67,76 @@ namespace WinFormAnimation2D
             GL.LoadIdentity();
         }
 
+        /// <summary>
+        /// Important points to remember:
+        /// Set normals.
+        /// Must be clock wise vertex draw order
+        /// The x-axis is accross the screen, so the Z-axis triangle must have component along X: +-1
+        /// since look at looks towards the center, we need to offset it a bit to see the Z axis.
+        /// </summary>
+        public void DrawAxis3D()
+        {
+            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+            GL.Normal3(0, 0, 1);
+            int shift = 5;
+            GL.Begin(BeginMode.Triangles);
+            // x axis
+            GL.Color3(1.0f, 0.0f, 0.0f);
+            GL.Vertex3(0, 0, 0);
+            GL.Vertex3(20, -shift, 0);
+            GL.Vertex3(20, shift, 0);
+            // y axis
+            GL.Color3(0.0f, 1.0f, 0.0f);
+            GL.Vertex3(0, 0, 0);
+            GL.Vertex3(shift, 20, 0);
+            GL.Vertex3(-shift, 20, 0);
+            // z axis
+            GL.Color3(0.0f, 0.0f, 1.0f);
+            GL.Vertex3(0, 0, 0);
+            GL.Vertex3(-shift, 0, 20);
+            GL.Vertex3(shift, 0, 20);
+            GL.End();
+        }
+
+        public void ClearOpenglFrameForRender(Matrix4 camera_matrix)
+        {
+            // TEST CODE to visualize mid point (pivot) and origin
+            // var view = Matrix4.LookAt(0, 50, 500, 0, 0, 0, 0, 1, 0);
+            //GL.LoadMatrix(ref view);
+            GL.LoadIdentity();
+            GL.LoadMatrix(ref camera_matrix);
+            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+            // light color
+            var col = new Vector3(1, 1, 1);
+            col *= (0.25f + 1.5f * 10 / 100.0f) * 1.5f;
+            GL.Light(LightName.Light0, LightParameter.Ambient, new float[] { col.X, col.Y, col.Z, 1 });
+            // 3d
+            GL.DepthMask(true);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        }
+
+        public void ClearDrawign2DFrameForRender(Matrix camera_matrix)
+        {
+            // 2d
+            Util.GR.Clear(Color.DarkGray);
+            Util.GR.MultiplyTransform(camera_matrix);
+        }
+
+        public void DrawAxis2D(PointF mouse_pos)
+        {
+            // center
+            Util.GR.eDrawCircle(Util.pp2, new Point(0,0), 3);
+            // mouse position, big-green-circle should be under the mouse arrow
+            Util.GR.eDrawBigPoint(mouse_pos);
+        }
+
         public void DrawEmptyEntitySplash()
         {
             string msg = "No file loaded";
             var w = (float)RenderResolution.Width;
             var h = (float)RenderResolution.Height;
-            Util.GR.DrawString(msg, GlobalDrawConf.DefaultFont16 
-                , Brushes.Aquamarine , new PointF(w / 2.0f, h / 2.0f) );
+            Util.GR.DrawString(msg, GlobalDrawConf.DefaultFont16
+                , Brushes.Aquamarine, new PointF(w / 2.0f, h / 2.0f));
 
         }
 
