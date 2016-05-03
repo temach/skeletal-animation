@@ -14,6 +14,12 @@ using System.Diagnostics;
 namespace WinFormAnimation2D
 {
 
+    enum CamMode
+    {
+        FreeFly
+        , Orbital
+    }
+
     /// <summary>
     /// Maintains camera abstraction.
     /// </summary>
@@ -21,6 +27,10 @@ namespace WinFormAnimation2D
     {
         public CameraDrawing2D _2d_camera;
         public CameraFreeFly3D _3d_camera;
+        public CamMode _cam_mode
+        {
+            get { return Properties.Settings.Default.OrbitingCamera ? CamMode.Orbital : CamMode.FreeFly; }
+        }
 
         public Vector2 GetTranslation
         {
