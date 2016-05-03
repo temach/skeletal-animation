@@ -65,6 +65,7 @@
     <Compile Include="Camera.cs" />
     <Compile Include="CameraDrawing2D.cs" />
     <Compile Include="CameraFreeFly3D.cs" />
+    <Compile Include="CameraOrbital3D.cs" />
     <Compile Include="CommandLine.cs" />
     <Compile Include="Drawing2dMatrixExtensions.cs" />
     <Compile Include="Drawing2dGraphicsExtensions.cs" />

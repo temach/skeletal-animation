@@ -71,13 +71,13 @@ namespace WinFormAnimation2D
             }
         }
 
-        public void RotateBy(double angle_degrees)
+        public void RotateBy(double direction)
         {
-            RotateByAxis(angle_degrees, Vector3.UnitX);
+            ClockwiseRotateAroundAxis(Vector3.Multiply(Vector3.UnitX, (float)direction));
         }
-        public void RotateByAxis(double angle_degrees, Vector3 axis)
+        public void ClockwiseRotateAroundAxis(Vector3 axis)
         {
-            _transform.RotateAroundAxis(angle_degrees, axis);
+            _transform.RotateAroundAxis(_transform.RotateSpeedDegrees, axis);
         }
 
         // x,y,z are direction parameters one of {-1, 0, 1}

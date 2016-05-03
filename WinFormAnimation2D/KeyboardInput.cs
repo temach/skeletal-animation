@@ -76,38 +76,20 @@ namespace WinFormAnimation2D
             }
         }
 
-        public double GetRotationDirection(Keys e)
-        {
-            switch (e)
-            {
-                case Keys.I:
-                case Keys.K:
-                case Keys.Oemcomma:
-                    return 1;
-                case Keys.O:
-                case Keys.L:
-                case Keys.OemPeriod:
-                    return -1;
-                default:
-                    Debug.Assert(false);
-                    break;
-            }
-            return double.NaN;
-        }
-
         public Vector3 GetRotationAxis(Keys key)
         {
             switch (key)
             {
-                case Keys.I:
-                case Keys.O:
-                    return Vector3.UnitX;
-                case Keys.K:
-                case Keys.L:
-                    return Vector3.UnitY;
-                case Keys.Oemcomma:
-                case Keys.OemPeriod:
-                    return Vector3.UnitZ;
+                // x axis
+                case Keys.I: return Vector3.UnitX;
+                case Keys.O: return -1 * Vector3.UnitX;
+                // y axis
+                case Keys.K: return Vector3.UnitY;
+                case Keys.L: return -1 * Vector3.UnitY;
+                // z axis
+                case Keys.Oemcomma: return Vector3.UnitZ;
+                case Keys.OemPeriod: return -1 * Vector3.UnitZ;
+                //
                 default:
                     Debug.Assert(false);
                     break;

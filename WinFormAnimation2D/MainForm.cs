@@ -101,7 +101,6 @@ namespace WinFormAnimation2D
             KeyboardAction action = _kbd.ProcessKeydown(keyData);
             if (action == KeyboardAction.DoRotation)
             {
-                double rotation_direction = _kbd.GetRotationDirection(_kbd.RecentKey);
                 Vector3 rotation_axis = _kbd.GetRotationAxis(_kbd.RecentKey);
                 if (! Properties.Settings.Default.MoveCamera && Current != null)
                 {
@@ -109,7 +108,7 @@ namespace WinFormAnimation2D
                 }
                 else
                 {
-                    _camera.RotateBy(rotation_direction, rotation_axis);
+                    _camera.RotateAround(rotation_axis);
                 }
                 this.pictureBox_main.Invalidate();
                 return true;
