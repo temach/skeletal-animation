@@ -60,6 +60,7 @@
             this.tabPage_TreeView = new System.Windows.Forms.TabPage();
             this.tabPage_RenderOptions = new System.Windows.Forms.TabPage();
             this.tabPage_CmdLine = new System.Windows.Forms.TabPage();
+            this.checkBox_OrbitingCamera = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).BeginInit();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_time)).BeginInit();
@@ -366,6 +367,7 @@
             // 
             // tabPage_RenderOptions
             // 
+            this.tabPage_RenderOptions.Controls.Add(this.checkBox_OrbitingCamera);
             this.tabPage_RenderOptions.Controls.Add(this.checkBox_moveCamera);
             this.tabPage_RenderOptions.Controls.Add(this.checkBox_FixCameraPlane);
             this.tabPage_RenderOptions.Controls.Add(this.checkBox_breakpoints_on);
@@ -394,6 +396,17 @@
             this.tabPage_CmdLine.TabIndex = 2;
             this.tabPage_CmdLine.Text = "Cmd Line";
             this.tabPage_CmdLine.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_OrbitingCamera
+            // 
+            this.checkBox_OrbitingCamera.AutoSize = true;
+            this.checkBox_OrbitingCamera.Location = new System.Drawing.Point(19, 245);
+            this.checkBox_OrbitingCamera.Name = "checkBox_OrbitingCamera";
+            this.checkBox_OrbitingCamera.Size = new System.Drawing.Size(101, 17);
+            this.checkBox_OrbitingCamera.TabIndex = 50;
+            this.checkBox_OrbitingCamera.Text = "Orbiting Camera";
+            this.checkBox_OrbitingCamera.UseVisualStyleBackColor = true;
+            this.checkBox_OrbitingCamera.CheckedChanged += new System.EventHandler(this.checkBox_OrbitingCamera_CheckedChanged);
             // 
             // MainForm
             // 
@@ -458,6 +471,7 @@
         private System.Windows.Forms.TabPage tabPage_TreeView;
         private System.Windows.Forms.TabPage tabPage_RenderOptions;
         private System.Windows.Forms.TabPage tabPage_CmdLine;
+        private System.Windows.Forms.CheckBox checkBox_OrbitingCamera;
     }
 }
 

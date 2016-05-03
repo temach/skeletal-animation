@@ -465,5 +465,10 @@ namespace WinFormAnimation2D
             _last_frame_sw.Restart();
             _world.Update(LastFrameDelay);
         }
+
+        private void checkBox_OrbitingCamera_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.OrbitingCamera = this.checkBox_OrbitingCamera.Checked;
+        }
     }
 }

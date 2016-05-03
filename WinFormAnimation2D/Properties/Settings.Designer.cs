@@ -94,5 +94,17 @@ namespace WinFormAnimation2D.Properties {
                 this["FixCameraPlane"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool OrbitingCamera {
+            get {
+                return ((bool)(this["OrbitingCamera"]));
+            }
+            set {
+                this["OrbitingCamera"] = value;
+            }
+        }
     }
 }
