@@ -18,8 +18,6 @@ namespace WinFormAnimation2D
         private Matrix4 _view;
         private Matrix4 _viewWithOffset;
         private float _cameraDistance;
-        private float _pitchAngle = 0.0f; //0.8f;
-        private float _rollAngle = 0.0f;
         private Vector3 _right;
         private Vector3 _up;
         private Vector3 _front;
@@ -30,7 +28,6 @@ namespace WinFormAnimation2D
 
         private float ZoomSpeed = 2.00105f;
         private float MinimumCameraDistance = 0.1f;
-
         /// <summary>
         /// Rotation speed, in degrees per pixels
         /// </summary>
@@ -45,15 +42,11 @@ namespace WinFormAnimation2D
         {
             // _view = Matrix4.CreateFromAxisAngle(new Vector3(0.0f, 1.0f, 0.0f), 0.9f);
             _view = Matrix4.Identity;
-
             _viewWithOffset = Matrix4.Identity;
-
             _cameraDistance = InitialCameraDistance;
-
             _right = Vector3.UnitX;
             _up = Vector3.UnitY;
             _front = Vector3.UnitZ;
-                
             SetOrbitOrConstrainedMode();           
         }
 
@@ -68,16 +61,14 @@ namespace WinFormAnimation2D
             _dirty = true;
         }
 
-
         public Matrix4 GetView()
         {
             if (_dirty)
             {
-                UpdateViewMatrix();
+                  UpdateViewMatrix();
             }
             return _viewWithOffset;
         }
-
 
         public void MouseMove(int x, int y)
         {
@@ -85,22 +76,17 @@ namespace WinFormAnimation2D
             {
                 return;
             }
-
             if (x != 0)
             {
                 _view *= Matrix4.CreateFromAxisAngle(_up, (float)(x * RotationSpeed * Math.PI / 180.0));
             }
-
             if (y != 0)
             {
                 _view *= Matrix4.CreateFromAxisAngle(_right, (float)(y * RotationSpeed * Math.PI / 180.0));
             }
-
-
             _dirty = true;
             SetOrbitOrConstrainedMode();
         }
-
 
         public void Scroll(float z)
         {
@@ -109,21 +95,17 @@ namespace WinFormAnimation2D
             _dirty = true;
         }
 
-
         public void Pan(float x, float y)
         {
             _panVector.X += x * PanSpeed;
             _panVector.Y += -y * PanSpeed;
-
             _dirty = true;
         }
-
 
         public void MovementKey(float x, float y, float z)
         {
             // TODO switch to FPS camera at current position?
         }
-
 
         public Vector3 _local_x { get { return _view.Row0.Xyz; } }
         public Vector3 _local_y { get { return _view.Row1.Xyz; } }
@@ -132,17 +114,15 @@ namespace WinFormAnimation2D
 
         private void UpdateViewMatrix()
         {
-            var viewWithPitchAndRoll = _view * Matrix4.CreateFromAxisAngle(_right, _pitchAngle) * Matrix4.CreateFromAxisAngle(_front, _rollAngle);
-            _viewWithOffset = Matrix4.LookAt(viewWithPitchAndRoll.Column2.Xyz * _cameraDistance + _pivot, _pivot, viewWithPitchAndRoll.Column1.Xyz);
+            // for othagonal matrices T^(-1) = T^(transposed), so here we are applying a global rotation
+            _viewWithOffset = Matrix4.LookAt(_view.Column2.Xyz * _cameraDistance + _pivot, _pivot, _view.Column1.Xyz);
             _viewWithOffset *= Matrix4.CreateTranslation(_panVector);
-
             _dirty = false;
         }
 
         /// Switches the camera controller between the X,Z,Y and Orbit modes.
         public void SetOrbitOrConstrainedMode()
         {
-            _panVector = Vector3.Zero;
             _dirty = true;
         }
 
