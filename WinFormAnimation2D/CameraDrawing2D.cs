@@ -52,11 +52,11 @@ namespace WinFormAnimation2D
         /// <summary>
         /// Get the mouse position and calculate the world coordinates based on the screen coordinates.
         /// </summary>
-        public PointF ConvertScreen2WorldCoordinates(PointF screen_coords)
+        public Vector2 ConvertScreen2WorldCoordinates(Point screen_coords)
         {
             Vector3 tmp = new Vector3(screen_coords.X, screen_coords.Y, 0.0f);
             tmp = Vector3.Transform(tmp, _transform._matrix);
-            return new PointF(tmp.X, tmp.Y);
+            return new Vector2(tmp.X, tmp.Y);
         }
 
         public void RotateBy(double angle_degrees)

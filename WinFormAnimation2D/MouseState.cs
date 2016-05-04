@@ -23,29 +23,47 @@ namespace WinFormAnimation2D
         /// Captured mouse position when it was clicked.
         public Point ClickPos;
 
+        public Point LastFramePos;
+        public Point FrameDelta
+        {
+            get
+            {
+                return new Point(LastFramePos.X - CurrentPos.X, LastFramePos.Y - CurrentPos.Y);
+            }
+        }
+
         /// Position of where the user is pointing inside the game world
-        public PointF InnerWorldPos;
+        public OpenTK.Vector2 InnerWorldPos;
         /// Position of click inside the game world.
-        public PointF InnerWorldClickPos;
+        public OpenTK.Vector2 InnerWorldClickPos;
 
         /// Mimimum motion delta for mouse to be recognised
         public readonly int HorizHysteresis = 4;
         public readonly int VertHysteresis = 4;
 
         /// Updates mouse click position.
-        public void RecordMouseClick(MouseEventArgs e, PointF inner_world)
+        public void RecordMouseClick(MouseEventArgs e)
         {
-            this.InnerWorldPos = inner_world;
-            this.InnerWorldClickPos = inner_world;
             this.ClickPos = new Point(e.X, e.Y);
             this.IsPressed = true;
         }
 
         /// Updates current mouse position. Then we can caluclate delta better.
-        public void RecordMouseMove(MouseEventArgs e, PointF inner_world)
+        public void RecordMouseMove(MouseEventArgs e)
         {
-            this.InnerWorldPos = inner_world;
+            this.LastFramePos = this.CurrentPos;
             this.CurrentPos = new Point(e.X, e.Y);
+        }
+
+        public void RecordInnerWorldMouseClick(OpenTK.Vector2 vec)
+        {
+            this.InnerWorldClickPos = vec;
+            this.InnerWorldPos = vec;
+        }
+
+        public void RecordInnerWorldMouseMove(OpenTK.Vector2 vec)
+        {
+            this.InnerWorldPos = vec;
         }
 
     };

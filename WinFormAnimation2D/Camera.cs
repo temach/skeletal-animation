@@ -39,7 +39,7 @@ namespace WinFormAnimation2D
         }
 
         /// Get the mouse position and calculate the world coordinates based on the screen coordinates.
-        public PointF ConvertScreen2WorldCoordinates(PointF screen_coords)
+        public Vector2 ConvertScreen2WorldCoordinates(Point screen_coords)
         {
             return _2d.ConvertScreen2WorldCoordinates(screen_coords);
         }
@@ -81,8 +81,9 @@ namespace WinFormAnimation2D
 
         public void ProcessMouse(int x, int y)
         {
-            _2d.ProcessMouse(x, y);
-            _3d_freefly.ProcessMouse(x, y);
+            //_2d.ProcessMouse(x, y);
+            //_3d_freefly.ProcessMouse(x, y);
+            _3d_orbital.MouseMove(x, y);
         }
 
         // x,y are direction parameters one of {-1, 0, 1}

@@ -22,7 +22,7 @@ namespace WinFormAnimation2D
     public partial class MainForm : Form
     {
 
-        MouseState _m_status = new MouseState();
+        MouseState _mouse = new MouseState();
 
         private World _world;
         private Timer tm = new Timer();
@@ -157,20 +157,14 @@ namespace WinFormAnimation2D
 
         private void pictureBox_main_MouseUp(object sender, MouseEventArgs e)
         {
-            _m_status.IsPressed = false;
-        }
-
-        public PointF PointFromMouseEvent(MouseEventArgs e)
-        {
-            return new PointF(e.X, e.Y);
+            _mouse.IsPressed = false;
         }
 
         private void pictureBox_main_MouseDown(object sender, MouseEventArgs e)
         {
-            var mouse_world_pos = PointFromMouseEvent(e);
-            mouse_world_pos = _camera.ConvertScreen2WorldCoordinates(mouse_world_pos);
-            _m_status.RecordMouseClick(e, mouse_world_pos);
-            if (_world.CheckMouseEntitySelect(_m_status))
+            _mouse.RecordMouseClick(e);
+            _mouse.RecordInnerWorldMouseClick(_camera.ConvertScreen2WorldCoordinates(_mouse.ClickPos));
+            if (_world.CheckMouseEntitySelect(_mouse))
             {
                 Current = _world.CurrentlySelected;
                 this.toolStripStatusLabel_entity_position.Text = Current.GetTranslation.ToString();
@@ -186,32 +180,24 @@ namespace WinFormAnimation2D
 
         private void pictureBox_main_MouseMove(object sender, MouseEventArgs e)
         {
-            PointF mouse_world_pos = PointFromMouseEvent(e);
-            mouse_world_pos = _camera.ConvertScreen2WorldCoordinates(mouse_world_pos);
-            _m_status.RecordMouseMove(e, mouse_world_pos);
-            if (_world.CheckMouseEntitySelect(_m_status))
+            _mouse.RecordMouseMove(e);
+            _mouse.RecordInnerWorldMouseMove(_camera.ConvertScreen2WorldCoordinates(_mouse.CurrentPos));
+            if (_world.CheckMouseEntitySelect(_mouse))
             {
-                this.toolStripStatusLabel_is_selected.Text = "HAS ENTITY";
+                //this.toolStripStatusLabel_is_selected.Text = "HAS ENTITY";
             }
             else
             {
-                this.toolStripStatusLabel_is_selected.Text = "___empty___";
+                //this.toolStripStatusLabel_is_selected.Text = "___empty___";
             }
 
             // Process mouse motion only if it is pressed
-            if (! _m_status.IsPressed) {
-                return;
-            }
-            // this.Text = _m_status._mouse_x_captured.ToString();
-            var delta_x = e.X - _m_status.ClickPos.X;
-            var delta_y = e.Y - _m_status.ClickPos.Y;
-            if (Math.Abs(delta_x) < _m_status.HorizHysteresis 
-                && Math.Abs(delta_y)  < _m_status.VertHysteresis)
-            {
+            if (! _mouse.IsPressed) {
                 return;
             }
             // time to do some rotation
-            //_camera.ProcessMouse(delta_x, delta_y);
+            _camera.ProcessMouse(_mouse.FrameDelta.X, _mouse.FrameDelta.Y);
+            this.toolStripStatusLabel_is_selected.Text = _mouse.FrameDelta.ToString();
             pictureBox_main.Invalidate();
         }
 
@@ -316,7 +302,7 @@ namespace WinFormAnimation2D
             _world._renderer.ClearDrawign2DFrameForRender(_camera.MatrixToDrawing2D().eTo3x2());
             // axis and other random stuff
             _world._renderer.DrawAxis3D();
-            _world._renderer.DrawAxis2D(_m_status.InnerWorldPos);
+            _world._renderer.DrawAxis2D(_mouse.InnerWorldPos.eToPointFloat());
             // render entity
             _world.RenderWorld();
             if (_current != null)
@@ -459,7 +445,7 @@ namespace WinFormAnimation2D
 
         private void UpdateFrame()
         {          
-            this.toolStripStatusLabel_mouse_coords.Text = _m_status.InnerWorldPos.ToString();
+            this.toolStripStatusLabel_mouse_coords.Text = _mouse.InnerWorldPos.ToString();
             LastFrameDelay = _last_frame_sw.ElapsedMilliseconds;
             _last_frame_sw.Restart();
             _world.Update(LastFrameDelay);
