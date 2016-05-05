@@ -49,22 +49,13 @@ namespace WinFormAnimation2D
 
         // camera related stuff
         private CameraDevice _camera;
-        private Point PictureBoxCenterPoint
-        {
-            get
-            {
-                return new Point(this.pictureBox_main.Width / 2, this.pictureBox_main.Height / 2);
-            }
-        }
-
-        public EventHandler ClearScreen;
-        public EventHandler RedrawIfAnimUpdate;
 
         public MainForm()
         {
             InitializeComponent();
+            // set up rendering stuff
+            Util.GR = this.button_ResetCamera.CreateGraphics();
             _kbd = new KeyboardInput(this.textBox_cli);
-            ClearScreen = delegate { }; // this.pictureBox_main.Invalidate(); };
             Matrix4 opengl_camera_init = Matrix4.LookAt(0, 50, 500, 0, 0, 0, 0, 1, 0).Inverted();
             _camera = new CameraDevice(Matrix4.Identity, this.pictureBox_main.Size, opengl_camera_init);
             // manually register the mousewheel event handler.
@@ -134,16 +125,6 @@ namespace WinFormAnimation2D
             return false;
         }
 
-        // change the tranbslation part of the matrix to all zeros
-        private void button_resetpos_Click(object sender, EventArgs e)
-        {
-            pictureBox_main.Invalidate();
-        }
-        private void button_resetzoom_Click(object sender, EventArgs e)
-        {
-            //_camera.CamMatrix = _camera.CamMatrix.eSnapScale(1.0);
-        }
-
         private void pictureBox_main_MouseUp(object sender, MouseEventArgs e)
         {
             _mouse.IsPressed = false;
@@ -187,7 +168,6 @@ namespace WinFormAnimation2D
             // time to do some rotation
             _camera.ProcessMouse(_mouse.FrameDelta.X, _mouse.FrameDelta.Y);
             this.toolStripStatusLabel_is_selected.Text = _mouse.FrameDelta.ToString();
-            pictureBox_main.Invalidate();
         }
 
         /// <summary>
@@ -345,7 +325,6 @@ namespace WinFormAnimation2D
 
         private void treeView_entity_info_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            // this.pictureBox_main.Invalidate();
         }
 
         private void checkBox_renderBones_CheckedChanged(object sender, EventArgs e)
@@ -380,7 +359,6 @@ namespace WinFormAnimation2D
         private void MainForm_ResizeEnd(object sender, EventArgs e)
         {
             _world._renderer.ResizeOpenGL(this.glControl1.Width, this.glControl1.Height);
-            // this.pictureBox_main.Invalidate();
         }
 
         private void glControl1_Load(object sender, EventArgs e)
@@ -407,8 +385,6 @@ namespace WinFormAnimation2D
 
         private void RenderFrame()
         {
-            // Set GR field so that we can use Sysem.Drawing2D as if it was like OpenGL
-            Util.GR = this.pictureBox_main.CreateGraphics();
             PrepareOpenGLRenderFrame();
             // render entity
             _world.RenderWorld();
@@ -423,7 +399,6 @@ namespace WinFormAnimation2D
             }
             HighlightSlectedNode();
             glControl1.SwapBuffers();
-            this.glControl1.Invalidate();
             // picture box was not made for such fast updates, we will update it with a timer
             // enable to see the slow speed of OpenGL update
             // glControl1.SwapBuffers();
