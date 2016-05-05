@@ -61,7 +61,7 @@ namespace WinFormAnimation2D
             _world = new World();
             try
             {
-                _world.LoadScene(Properties.Resources.mamonth_3);
+                _world.LoadScene(Properties.Resources.suzane_1);
             }
             catch (Exception ex)
             {

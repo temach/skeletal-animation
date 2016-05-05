@@ -190,6 +190,9 @@
   <data name="steam_machine" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\steam_machine.dae;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="suzane_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\suzane_1.dae;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="triple_fold_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\triple_fold_1.dae;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
