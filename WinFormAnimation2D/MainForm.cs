@@ -409,8 +409,6 @@ namespace WinFormAnimation2D
         {
             // Set GR field so that we can use Sysem.Drawing2D as if it was like OpenGL
             Util.GR = this.pictureBox_main.CreateGraphics();
-            // set up rendering stuff
-            Util.GR = this.button1.CreateGraphics();
             PrepareOpenGLRenderFrame();
             // render entity
             _world.RenderWorld();
@@ -457,6 +455,12 @@ namespace WinFormAnimation2D
         private void glControl1_MouseUp(object sender, MouseEventArgs e)
         {
             this.pictureBox_main_MouseUp(null, e);
+        }
+
+        private void button_ResetCamera_Click(object sender, EventArgs e)
+        {
+            Matrix4 opengl_camera_init = Matrix4.LookAt(0, 50, 500, 0, 0, 0, 0, 1, 0).Inverted();
+            _camera = new CameraDevice(Matrix4.Identity, this.pictureBox_main.Size, opengl_camera_init);
         }
     }
 }
