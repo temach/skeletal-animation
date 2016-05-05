@@ -59,8 +59,8 @@
             this.tabControl_panel = new System.Windows.Forms.TabControl();
             this.tabPage_TreeView = new System.Windows.Forms.TabPage();
             this.tabPage_RenderOptions = new System.Windows.Forms.TabPage();
-            this.tabPage_CmdLine = new System.Windows.Forms.TabPage();
             this.checkBox_OrbitingCamera = new System.Windows.Forms.CheckBox();
+            this.tabPage_CmdLine = new System.Windows.Forms.TabPage();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).BeginInit();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_time)).BeginInit();
@@ -316,6 +316,9 @@
             this.glControl1.TabIndex = 47;
             this.glControl1.VSync = true;
             this.glControl1.Load += new System.EventHandler(this.glControl1_Load);
+            this.glControl1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.glControl1_MouseDown);
+            this.glControl1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.glControl1_MouseMove);
+            this.glControl1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.glControl1_MouseUp);
             // 
             // checkBox_forceFrameRedraw
             // 
@@ -384,6 +387,17 @@
             this.tabPage_RenderOptions.Text = "Render";
             this.tabPage_RenderOptions.UseVisualStyleBackColor = true;
             // 
+            // checkBox_OrbitingCamera
+            // 
+            this.checkBox_OrbitingCamera.AutoSize = true;
+            this.checkBox_OrbitingCamera.Location = new System.Drawing.Point(19, 245);
+            this.checkBox_OrbitingCamera.Name = "checkBox_OrbitingCamera";
+            this.checkBox_OrbitingCamera.Size = new System.Drawing.Size(101, 17);
+            this.checkBox_OrbitingCamera.TabIndex = 50;
+            this.checkBox_OrbitingCamera.Text = "Orbiting Camera";
+            this.checkBox_OrbitingCamera.UseVisualStyleBackColor = true;
+            this.checkBox_OrbitingCamera.CheckedChanged += new System.EventHandler(this.checkBox_OrbitingCamera_CheckedChanged);
+            // 
             // tabPage_CmdLine
             // 
             this.tabPage_CmdLine.Controls.Add(this.listBox_display);
@@ -396,17 +410,6 @@
             this.tabPage_CmdLine.TabIndex = 2;
             this.tabPage_CmdLine.Text = "Cmd Line";
             this.tabPage_CmdLine.UseVisualStyleBackColor = true;
-            // 
-            // checkBox_OrbitingCamera
-            // 
-            this.checkBox_OrbitingCamera.AutoSize = true;
-            this.checkBox_OrbitingCamera.Location = new System.Drawing.Point(19, 245);
-            this.checkBox_OrbitingCamera.Name = "checkBox_OrbitingCamera";
-            this.checkBox_OrbitingCamera.Size = new System.Drawing.Size(101, 17);
-            this.checkBox_OrbitingCamera.TabIndex = 50;
-            this.checkBox_OrbitingCamera.Text = "Orbiting Camera";
-            this.checkBox_OrbitingCamera.UseVisualStyleBackColor = true;
-            this.checkBox_OrbitingCamera.CheckedChanged += new System.EventHandler(this.checkBox_OrbitingCamera_CheckedChanged);
             // 
             // MainForm
             // 

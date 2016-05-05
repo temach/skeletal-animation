@@ -442,7 +442,6 @@ namespace WinFormAnimation2D
             this.pictureBox_main.Invalidate();
         }
 
-
         private void UpdateFrame()
         {          
             this.toolStripStatusLabel_mouse_coords.Text = _mouse.InnerWorldPos.ToString();
@@ -454,6 +453,21 @@ namespace WinFormAnimation2D
         private void checkBox_OrbitingCamera_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.OrbitingCamera = this.checkBox_OrbitingCamera.Checked;
+        }
+
+        private void glControl1_MouseDown(object sender, MouseEventArgs e)
+        {
+            this.pictureBox_main_MouseDown(null, e);
+        }
+
+        private void glControl1_MouseMove(object sender, MouseEventArgs e)
+        {
+            this.pictureBox_main_MouseMove(null, e);
+        }
+
+        private void glControl1_MouseUp(object sender, MouseEventArgs e)
+        {
+            this.pictureBox_main_MouseUp(null, e);
         }
     }
 }
