@@ -25,7 +25,6 @@ namespace WinFormAnimation2D
         MouseState _mouse = new MouseState();
 
         private World _world;
-        private Timer tm = new Timer();
 
         private Stopwatch _last_frame_sw = new Stopwatch();
         private double LastFrameDelay;
@@ -70,7 +69,6 @@ namespace WinFormAnimation2D
             _camera = new CameraDevice(Matrix4.Identity, this.pictureBox_main.Size, opengl_camera_init);
             // manually register the mousewheel event handler.
             this.MouseWheel += new MouseEventHandler(this.pictureBox_main_MouseMove);
-            tm.Interval = 30;
             _world = new World(this.pictureBox_main);
             try
             {
@@ -80,9 +78,8 @@ namespace WinFormAnimation2D
             {
                 MessageBox.Show(ex.Message);
             }
-            _cmd = new CommandLine(this.pictureBox_main, _world, tm, this.listBox_display, this);
+            _cmd = new CommandLine(this.pictureBox_main, _world, this.listBox_display, this);
             InitFillTreeFromWorldSingleEntity();
-            // tm.Start();
         }
 
         public void SetAnimTime(double val)
