@@ -54,7 +54,6 @@
             this.checkBox_triangulate = new System.Windows.Forms.CheckBox();
             this.checkBox_moveCamera = new System.Windows.Forms.CheckBox();
             this.glControl1 = new OpenTK.GLControl();
-            this.checkBox_forceFrameRedraw = new System.Windows.Forms.CheckBox();
             this.checkBox_FixCameraPlane = new System.Windows.Forms.CheckBox();
             this.tabControl_panel = new System.Windows.Forms.TabControl();
             this.tabPage_TreeView = new System.Windows.Forms.TabPage();
@@ -319,17 +318,6 @@
             this.glControl1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.glControl1_MouseMove);
             this.glControl1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.glControl1_MouseUp);
             // 
-            // checkBox_forceFrameRedraw
-            // 
-            this.checkBox_forceFrameRedraw.AutoSize = true;
-            this.checkBox_forceFrameRedraw.Location = new System.Drawing.Point(19, 88);
-            this.checkBox_forceFrameRedraw.Name = "checkBox_forceFrameRedraw";
-            this.checkBox_forceFrameRedraw.Size = new System.Drawing.Size(104, 17);
-            this.checkBox_forceFrameRedraw.TabIndex = 48;
-            this.checkBox_forceFrameRedraw.Text = "Forced Redraws";
-            this.checkBox_forceFrameRedraw.UseVisualStyleBackColor = true;
-            this.checkBox_forceFrameRedraw.CheckedChanged += new System.EventHandler(this.checkBox_forceFrameRedraw_CheckedChanged);
-            // 
             // checkBox_FixCameraPlane
             // 
             this.checkBox_FixCameraPlane.AutoSize = true;
@@ -373,7 +361,6 @@
             this.tabPage_RenderOptions.Controls.Add(this.checkBox_moveCamera);
             this.tabPage_RenderOptions.Controls.Add(this.checkBox_FixCameraPlane);
             this.tabPage_RenderOptions.Controls.Add(this.checkBox_breakpoints_on);
-            this.tabPage_RenderOptions.Controls.Add(this.checkBox_forceFrameRedraw);
             this.tabPage_RenderOptions.Controls.Add(this.button1);
             this.tabPage_RenderOptions.Controls.Add(this.checkBox_renderBones);
             this.tabPage_RenderOptions.Controls.Add(this.checkBox_render_boxes);
@@ -467,7 +454,6 @@
         private System.Windows.Forms.CheckBox checkBox_triangulate;
         private System.Windows.Forms.CheckBox checkBox_moveCamera;
         private OpenTK.GLControl glControl1;
-        private System.Windows.Forms.CheckBox checkBox_forceFrameRedraw;
         private System.Windows.Forms.CheckBox checkBox_FixCameraPlane;
         private System.Windows.Forms.TabControl tabControl_panel;
         private System.Windows.Forms.TabPage tabPage_TreeView;

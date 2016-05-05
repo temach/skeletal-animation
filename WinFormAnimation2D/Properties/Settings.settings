@@ -14,9 +14,6 @@
     <Setting Name="MoveCamera" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="ForceFrameRedraws" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="FixCameraPlane" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>

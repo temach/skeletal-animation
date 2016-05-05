@@ -74,18 +74,6 @@ namespace WinFormAnimation2D.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ForceFrameRedraws {
-            get {
-                return ((bool)(this["ForceFrameRedraws"]));
-            }
-            set {
-                this["ForceFrameRedraws"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool FixCameraPlane {
             get {
                 return ((bool)(this["FixCameraPlane"]));

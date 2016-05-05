@@ -375,23 +375,6 @@ namespace WinFormAnimation2D
             // this._cmd.RunCmd("set MoveCamera " + this.checkBox_triangulate.Checked);
         }
 
-        private void checkBox_forceFrameRedraw_CheckedChanged(object sender, EventArgs e)
-        {
-            Properties.Settings.Default.ForceFrameRedraws = this.checkBox_forceFrameRedraw.Checked;
-            if (this.checkBox_forceFrameRedraw.Checked)
-            {
-                tm.Tick += ClearScreen;
-                if (! tm.Enabled)
-                {
-                    tm.Start();
-                }
-            }
-            else
-            {
-                tm.Tick -= ClearScreen;
-            }
-        }
-
         private void checkBox_FixCameraPlane_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.FixCameraPlane = this.checkBox_FixCameraPlane.Checked;
