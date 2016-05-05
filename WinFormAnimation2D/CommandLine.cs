@@ -52,7 +52,7 @@ namespace WinFormAnimation2D
 
         public Dictionary<string, string> _debug = new Dictionary<string, string>();
 
-        public CommandLine(PictureBox window, World world, ListBox debug, MainForm form)
+        public CommandLine(World world, ListBox debug, MainForm form)
         {
             _world = world;
             _timer = new Timer();

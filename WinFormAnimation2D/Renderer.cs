@@ -21,16 +21,10 @@ namespace WinFormAnimation2D
         // Change this to OpenGL control later.
         private PictureBox _canvas;
 
-        // Obtain actual rendering resolution in pixels
-        public Size RenderResolution {
-            get { return _canvas.Size; }
-        }
-
         public DrawConfig GlobalDrawConf;
 
-        public Renderer(PictureBox targetcanvas)
+        public Renderer()
         {
-            _canvas = targetcanvas;
         }
 
         public void ClearFrameBuffer()
@@ -133,11 +127,9 @@ namespace WinFormAnimation2D
         public void DrawEmptyEntitySplash()
         {
             string msg = "No file loaded";
-            var w = (float)RenderResolution.Width;
-            var h = (float)RenderResolution.Height;
-            Util.GR.DrawString(msg, GlobalDrawConf.DefaultFont16
-                , Brushes.Aquamarine, new PointF(w / 2.0f, h / 2.0f));
-
+            //var w = (float)RenderResolution.Width;
+            //var h = (float)RenderResolution.Height;
+            // Util.GR.DrawString(msg, GlobalDrawConf.DefaultFont16 , Brushes.Aquamarine, new PointF(w / 2.0f, h / 2.0f));
         }
 
     }

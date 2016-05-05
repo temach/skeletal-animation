@@ -139,9 +139,9 @@ namespace WinFormAnimation2D
             private set { _currently_selected = value; }
         }
 
-        public World(PictureBox targetcanvas)
+        public World()
         {
-            _renderer = new Renderer(targetcanvas);
+            _renderer = new Renderer();
             _renderer.GlobalDrawConf = new DrawConfig
             {
                 EnablePolygonModeFill = true,

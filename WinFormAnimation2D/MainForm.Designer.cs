@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.pictureBox_main = new System.Windows.Forms.PictureBox();
             this.label2 = new System.Windows.Forms.Label();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -60,7 +59,6 @@
             this.tabPage_RenderOptions = new System.Windows.Forms.TabPage();
             this.checkBox_OrbitingCamera = new System.Windows.Forms.CheckBox();
             this.tabPage_CmdLine = new System.Windows.Forms.TabPage();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).BeginInit();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_time)).BeginInit();
             this.tabControl_panel.SuspendLayout();
@@ -68,19 +66,6 @@
             this.tabPage_RenderOptions.SuspendLayout();
             this.tabPage_CmdLine.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // pictureBox_main
-            // 
-            this.pictureBox_main.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.pictureBox_main.Location = new System.Drawing.Point(403, 37);
-            this.pictureBox_main.Name = "pictureBox_main";
-            this.pictureBox_main.Size = new System.Drawing.Size(330, 464);
-            this.pictureBox_main.TabIndex = 1;
-            this.pictureBox_main.TabStop = false;
-            this.pictureBox_main.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox_main_MouseDown);
-            this.pictureBox_main.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox_main_MouseMove);
-            this.pictureBox_main.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox_main_MouseUp);
             // 
             // label2
             // 
@@ -311,7 +296,7 @@
             this.glControl1.BackColor = System.Drawing.Color.Black;
             this.glControl1.Location = new System.Drawing.Point(12, 35);
             this.glControl1.Name = "glControl1";
-            this.glControl1.Size = new System.Drawing.Size(385, 466);
+            this.glControl1.Size = new System.Drawing.Size(721, 466);
             this.glControl1.TabIndex = 47;
             this.glControl1.VSync = true;
             this.glControl1.Load += new System.EventHandler(this.glControl1_Load);
@@ -407,12 +392,10 @@
             this.Controls.Add(this.glControl1);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.pictureBox_main);
             this.Controls.Add(this.trackBar_time);
             this.Name = "MainForm";
             this.Text = "Form1";
             this.ResizeEnd += new System.EventHandler(this.MainForm_ResizeEnd);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_main)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_time)).EndInit();
@@ -429,7 +412,6 @@
         }
 
         #endregion
-        private System.Windows.Forms.PictureBox pictureBox_main;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_is_selected;

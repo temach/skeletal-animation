@@ -57,10 +57,10 @@ namespace WinFormAnimation2D
             Util.GR = this.button_ResetCamera.CreateGraphics();
             _kbd = new KeyboardInput(this.textBox_cli);
             Matrix4 opengl_camera_init = Matrix4.LookAt(0, 50, 500, 0, 0, 0, 0, 1, 0).Inverted();
-            _camera = new CameraDevice(Matrix4.Identity, this.pictureBox_main.Size, opengl_camera_init);
+            _camera = new CameraDevice(Matrix4.Identity, opengl_camera_init);
             // manually register the mousewheel event handler.
             this.MouseWheel += new MouseEventHandler(this.pictureBox_main_MouseMove);
-            _world = new World(this.pictureBox_main);
+            _world = new World();
             try
             {
                 _world.LoadScene(Properties.Resources.mamonth_3);
@@ -69,7 +69,7 @@ namespace WinFormAnimation2D
             {
                 MessageBox.Show(ex.Message);
             }
-            _cmd = new CommandLine(this.pictureBox_main, _world, this.listBox_display, this);
+            _cmd = new CommandLine(_world, this.listBox_display, this);
             InitFillTreeFromWorldSingleEntity();
         }
 
@@ -435,7 +435,7 @@ namespace WinFormAnimation2D
         private void button_ResetCamera_Click(object sender, EventArgs e)
         {
             Matrix4 opengl_camera_init = Matrix4.LookAt(0, 50, 500, 0, 0, 0, 0, 1, 0).Inverted();
-            _camera = new CameraDevice(Matrix4.Identity, this.pictureBox_main.Size, opengl_camera_init);
+            _camera = new CameraDevice(Matrix4.Identity, opengl_camera_init);
         }
     }
 }

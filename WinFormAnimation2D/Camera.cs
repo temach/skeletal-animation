@@ -44,9 +44,9 @@ namespace WinFormAnimation2D
             return _2d.ConvertScreen2WorldCoordinates(screen_coords);
         }
 
-        public CameraDevice(Matrix4 draw2d_init_mat, Size window_size, Matrix4 opengl_init_mat)
+        public CameraDevice(Matrix4 draw2d_init_mat, Matrix4 opengl_init_mat)
         {
-            _2d = new CameraDrawing2D(draw2d_init_mat, window_size);
+            _2d = new CameraDrawing2D(draw2d_init_mat, new Size(0,0));
             _3d_freefly = new CameraFreeFly3D(opengl_init_mat);
             _3d_orbital = new OrbitCameraController();
             // _3d_orbital = new CameraOrbital3D(opengl_init_mat);
@@ -70,7 +70,7 @@ namespace WinFormAnimation2D
         {
             bool has_neg = (axis.X < 0) || (axis.Y < 0) || (axis.Z < 0);
             float direction = has_neg ? -1 : 1;
-            _2d.RotateAroundScreenCenter2D(direction);
+            // _2d.RotateAroundScreenCenter2D(direction);
             _3d_freefly.ClockwiseRotateAroundAxis(axis);
             //_3d_orbital.RotateByAxis(angle_degrees, axis);
             // _3d_orbital.RotateByAxis(angle_degrees, axis);
