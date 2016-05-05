@@ -74,8 +74,13 @@ namespace WinFormAnimation2D
 
         public void Render(Pen p = null)
         {
-            Point[] tmp = Triangle.Select(v => v.eToPoint()).ToArray();
-            Util.GR.DrawLines(p == null ? Pens.Aqua : p, tmp);
+            // Util.GR.DrawLines(p == null ? Pens.Aqua : p, tmp);
+            GL.Begin(BeginMode.LineLoop);
+            foreach (Vector3 vec in Triangle)
+            {
+                GL.Vertex3(vec.X, vec.Y, vec.Z);
+            }
+            GL.End();
         }
     }
 
@@ -126,13 +131,7 @@ namespace WinFormAnimation2D
 
         public void Render()
         {
-            RenderDrawing2D();
             RenderGL();
-        }
-
-        public void RenderDrawing2D()
-        {
-            Util.GR.DrawRectangle(Util.pp4, Rectangle.Round(this.Rect));
         }
 
         public void RenderGL()

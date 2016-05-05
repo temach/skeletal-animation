@@ -53,8 +53,6 @@ namespace WinFormAnimation2D
         public MainForm()
         {
             InitializeComponent();
-            // set up rendering stuff
-            Util.GR = this.button_ResetCamera.CreateGraphics();
             _kbd = new KeyboardInput(this.textBox_cli);
             Matrix4 opengl_camera_init = Matrix4.LookAt(0, 50, 500, 0, 0, 0, 0, 1, 0).Inverted();
             _camera = new CameraDevice(Matrix4.Identity, opengl_camera_init);

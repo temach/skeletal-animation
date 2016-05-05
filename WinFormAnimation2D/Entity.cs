@@ -99,36 +99,12 @@ namespace WinFormAnimation2D
             if (_draw_conf.EnablePerspectiveCorrectionHint)
             {
                 // all are from System.Drawing.Drawing2D.
-                Util.GR.CompositingQuality = CompositingQuality.HighQuality;
-                Util.GR.InterpolationMode = InterpolationMode.HighQualityBilinear;
-                Util.GR.SmoothingMode = SmoothingMode.AntiAlias;
             }
             // second pass: render with this matrix
             RecursiveRenderSystemDrawing(_node);
             // apply the matrix to graphics just to draw the rectangle
             // TODO: we should just transform the border according to the RecursiveTransformVertices
             RenderBoundingBoxes(_extra_geometry);
-        }
-
-        public void RenderTriangle(List<Vector2> vertices)
-        {
-            Brush br = Util.GetNextBrush();
-            var to_draw = vertices.Select(vec => vec.eToPointFloat()).ToArray();
-            Util.GR.FillPolygon(br, to_draw);
-            foreach (var p in to_draw)
-            {
-                Util.GR.eDrawPoint(p);
-            }
-        }
-        public List<Vector2> cur_triangle = new List<Vector2>();
-        public void RenderVertex(Vector2 vec)
-        {
-            cur_triangle.Add(vec);
-            if (cur_triangle.Count() == 3)
-            {
-                RenderTriangle(cur_triangle);
-                cur_triangle.Clear();
-            }
         }
 
         // Render the scene.
@@ -153,8 +129,6 @@ namespace WinFormAnimation2D
                         Vector3 trans;
                         Vector3.Transform(ref default_pose, ref delta, out trans);
                         aabb.UpdateNearFar(trans);
-                        // 2d
-                        RenderVertex(trans.eTo2D());
                         // 3d
                         GL.Vertex3(trans.X, trans.Y, trans.Z);
                     }

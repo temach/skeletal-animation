@@ -22,9 +22,6 @@ namespace WinFormAnimation2D
     public static class Util
     {
 
-        // When we get OpenGL we will not have to pass around a Graphics instance.
-        public static Graphics GR = null;
-
         // Useful for random value generation. 
         // We use only one Random instance in the whole program.
         private static Random rand = new Random();
@@ -59,20 +56,6 @@ namespace WinFormAnimation2D
         /// </summary>
         public static Pen pp4 = new Pen(Color.SkyBlue, 2.5f);
         public static Color cc4 = Color.SkyBlue;
-
-        /// <summary>
-        /// Internal matrix stack. Like OpenGL's one.
-        /// </summary>
-        public static Stack<d2d.GraphicsState> matrix_stack = new Stack<d2d.GraphicsState>();
-        public static void PushMatrix()
-        {
-            matrix_stack.Push(Util.GR.Save());
-        }
-        public static void PopMatrix()
-        {
-            Util.GR.Restore(matrix_stack.Pop());
-        }
-
 
         /// <summary>
         /// Get a brush of next color. (to distingush rendered polygons)

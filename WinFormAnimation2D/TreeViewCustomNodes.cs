@@ -70,9 +70,7 @@ namespace WinFormAnimation2D
 
         public void Render()
         {
-            Util.PushMatrix();
             DrawData.OverallBox.Render();
-            Util.PopMatrix();
         }
 
         public MeshTreeNode(string name)
@@ -89,9 +87,7 @@ namespace WinFormAnimation2D
 
         public void Render()
         {
-            Util.PushMatrix();
             DrawData.Render();
-            Util.PopMatrix();
         }
         public ArmatureTreeNode(string name)
         {

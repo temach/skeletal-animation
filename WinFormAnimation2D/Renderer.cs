@@ -109,21 +109,6 @@ namespace WinFormAnimation2D
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
 
-        public void ClearDrawign2DFrameForRender(Matrix camera_matrix)
-        {
-            // 2d
-            Util.GR.Clear(Color.DarkGray);
-            Util.GR.MultiplyTransform(camera_matrix);
-        }
-
-        public void DrawAxis2D(PointF mouse_pos)
-        {
-            // center
-            Util.GR.eDrawCircle(Util.pp2, new Point(0,0), 3);
-            // mouse position, big-green-circle should be under the mouse arrow
-            Util.GR.eDrawBigPoint(mouse_pos);
-        }
-
         public void DrawEmptyEntitySplash()
         {
             string msg = "No file loaded";

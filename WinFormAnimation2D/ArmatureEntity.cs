@@ -30,10 +30,6 @@ namespace WinFormAnimation2D
 
         public void RenderBone()
         {
-            // just draw a random line for now
-            Util.GR.eDrawPoint(new Point(0, 0));
-            Util.GR.DrawLine(Util.pp2, new Point(0, 0), new Point(40, 40));
-            Util.GR.eDrawPoint(new Point(40, 40));
         }
 
         //-------------------------------------------------------------------------------------------------
@@ -44,16 +40,6 @@ namespace WinFormAnimation2D
         // one mesh, one bone policy
         private void RecursiveRenderSystemDrawing(Node nd)
         {
-            Util.PushMatrix();
-            Matrix4x4 mat44 = nd.Transform;
-            Util.GR.MultiplyTransform(mat44.eTo3x2());
-            RenderBone();
-            foreach (Node child in nd.Children)
-            {
-                RecursiveRenderSystemDrawing(child);
-            }
-            // we don't want to apply this branch transform to the next branch
-            Util.PopMatrix();
         }
 
     } // end of class
