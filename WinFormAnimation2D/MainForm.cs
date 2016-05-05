@@ -59,7 +59,7 @@ namespace WinFormAnimation2D
             Matrix4 opengl_camera_init = Matrix4.LookAt(0, 50, 500, 0, 0, 0, 0, 1, 0).Inverted();
             _camera = new CameraDevice(Matrix4.Identity, opengl_camera_init);
             // manually register the mousewheel event handler.
-            this.MouseWheel += new MouseEventHandler(this.pictureBox_main_MouseMove);
+            this.glControl1.MouseWheel += new MouseEventHandler(this.glControl1_MouseWheel);
             _world = new World();
             try
             {
@@ -123,51 +123,6 @@ namespace WinFormAnimation2D
             }
             Debug.Assert(false, "You forgot to handle some keyboard action");
             return false;
-        }
-
-        private void pictureBox_main_MouseUp(object sender, MouseEventArgs e)
-        {
-            _mouse.IsPressed = false;
-        }
-
-        private void pictureBox_main_MouseDown(object sender, MouseEventArgs e)
-        {
-            _mouse.RecordMouseClick(e);
-            _mouse.RecordInnerWorldMouseClick(_camera.ConvertScreen2WorldCoordinates(_mouse.ClickPos));
-            if (_world.CheckMouseEntitySelect(_mouse))
-            {
-                Current = _world.CurrentlySelected;
-                this.toolStripStatusLabel_entity_position.Text = Current.GetTranslation.ToString();
-                this.treeView_entity_info.SelectedNode = this.treeView_entity_info.Nodes[Current.Name];
-            }
-            else
-            {
-                Current = null;
-                this.toolStripStatusLabel_entity_position.Text = "none";
-                this.treeView_entity_info.SelectedNode = null;
-            }
-        }
-
-        private void pictureBox_main_MouseMove(object sender, MouseEventArgs e)
-        {
-            _mouse.RecordMouseMove(e);
-            _mouse.RecordInnerWorldMouseMove(_camera.ConvertScreen2WorldCoordinates(_mouse.CurrentPos));
-            if (_world.CheckMouseEntitySelect(_mouse))
-            {
-                //this.toolStripStatusLabel_is_selected.Text = "HAS ENTITY";
-            }
-            else
-            {
-                //this.toolStripStatusLabel_is_selected.Text = "___empty___";
-            }
-
-            // Process mouse motion only if it is pressed
-            if (! _mouse.IsPressed) {
-                return;
-            }
-            // time to do some rotation
-            _camera.ProcessMouse(_mouse.FrameDelta.X, _mouse.FrameDelta.Y);
-            this.toolStripStatusLabel_is_selected.Text = _mouse.FrameDelta.ToString();
         }
 
         /// <summary>
@@ -419,17 +374,51 @@ namespace WinFormAnimation2D
 
         private void glControl1_MouseDown(object sender, MouseEventArgs e)
         {
-            this.pictureBox_main_MouseDown(null, e);
+            _mouse.RecordMouseClick(e);
+            _mouse.RecordInnerWorldMouseClick(_camera.ConvertScreen2WorldCoordinates(_mouse.ClickPos));
+            if (_world.CheckMouseEntitySelect(_mouse))
+            {
+                Current = _world.CurrentlySelected;
+                this.toolStripStatusLabel_entity_position.Text = Current.GetTranslation.ToString();
+                this.treeView_entity_info.SelectedNode = this.treeView_entity_info.Nodes[Current.Name];
+            }
+            else
+            {
+                Current = null;
+                this.toolStripStatusLabel_entity_position.Text = "none";
+                this.treeView_entity_info.SelectedNode = null;
+            }
         }
 
         private void glControl1_MouseMove(object sender, MouseEventArgs e)
         {
-            this.pictureBox_main_MouseMove(null, e);
+            _mouse.RecordMouseMove(e);
+            _mouse.RecordInnerWorldMouseMove(_camera.ConvertScreen2WorldCoordinates(_mouse.CurrentPos));
+            if (_world.CheckMouseEntitySelect(_mouse))
+            {
+                //this.toolStripStatusLabel_is_selected.Text = "HAS ENTITY";
+            }
+            else
+            {
+                //this.toolStripStatusLabel_is_selected.Text = "___empty___";
+            }
+
+            // Process mouse motion only if it is pressed
+            if (! _mouse.IsPressed) {
+                return;
+            }
+            // time to do some rotation
+            _camera.ProcessMouse(_mouse.FrameDelta.X, _mouse.FrameDelta.Y);
+            this.toolStripStatusLabel_is_selected.Text = _mouse.FrameDelta.ToString();
         }
 
         private void glControl1_MouseUp(object sender, MouseEventArgs e)
         {
-            this.pictureBox_main_MouseUp(null, e);
+            _mouse.IsPressed = false;
+        }
+
+        private void glControl1_MouseWheel(object sender, MouseEventArgs e)
+        {
         }
 
         private void button_ResetCamera_Click(object sender, EventArgs e)
