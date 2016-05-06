@@ -22,6 +22,11 @@ namespace WinFormAnimation2D
         private Vector3 _up;
         private Vector3 _front;
 
+        public Vector3 GetTranslation
+        {
+            get { return _viewWithOffset.ExtractTranslation(); }
+        }
+
         private Vector3 _panVector;
 
         private bool _dirty = true;

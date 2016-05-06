@@ -33,9 +33,9 @@ namespace WinFormAnimation2D
         }
 
         /// Position of where the user is pointing inside the game world
-        public OpenTK.Vector2 InnerWorldPos;
+        public OpenTK.Vector3 InnerWorldPos;
         /// Position of click inside the game world.
-        public OpenTK.Vector2 InnerWorldClickPos;
+        public OpenTK.Vector3 InnerWorldClickPos;
 
         /// Mimimum motion delta for mouse to be recognised
         public readonly int HorizHysteresis = 4;
@@ -55,13 +55,13 @@ namespace WinFormAnimation2D
             this.CurrentPos = new Point(e.X, e.Y);
         }
 
-        public void RecordInnerWorldMouseClick(OpenTK.Vector2 vec)
+        public void RecordInnerWorldMouseClick(OpenTK.Vector3 vec)
         {
             this.InnerWorldClickPos = vec;
             this.InnerWorldPos = vec;
         }
 
-        public void RecordInnerWorldMouseMove(OpenTK.Vector2 vec)
+        public void RecordInnerWorldMouseMove(OpenTK.Vector3 vec)
         {
             this.InnerWorldPos = vec;
         }

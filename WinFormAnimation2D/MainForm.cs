@@ -55,7 +55,7 @@ namespace WinFormAnimation2D
             InitializeComponent();
             _kbd = new KeyboardInput(this.textBox_cli);
             Matrix4 opengl_camera_init = Matrix4.LookAt(0, 50, 500, 0, 0, 0, 0, 1, 0).Inverted();
-            _camera = new CameraDevice(Matrix4.Identity, opengl_camera_init);
+            _camera = new CameraDevice(opengl_camera_init);
             // manually register the mousewheel event handler.
             this.glControl1.MouseWheel += new MouseEventHandler(this.glControl1_MouseWheel);
             _world = new World();
@@ -99,7 +99,7 @@ namespace WinFormAnimation2D
             else if (action == KeyboardAction.DoMotion)
             {
                 Vector3 direction = _kbd.GetDirectionNormalized(_kbd.RecentKey);
-                if (!Properties.Settings.Default.MoveCamera && Current != null)
+                if (! Properties.Settings.Default.MoveCamera && Current != null)
                 {
                     // Current.MoveBy((int)direction.X, (int)direction.Y);
                 }
@@ -406,7 +406,7 @@ namespace WinFormAnimation2D
                 return;
             }
             // time to do some rotation
-            _camera.ProcessMouse(_mouse.FrameDelta.X, _mouse.FrameDelta.Y);
+            _camera.OnMouseMove(_mouse.FrameDelta.X, _mouse.FrameDelta.Y);
             this.toolStripStatusLabel_is_selected.Text = _mouse.FrameDelta.ToString();
         }
 
@@ -422,7 +422,7 @@ namespace WinFormAnimation2D
         private void button_ResetCamera_Click(object sender, EventArgs e)
         {
             Matrix4 opengl_camera_init = Matrix4.LookAt(0, 50, 500, 0, 0, 0, 0, 1, 0).Inverted();
-            _camera = new CameraDevice(Matrix4.Identity, opengl_camera_init);
+            _camera = new CameraDevice(opengl_camera_init);
         }
     }
 }
