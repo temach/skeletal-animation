@@ -237,11 +237,6 @@ namespace WinFormAnimation2D
             }
         }
 
-        private void checkBox_breakpoints_on_CheckedChanged(object sender, EventArgs e)
-        {
-            Breakpoints.Allow = this.checkBox_breakpoints_on.Checked;
-        }
-
         // use unix style command invocation
         // cmdname arg1 arg2 arg3
         private void button_RunCli_Click(object sender, EventArgs e)
@@ -262,10 +257,6 @@ namespace WinFormAnimation2D
                 , Current._action);
         }
 
-        private void treeView_entity_info_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-        }
-
         private void checkBox_renderBones_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.RenderAllBoneBounds = this.checkBox_renderBones.Checked;
@@ -278,6 +269,11 @@ namespace WinFormAnimation2D
             // this._cmd.RunCmd("set RenderAllMeshBounds " + this.checkBox_render_boxes.Checked);
         }
 
+        private void checkBox_breakpoints_on_CheckedChanged(object sender, EventArgs e)
+        {
+            Breakpoints.Allow = this.checkBox_breakpoints_on.Checked;
+        }
+
         private void checkBox_triangulate_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.TriangulateMesh = this.checkBox_triangulate.Checked;
@@ -288,6 +284,12 @@ namespace WinFormAnimation2D
         {
             Properties.Settings.Default.MoveCamera = this.checkBox_moveCamera.Checked;
             // this._cmd.RunCmd("set MoveCamera " + this.checkBox_triangulate.Checked);
+        }
+
+        private void checkBox_OrbitingCamera_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.OrbitingCamera = this.checkBox_OrbitingCamera.Checked;
+            button_ResetCamera_Click(null, null);
         }
 
         private void checkBox_FixCameraPlane_CheckedChanged(object sender, EventArgs e)
@@ -349,11 +351,6 @@ namespace WinFormAnimation2D
             LastFrameDelay = _last_frame_sw.ElapsedMilliseconds;
             _last_frame_sw.Restart();
             _world.Update(LastFrameDelay);
-        }
-
-        private void checkBox_OrbitingCamera_CheckedChanged(object sender, EventArgs e)
-        {
-            Properties.Settings.Default.OrbitingCamera = this.checkBox_OrbitingCamera.Checked;
         }
 
         private void glControl1_MouseDown(object sender, MouseEventArgs e)
