@@ -67,7 +67,13 @@ namespace WinFormAnimation2D
             // when user pulls mouse to the right (x > 0) we perform a clockwise rotation.
             if (x != 0)
             {
-                _transform.Rotate(x * _transform.RotateSpeedDegrees);
+                _transform.RotateAroundAxis(x * _transform.RotateSpeedDegrees, Vector3.UnitY);
+                return;
+            }
+            if (y != 0)
+            {
+                _transform.RotateAroundAxis(y * _transform.RotateSpeedDegrees, Vector3.UnitX);
+                return;
             }
         }
 
@@ -83,15 +89,7 @@ namespace WinFormAnimation2D
         // x,y,z are direction parameters one of {-1, 0, 1}
         public void MoveBy(Vector3 dir)
         {
-            if (Properties.Settings.Default.FixCameraPlane)
-            {
-                var translate = _transform.TranslationFromDirectionInPlaneYZ(dir.Xy);
-                _transform.ApplyTranslation(translate);
-            }
-            else
-            {
-                _transform.MoveBy(dir);
-            }
+            _transform.MoveBy(dir);
         }
 
     }
