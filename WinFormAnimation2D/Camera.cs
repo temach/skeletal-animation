@@ -74,6 +74,12 @@ namespace WinFormAnimation2D
             _3d_orbital.MouseMove(x, y);
         }
 
+        public void Scroll(float scroll)
+        {
+            _3d_freefly.MoveBy(new Vector3(0, 0, -1 * scroll));
+            _3d_orbital.Scroll(scroll);
+        }
+
         // x,y are direction parameters one of {-1, 0, 1}
         public void MoveBy(Vector3 direction)
         {

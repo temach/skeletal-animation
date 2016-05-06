@@ -86,28 +86,14 @@ namespace WinFormAnimation2D
             if (action == KeyboardAction.DoRotation)
             {
                 Vector3 rotation_axis = _kbd.GetRotationAxis(_kbd.RecentKey);
-                if (! Properties.Settings.Default.MoveCamera && Current != null)
-                {
-                    // Current.RotateBy(rotation_direction);
-                }
-                else
-                {
-                    _camera.RotateAround(rotation_axis);
-                }
+                _camera.RotateAround(rotation_axis);
                 return true;
             }
             else if (action == KeyboardAction.DoMotion)
             {
                 Vector3 direction = _kbd.GetDirectionNormalized(_kbd.RecentKey);
-                if (! Properties.Settings.Default.MoveCamera && Current != null)
-                {
-                    // Current.MoveBy((int)direction.X, (int)direction.Y);
-                }
-                else
-                {
-                    _camera.MoveBy(direction);
-                    this.toolStripStatusLabel_camera_position.Text = _camera.GetTranslation.ToString();
-                }
+                _camera.MoveBy(direction);
+                this.toolStripStatusLabel_camera_position.Text = _camera.GetTranslation.ToString();
                 return true; // hide this key event from other controls
             }
             else if (action == KeyboardAction.RunCommand)
@@ -417,6 +403,7 @@ namespace WinFormAnimation2D
 
         private void glControl1_MouseWheel(object sender, MouseEventArgs e)
         {
+            _camera.Scroll(Math.Sign(e.Delta));
         }
 
         private void button_ResetCamera_Click(object sender, EventArgs e)

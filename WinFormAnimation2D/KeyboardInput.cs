@@ -106,9 +106,9 @@ namespace WinFormAnimation2D
                 case Keys.D:
                     return new Vector3(1, 0, 0);
                 case Keys.W:
-                    return new Vector3(0, -1, 0);
-                case Keys.S:
                     return new Vector3(0, 1, 0);
+                case Keys.S:
+                    return new Vector3(0, -1, 0);
                 case Keys.E:
                     return new Vector3(0, 0, -1);
                 case Keys.Q:
