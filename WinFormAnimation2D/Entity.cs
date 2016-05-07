@@ -118,19 +118,22 @@ namespace WinFormAnimation2D
                 aabb.SafeStartUpdateNearFar();
                 foreach (Face cur_face in cur_mesh.Faces)
                 {
-                    GL.Normal3(0, 0, 1);
                     GL.Color3(Util.GetNextColor());
                     GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.Triangles);
                     foreach (var vert_id in cur_face.Indices)
                     {
                         // we must get the new vertex position here
-                        Matrix4 delta = _vertex2matrix[cur_mesh.Vertices[vert_id]].eToOpenTK();
-                        Vector3 default_pose = cur_mesh.Vertices[vert_id].eToOpenTK();
-                        Vector3 trans;
-                        Vector3.Transform(ref default_pose, ref delta, out trans);
-                        aabb.UpdateNearFar(trans);
+                        Matrix4 matrix_with_offset = _vertex2matrix[cur_mesh.Vertices[vert_id]].eToOpenTK();
+                        Vector3 vertex_default = cur_mesh.Vertices[vert_id].eToOpenTK();
+                        Vector3 vertex;
+                        Vector3.Transform(ref vertex_default, ref matrix_with_offset, out vertex);
+                        Vector3 normal_default = cur_mesh.Normals[vert_id].eToOpenTK();
+                        Vector3 normal;
+                        Vector3.TransformNormal(ref normal_default, ref matrix_with_offset, out normal);
+                        aabb.UpdateNearFar(vertex);
                         // 3d
-                        GL.Vertex3(trans.X, trans.Y, trans.Z);
+                        GL.Normal3(normal.X, normal.Y, normal.Z);
+                        GL.Vertex3(vertex.X, vertex.Y, vertex.Z);
                     }
                     GL.End();
                 }
