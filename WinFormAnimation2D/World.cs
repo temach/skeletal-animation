@@ -166,6 +166,7 @@ namespace WinFormAnimation2D
             ActionState state = new ActionState(_cur_scene._inner.Animations[0]);
             _enttity_one = new Entity(_cur_scene, mesh, armature, state);
             state._owner = _enttity_one;
+            _action_one.ApplyAnimation(_enttity_one._armature, _enttity_one._action);
         }
 
         public Scene BuildAssimpScene(MemoryStream model_data, string format_hint)

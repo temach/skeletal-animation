@@ -38,7 +38,7 @@ namespace WinFormAnimation2D
         private Entity _current;
         private Entity Current
         {
-            get { return _current; }
+            get { return _world._enttity_one; }
             set {
                 _current = value;
                 _cmd._current = value;

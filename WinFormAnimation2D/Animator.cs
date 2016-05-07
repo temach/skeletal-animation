@@ -73,7 +73,7 @@ namespace WinFormAnimation2D
         {
             ChangeLocalFixedDataBlend(st);
             var root_node = armature;
-            root_node.GlobalTransform = root_node.LocalTransform * st.GlobalTransform ;
+            root_node.GlobalTransform = root_node.LocalTransform * st.GlobalTransform;
             foreach (var child in root_node.Children)
             {
                 ReCalculateGlobalTransform(child);
