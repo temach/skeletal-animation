@@ -94,5 +94,41 @@ namespace WinFormAnimation2D.Properties {
                 this["OrbitingCamera"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool RenderNormals {
+            get {
+                return ((bool)(this["RenderNormals"]));
+            }
+            set {
+                this["RenderNormals"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool RenderTexture {
+            get {
+                return ((bool)(this["RenderTexture"]));
+            }
+            set {
+                this["RenderTexture"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool RenderVertexColors {
+            get {
+                return ((bool)(this["RenderVertexColors"]));
+            }
+            set {
+                this["RenderVertexColors"] = value;
+            }
+        }
     }
 }

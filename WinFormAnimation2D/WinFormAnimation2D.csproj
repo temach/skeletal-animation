@@ -72,6 +72,7 @@
     <Compile Include="ExtraGeometry.cs" />
     <Compile Include="KeyboardInput.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="MeshDraw.cs" />
     <Compile Include="MouseState.cs" />
     <Compile Include="OpentkMatrixExtensions.cs" />
     <Compile Include="OpentkVectorExtensions.cs" />
