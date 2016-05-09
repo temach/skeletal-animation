@@ -59,6 +59,7 @@
             this.tabPage_RenderOptions = new System.Windows.Forms.TabPage();
             this.checkBox_OrbitingCamera = new System.Windows.Forms.CheckBox();
             this.tabPage_CmdLine = new System.Windows.Forms.TabPage();
+            this.checkBox_RenderNormals = new System.Windows.Forms.CheckBox();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_time)).BeginInit();
             this.tabControl_panel.SuspendLayout();
@@ -342,6 +343,7 @@
             // 
             // tabPage_RenderOptions
             // 
+            this.tabPage_RenderOptions.Controls.Add(this.checkBox_RenderNormals);
             this.tabPage_RenderOptions.Controls.Add(this.checkBox_OrbitingCamera);
             this.tabPage_RenderOptions.Controls.Add(this.checkBox_moveCamera);
             this.tabPage_RenderOptions.Controls.Add(this.checkBox_FixCameraPlane);
@@ -381,6 +383,17 @@
             this.tabPage_CmdLine.TabIndex = 2;
             this.tabPage_CmdLine.Text = "Cmd Line";
             this.tabPage_CmdLine.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_RenderNormals
+            // 
+            this.checkBox_RenderNormals.AutoSize = true;
+            this.checkBox_RenderNormals.Location = new System.Drawing.Point(19, 76);
+            this.checkBox_RenderNormals.Name = "checkBox_RenderNormals";
+            this.checkBox_RenderNormals.Size = new System.Drawing.Size(122, 17);
+            this.checkBox_RenderNormals.TabIndex = 51;
+            this.checkBox_RenderNormals.Text = "Render with normals";
+            this.checkBox_RenderNormals.UseVisualStyleBackColor = true;
+            this.checkBox_RenderNormals.CheckedChanged += new System.EventHandler(this.checkBox_RenderNormals_CheckedChanged);
             // 
             // MainForm
             // 
@@ -442,6 +455,7 @@
         private System.Windows.Forms.TabPage tabPage_RenderOptions;
         private System.Windows.Forms.TabPage tabPage_CmdLine;
         private System.Windows.Forms.CheckBox checkBox_OrbitingCamera;
+        private System.Windows.Forms.CheckBox checkBox_RenderNormals;
     }
 }
 

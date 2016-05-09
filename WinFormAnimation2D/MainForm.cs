@@ -286,6 +286,11 @@ namespace WinFormAnimation2D
             // this._cmd.RunCmd("set MoveCamera " + this.checkBox_triangulate.Checked);
         }
 
+        private void checkBox_RenderNormals_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.RenderNormals = this.checkBox_RenderNormals.Checked;
+        }
+
         private void checkBox_OrbitingCamera_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.OrbitingCamera = this.checkBox_OrbitingCamera.Checked;
@@ -410,5 +415,6 @@ namespace WinFormAnimation2D
             Matrix4 opengl_camera_init = Matrix4.LookAt(0, 50, 500, 0, 0, 0, 0, 1, 0).Inverted();
             _camera = new CameraDevice(opengl_camera_init);
         }
+
     }
 }
