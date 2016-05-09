@@ -16,22 +16,11 @@ namespace WinFormAnimation2D
         // collada file stores armature as a separate node
         public Dictionary<string,BoneNode> _name2bone_node = new Dictionary<string,BoneNode>();
         public Dictionary<string,Node> _name2node = new Dictionary<string, Node>();
-        public Dictionary<int,MeshDraw> _mesh_id2mesh_draw = new Dictionary<int, MeshDraw>();
 
         public SceneWrapper(Scene sc)
         {
             _inner = sc;
             InnerBuildNodeDict(sc.RootNode);
-            MakeMeshDraw(sc.Meshes);
-        }
-
-        // Make a class that will be responsible for managind the buffer lists
-        public void MakeMeshDraw(IList<Mesh> meshes)
-        {
-            for (int i = 0; i < meshes.Count; i++)
-            {
-                _mesh_id2mesh_draw[i] = new MeshDraw(meshes[i]);
-            }
         }
 
         public void InnerBuildNodeDict(Node nd)

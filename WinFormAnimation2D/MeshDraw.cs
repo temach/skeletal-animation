@@ -10,6 +10,7 @@ using System.Drawing;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace WinFormAnimation2D
 {
@@ -35,6 +36,7 @@ namespace WinFormAnimation2D
     class MeshDraw
     {
         public Mesh _mesh;
+        public Dictionary<int,Matrix4x4> _vertex_id2matrix = new Dictionary<int,Matrix4x4>();
         public Vbo _vbo;
 
         /// <summary>
@@ -43,19 +45,15 @@ namespace WinFormAnimation2D
         public MeshDraw(Mesh mesh)
         {
             Debug.Assert(mesh != null);
-
             _mesh = mesh;
-            // Upload(out _vbo);
+            Upload(out _vbo);
         }
 
-
         /// <summary>
-        /// Draws the mesh geometry given the current pipeline state. 
-        /// 
+        /// Render mesh from GPU memory.
         /// The pipeline is restored afterwards.
         /// </summary>
-        /// <param name="flags">Rendering mode</param>
-        public void Render()
+        public void RenderVBO()
         {
             GL.PushClientAttrib(ClientAttribMask.ClientVertexArrayBit);
             Debug.Assert(_vbo.VertexBufferId != 0);
@@ -99,6 +97,21 @@ namespace WinFormAnimation2D
             GL.PopClientAttrib();
         }
 
+        bool _buffer_mapped = false;
+        public void BeginModifyVertexData(out IntPtr data, out int qty_vertices)
+        {
+            Debug.Assert(_buffer_mapped == false, "Forgot to unmap the buffer with GL.UnmapBuffer()");
+            _buffer_mapped = true;
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _vbo.VertexBufferId);
+            data = GL.MapBuffer(BufferTarget.ArrayBuffer, BufferAccess.ReadWrite);
+            // note: number of floats in "data" = (qty_vertices * 3)
+            qty_vertices = _mesh.VertexCount;
+        }
+        public void EndModifyVertexData()
+        {
+            GL.UnmapBuffer(BufferTarget.ArrayBuffer);
+            _buffer_mapped = false;
+        }
 
         /// <summary>
         /// Currently only called during construction, this method uploads the input mesh (
@@ -108,32 +121,22 @@ namespace WinFormAnimation2D
         private void Upload(out Vbo vboToFill)
         {
             vboToFill = new Vbo();     
-      
             UploadVertices(out vboToFill.VertexBufferId);
-            if (_mesh.HasNormals)
-            {
-                UploadNormals(out vboToFill.NormalBufferId);
-            }
-
-            if (_mesh.HasVertexColors(0))
-            {
-                UploadColors(out vboToFill.ColorBufferId);
-            }
-
-            if (_mesh.HasTextureCoords(0))
-            {
-                UploadTextureCoords(out vboToFill.TexCoordBufferId);
-            }
-
-            if (_mesh.HasTangentBasis)
-            {
-                UploadTangentsAndBitangents(out vboToFill.TangentBufferId, out vboToFill.BitangentBufferId);
-            }
-
+            //if (_mesh.HasNormals)
+            //{
+            //    UploadNormals(out vboToFill.NormalBufferId);
+            //}
+            //if (_mesh.HasVertexColors(0))
+            //{
+            //    UploadColors(out vboToFill.ColorBufferId);
+            //}
+            //if (_mesh.HasTextureCoords(0))
+            //{
+            //    UploadTextureCoords(out vboToFill.TexCoordBufferId);
+            //}
             UploadPrimitives(out vboToFill.ElementBufferId, out vboToFill.NumIndices);
             // TODO: upload bone weights
         }
-
 
         /// <summary>
         /// Generates and populates an Gl vertex array buffer given 3D vectors as source data
@@ -152,8 +155,8 @@ namespace WinFormAnimation2D
                 temp[n++] = v.Y;
                 temp[n++] = v.Z;
             }
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)byteCount, temp, BufferUsageHint.StaticDraw);
-            VerifyBufferSize(byteCount);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)byteCount, temp, BufferUsageHint.DynamicCopy);
+            VerifyArrayBufferSize(byteCount);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }
 
@@ -162,7 +165,7 @@ namespace WinFormAnimation2D
         /// Verifies that the size of the currently bound vertex array buffer matches
         /// a given parameter and throws if it doesn't.
         /// </summary>
-        private void VerifyBufferSize(int byteCount)
+        private void VerifyArrayBufferSize(int byteCount)
         {
             int bufferSize;
             GL.GetBufferParameter(BufferTarget.ArrayBuffer, BufferParameterName.BufferSize, out bufferSize);
@@ -178,7 +181,7 @@ namespace WinFormAnimation2D
         /// </summary>
         private void UploadPrimitives(out int elementBufferId, out int indicesCount)
         {
-            Debug.Assert(_mesh.HasTextureCoords(0));
+            //Debug.Assert(_mesh.HasTextureCoords(0));
 
             GL.GenBuffers(1, out elementBufferId);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, elementBufferId);
@@ -201,10 +204,7 @@ namespace WinFormAnimation2D
             {
                 temp[n++] = (uint)idx;
             }
-
-            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)byteCount
-                , temp, BufferUsageHint.StaticDraw);
-
+            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)byteCount, temp, BufferUsageHint.DynamicCopy);
             int bufferSize;
             GL.GetBufferParameter(BufferTarget.ElementArrayBuffer, BufferParameterName.BufferSize, out bufferSize);
             if (byteCount != bufferSize)
@@ -238,8 +238,8 @@ namespace WinFormAnimation2D
             }
 
             var byteCount = floatCount*sizeof (float);
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(byteCount), temp, BufferUsageHint.StaticDraw);
-            VerifyBufferSize(byteCount);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(byteCount), temp, BufferUsageHint.DynamicCopy);
+            VerifyArrayBufferSize(byteCount);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }
 
@@ -304,8 +304,8 @@ namespace WinFormAnimation2D
                 byteColors[n++] = (byte)(c.A * 255);
             }
 
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(byteCount), byteColors, BufferUsageHint.StaticDraw);
-            VerifyBufferSize(byteCount);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(byteCount), byteColors, BufferUsageHint.DynamicCopy);
+            VerifyArrayBufferSize(byteCount);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }       
     }

@@ -44,6 +44,7 @@ namespace WinFormAnimation2D
         public Geometry _extra_geometry;
         public DrawConfig _draw_conf;
         public TransformState _transform;
+        public Dictionary<int,MeshDraw> _mesh_id2mesh_draw = new Dictionary<int,MeshDraw>();
         public Matrix4 Matrix
         {
             get { return _transform._matrix; }
@@ -63,6 +64,7 @@ namespace WinFormAnimation2D
         }
 
         // the only public constructor
+        // TODO: change the "Node mesh". This should point to MeshDraw object which is unique to each entity.
         public Entity(SceneWrapper sc, Node mesh, BoneNode armature, ActionState state)
         {
             _scene = sc;
@@ -71,6 +73,20 @@ namespace WinFormAnimation2D
             _armature = armature;
             _action = state;
             _transform = new TransformState(Matrix4.Identity, 10, 17);
+        }
+
+        public void UploadMeshVBO()
+        {
+            InnerMakeMeshDraw(_scene._inner.Meshes);
+        }
+
+        // Make a class that will be responsible for managind the buffer lists
+        public void InnerMakeMeshDraw(IList<Mesh> meshes)
+        {
+            for (int i = 0; i < meshes.Count; i++)
+            {
+                _mesh_id2mesh_draw[i] = new MeshDraw(meshes[i]);
+            }
         }
 
         public void RotateBy(double angle_degrees)
@@ -113,30 +129,10 @@ namespace WinFormAnimation2D
         {
             foreach(int mesh_id in nd.MeshIndices)
             {
-                Mesh cur_mesh = _scene._inner.Meshes[mesh_id];
+                MeshDraw mesh_draw = _mesh_id2mesh_draw[mesh_id];
+                mesh_draw.RenderVBO();
                 MeshBounds aabb = _extra_geometry._mesh_id2box[mesh_id];
                 aabb.SafeStartUpdateNearFar();
-                foreach (Face cur_face in cur_mesh.Faces)
-                {
-                    GL.Color3(Util.GetNextColor());
-                    GL.Begin(OpenTK.Graphics.OpenGL.PrimitiveType.Triangles);
-                    foreach (var vert_id in cur_face.Indices)
-                    {
-                        // we must get the new vertex position here
-                        Matrix4 matrix_with_offset = _vertex2matrix[cur_mesh.Vertices[vert_id]].eToOpenTK();
-                        Vector3 vertex_default = cur_mesh.Vertices[vert_id].eToOpenTK();
-                        Vector3 vertex;
-                        Vector3.Transform(ref vertex_default, ref matrix_with_offset, out vertex);
-                        Vector3 normal_default = cur_mesh.Normals[vert_id].eToOpenTK();
-                        Vector3 normal;
-                        Vector3.TransformNormal(ref normal_default, ref matrix_with_offset, out normal);
-                        aabb.UpdateNearFar(vertex);
-                        // 3d
-                        GL.Normal3(normal.X, normal.Y, normal.Z);
-                        GL.Vertex3(vertex.X, vertex.Y, vertex.Z);
-                    }
-                    GL.End();
-                }
             }
             foreach (Node child in nd.Children)
             {
@@ -160,10 +156,11 @@ namespace WinFormAnimation2D
         public void UpdateModel(double dt_ms)
         {
             // first pass: calculate a matrix for each vertex
-            RecursiveTransformVertices(_node, Matrix4.Identity.eToAssimp());
+            // RecursiveCalculateVertexTransform(_node, Matrix4.Identity.eToAssimp());
+            // RecursiveTransformVertices(_node);
         }
 
-        // First pass: transform all vertices in a mesh according to bone
+        // First pass: calculate the transofmration matrix for each vertex
         // here we must associate a matrix with each bone (maybe with each vertex_id??)
         // then we multiply the current_bone matrix with the one we had before 
         // (perhaps it was identity, perhaps it was already some matrix (if 
@@ -171,12 +168,13 @@ namespace WinFormAnimation2D
         // then we store this multiplied matrix.
         // in the render function we get a vertex_id, so we can find the matrix to apply 
         // to the vertex, then we send the vertex to OpenGL
-        public void RecursiveTransformVertices(Node nd, Matrix4x4 current)
+        public void RecursiveCalculateVertexTransform(Node nd, Matrix4x4 current)
         {
             Matrix4x4 current_node = current * nd.Transform;
             foreach(int mesh_id in nd.MeshIndices)
             {
                 Mesh cur_mesh = _scene._inner.Meshes[mesh_id];
+                MeshDraw mesh_draw = _mesh_id2mesh_draw[mesh_id];
                 foreach (Bone bone in cur_mesh.Bones)
                 {
                     // a bone transform is more than by what we need to trasnform the model
@@ -188,14 +186,59 @@ namespace WinFormAnimation2D
                     Matrix4x4 current_bone = delta_roto * current_node;
                     foreach (var pair in bone.VertexWeights)
                     {
-                        Vector3D vertex = cur_mesh.Vertices[pair.VertexID];
-                        _vertex2matrix[vertex] = current_bone;
+                        // Can apply bone weight here
+                        mesh_draw._vertex_id2matrix[pair.VertexID] = current_bone;
                     }
                 }
             }
             foreach (Node child in nd.Children)
             {
-                 RecursiveTransformVertices(child, current_node);
+                 RecursiveCalculateVertexTransform(child, current_node);
+            }
+        }
+
+        // Second pass: transform all vertices in a mesh according to bone
+        // just apply the previously caluclated matrix
+        public void RecursiveTransformVertices(Node nd)
+        {
+            foreach (int mesh_id in nd.MeshIndices)
+            {
+                MeshDraw mesh_draw = _mesh_id2mesh_draw[mesh_id];
+                // map data from VBO
+                IntPtr data;
+                int qty_vertices;
+                mesh_draw.BeginModifyVertexData(out data, out qty_vertices);
+                // iterate over inital vertex positions
+                Mesh cur_mesh = _scene._inner.Meshes[mesh_id];
+                MeshBounds aabb = _extra_geometry._mesh_id2box[mesh_id];
+                aabb.SafeStartUpdateNearFar();
+                // go over every vertex in the mesh
+                // unsafe
+                // {
+                //     // array of floats: X,Y,Z.....
+                //     float* coords = (float*)data;
+                //     for (int vertex_id = 0; vertex_id < qty_vertices; vertex_id++)
+                //     {
+                //         //float x = (float)coords[vertex_id + 0];
+                //         //float y = (float)coords[vertex_id + 1];
+                //         //float z = (float)coords[vertex_id + 2];
+                //         Matrix4 matrix_with_offset = Matrix4.Identity; // mesh_draw._vertex_id2matrix[vertex_id].eToOpenTK();
+                //         // get the initial position of vertex when scene was loaded
+                //         Vector3 vertex_default = cur_mesh.Vertices[vertex_id].eToOpenTK();
+                //         Vector3 vertex;
+                //         Vector3.Transform(ref vertex_default, ref matrix_with_offset, out vertex);
+                //         // write new coords back into array
+                //         coords[vertex_id + 0] = vertex.X;
+                //         coords[vertex_id + 1] = vertex.Y;
+                //         coords[vertex_id + 2] = vertex.Z;
+                //         aabb.UpdateNearFar(vertex);
+                //     }
+                // }
+                mesh_draw.EndModifyVertexData();
+                foreach (Node child in nd.Children)
+                {
+                    RecursiveTransformVertices(child);
+                }
             }
         }
 
