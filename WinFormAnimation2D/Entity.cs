@@ -220,10 +220,7 @@ namespace WinFormAnimation2D
                     float* coords = (float*)data;
                     for (int vertex_id = 0; vertex_id < qty_vertices; vertex_id++)
                     {
-                        float x = (float)coords[vertex_id*sz + 0];
-                        float y = (float)coords[vertex_id*sz + 1];
-                        float z = (float)coords[vertex_id*sz + 2];
-                        Matrix4 matrix_with_offset = Matrix4.Identity; // mesh_draw._vertex_id2matrix[vertex_id].eToOpenTK();
+                        Matrix4 matrix_with_offset = mesh_draw._vertex_id2matrix[vertex_id].eToOpenTK();
                         // get the initial position of vertex when scene was loaded
                         Vector3 vertex_default = cur_mesh.Vertices[vertex_id].eToOpenTK();
                         Vector3 vertex;
@@ -243,14 +240,19 @@ namespace WinFormAnimation2D
                 mesh_draw.BeginModifyNormalData(out normal_data, out qty_normals);
                 unsafe
                 {
-                    // array of floats: X,Y,Z.....
                     int sz = 3;
                     float* normals = (float*)normal_data;
-                    for (int vertex_id = 0; vertex_id < qty_normals; vertex_id++)
+                    for (int normal_id = 0; normal_id < qty_normals; normal_id++)
                     {
-                        float x = (float)normals[vertex_id*sz + 0];
-                        float y = (float)normals[vertex_id*sz + 1];
-                        float z = (float)normals[vertex_id*sz + 2];
+                        Matrix4 matrix_with_offset = mesh_draw._vertex_id2matrix[normal_id].eToOpenTK();
+                        // get the initial position of vertex when scene was loaded
+                        Vector3 normal_default = cur_mesh.Normals[normal_id].eToOpenTK();
+                        Vector3 normal;
+                        Vector3.TransformNormal(ref normal_default, ref matrix_with_offset, out normal);
+                        // write new coords back into array
+                        normals[normal_id*sz + 0] = normal.X;
+                        normals[normal_id*sz + 1] = normal.Y;
+                        normals[normal_id*sz + 2] = normal.Z;
                     }
                 }
                 mesh_draw.EndModifyNormalData();

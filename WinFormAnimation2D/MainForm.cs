@@ -227,6 +227,7 @@ namespace WinFormAnimation2D
             GL.Vertex3(shift,-shift,0);
             GL.Vertex3(ent_group.OverallBox._zero_far);
             GL.End();
+            GL.Color3(Color.Green);
         }
 
         private void RenderBones(Entity ent)
