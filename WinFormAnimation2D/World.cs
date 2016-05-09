@@ -104,6 +104,10 @@
 
 /// OpenTK matrix multiply: (A *= B) is the same as (A = A * B)
 
+/// Miscorsoft designates its 32 bit system as x84
+/// and 64 bit systems as x64.
+/// The target CPU for this project is x64
+
 
 using System;
 using System.Collections.Generic;

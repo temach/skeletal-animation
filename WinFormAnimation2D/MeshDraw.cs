@@ -92,7 +92,7 @@ namespace WinFormAnimation2D
             // primitives
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, _vbo.ElementBufferId);
             GL.DrawElements(BeginMode.Triangles, _vbo.NumIndices /* actually, count(indices) */,
-                DrawElementsType.UnsignedInt, IntPtr.Zero);
+                DrawElementsType.UnsignedShort, IntPtr.Zero);
             // Restore the state
             GL.PopClientAttrib();
         }
@@ -113,6 +113,22 @@ namespace WinFormAnimation2D
             _buffer_mapped = false;
         }
 
+        public void BeginModifyNormalData(out IntPtr data, out int qty_normals)
+        {
+            Debug.Assert(_buffer_mapped == false, "Forgot to unmap the buffer with GL.UnmapBuffer()");
+            _buffer_mapped = true;
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _vbo.NormalBufferId);
+            data = GL.MapBuffer(BufferTarget.ArrayBuffer, BufferAccess.ReadWrite);
+            // note: number of floats in "data" = (qty_normals * 3)
+            qty_normals = _mesh.Normals.Count;
+        }
+        public void EndModifyNormalData()
+        {
+            GL.UnmapBuffer(BufferTarget.ArrayBuffer);
+            _buffer_mapped = false;
+        }
+
+
         /// <summary>
         /// Currently only called during construction, this method uploads the input mesh (
         /// the RenderMesh instance is bound to) to a VBO.
@@ -122,10 +138,10 @@ namespace WinFormAnimation2D
         {
             vboToFill = new Vbo();     
             UploadVertices(out vboToFill.VertexBufferId);
-            //if (_mesh.HasNormals)
-            //{
-            //    UploadNormals(out vboToFill.NormalBufferId);
-            //}
+            if (_mesh.HasNormals)
+            {
+                UploadNormals(out vboToFill.NormalBufferId);
+            }
             //if (_mesh.HasVertexColors(0))
             //{
             //    UploadColors(out vboToFill.ColorBufferId);
@@ -197,14 +213,20 @@ namespace WinFormAnimation2D
                 ++triCount;
             }
             var intCount = triCount * 3;
-            var temp = new uint[intCount];
-            byteCount = intCount * sizeof(uint);
+
+            // since we are 64 bit compile target
+            var temp = new ushort[intCount];
+            byteCount = intCount * sizeof(ushort);
             var n = 0;
             foreach (var idx in faces.Where(face => face.IndexCount == 3).SelectMany(face => face.Indices))
             {
-                temp[n++] = (uint)idx;
+                Debug.Assert(idx <= 0xffff);
+                temp[n++] = (ushort)idx;
             }
-            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)byteCount, temp, BufferUsageHint.DynamicCopy);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)byteCount, 
+                temp, BufferUsageHint.StaticDraw);
+
+
             int bufferSize;
             GL.GetBufferParameter(BufferTarget.ElementArrayBuffer, BufferParameterName.BufferSize, out bufferSize);
             if (byteCount != bufferSize)

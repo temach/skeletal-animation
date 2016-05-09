@@ -156,8 +156,8 @@ namespace WinFormAnimation2D
         public void UpdateModel(double dt_ms)
         {
             // first pass: calculate a matrix for each vertex
-            // RecursiveCalculateVertexTransform(_node, Matrix4.Identity.eToAssimp());
-            // RecursiveTransformVertices(_node);
+            RecursiveCalculateVertexTransform(_node, Matrix4.Identity.eToAssimp());
+            RecursiveTransformVertices(_node);
         }
 
         // First pass: calculate the transofmration matrix for each vertex
@@ -213,28 +213,48 @@ namespace WinFormAnimation2D
                 MeshBounds aabb = _extra_geometry._mesh_id2box[mesh_id];
                 aabb.SafeStartUpdateNearFar();
                 // go over every vertex in the mesh
-                // unsafe
-                // {
-                //     // array of floats: X,Y,Z.....
-                //     float* coords = (float*)data;
-                //     for (int vertex_id = 0; vertex_id < qty_vertices; vertex_id++)
-                //     {
-                //         //float x = (float)coords[vertex_id + 0];
-                //         //float y = (float)coords[vertex_id + 1];
-                //         //float z = (float)coords[vertex_id + 2];
-                //         Matrix4 matrix_with_offset = Matrix4.Identity; // mesh_draw._vertex_id2matrix[vertex_id].eToOpenTK();
-                //         // get the initial position of vertex when scene was loaded
-                //         Vector3 vertex_default = cur_mesh.Vertices[vertex_id].eToOpenTK();
-                //         Vector3 vertex;
-                //         Vector3.Transform(ref vertex_default, ref matrix_with_offset, out vertex);
-                //         // write new coords back into array
-                //         coords[vertex_id + 0] = vertex.X;
-                //         coords[vertex_id + 1] = vertex.Y;
-                //         coords[vertex_id + 2] = vertex.Z;
-                //         aabb.UpdateNearFar(vertex);
-                //     }
-                // }
+                unsafe
+                {
+                    // array of floats: X,Y,Z.....
+                    int sz = 3; // size of step
+                    float* coords = (float*)data;
+                    for (int vertex_id = 0; vertex_id < qty_vertices; vertex_id++)
+                    {
+                        float x = (float)coords[vertex_id*sz + 0];
+                        float y = (float)coords[vertex_id*sz + 1];
+                        float z = (float)coords[vertex_id*sz + 2];
+                        Matrix4 matrix_with_offset = Matrix4.Identity; // mesh_draw._vertex_id2matrix[vertex_id].eToOpenTK();
+                        // get the initial position of vertex when scene was loaded
+                        Vector3 vertex_default = cur_mesh.Vertices[vertex_id].eToOpenTK();
+                        Vector3 vertex;
+                        Vector3.Transform(ref vertex_default, ref matrix_with_offset, out vertex);
+                        // write new coords back into array
+                        coords[vertex_id*sz + 0] = vertex.X;
+                        coords[vertex_id*sz + 1] = vertex.Y;
+                        coords[vertex_id*sz + 2] = vertex.Z;
+                        aabb.UpdateNearFar(vertex);
+                    }
+                }
                 mesh_draw.EndModifyVertexData();
+
+                // for debug take a look at normals
+                IntPtr normal_data;
+                int qty_normals;
+                mesh_draw.BeginModifyNormalData(out normal_data, out qty_normals);
+                unsafe
+                {
+                    // array of floats: X,Y,Z.....
+                    int sz = 3;
+                    float* normals = (float*)normal_data;
+                    for (int vertex_id = 0; vertex_id < qty_normals; vertex_id++)
+                    {
+                        float x = (float)normals[vertex_id*sz + 0];
+                        float y = (float)normals[vertex_id*sz + 1];
+                        float z = (float)normals[vertex_id*sz + 2];
+                    }
+                }
+                mesh_draw.EndModifyNormalData();
+
                 foreach (Node child in nd.Children)
                 {
                     RecursiveTransformVertices(child);
