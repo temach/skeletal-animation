@@ -142,5 +142,17 @@ namespace WinFormAnimation2D.Properties {
                 this["OpenGLCullFace"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OpenGLMaterial {
+            get {
+                return ((bool)(this["OpenGLMaterial"]));
+            }
+            set {
+                this["OpenGLMaterial"] = value;
+            }
+        }
     }
 }
