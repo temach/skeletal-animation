@@ -169,6 +169,12 @@
   <data name="mamonth_3" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\mamonth_3.dae;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="ninja_rig_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ninja_rig_1.dae;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="ninja_rig_3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ninja_rig_3.dae;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="plane_planets_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\plane_planets_1.dae;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
