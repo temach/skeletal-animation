@@ -68,6 +68,7 @@ namespace WinFormAnimation2D
                 MessageBox.Show(ex.Message);
             }
             _cmd = new CommandLine(_world, this.listBox_display, this);
+            _cmd._current = _world._enttity_one;
             InitFillTreeFromWorldSingleEntity();
         }
 
@@ -365,18 +366,8 @@ namespace WinFormAnimation2D
         {
             _mouse.RecordMouseClick(e);
             _mouse.RecordInnerWorldMouseClick(_camera.ConvertScreen2WorldCoordinates(_mouse.ClickPos));
-            if (_world.CheckMouseEntitySelect(_mouse))
-            {
-                Current = _world.CurrentlySelected;
-                this.toolStripStatusLabel_entity_position.Text = Current.GetTranslation.ToString();
-                this.treeView_entity_info.SelectedNode = this.treeView_entity_info.Nodes[Current.Name];
-            }
-            else
-            {
-                Current = null;
-                this.toolStripStatusLabel_entity_position.Text = "none";
-                this.treeView_entity_info.SelectedNode = null;
-            }
+            this.toolStripStatusLabel_entity_position.Text = Current.GetTranslation.ToString();
+            this.treeView_entity_info.SelectedNode = this.treeView_entity_info.Nodes[Current.Name];
         }
 
         private void glControl1_MouseMove(object sender, MouseEventArgs e)
