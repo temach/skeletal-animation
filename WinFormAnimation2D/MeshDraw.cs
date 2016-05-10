@@ -109,7 +109,17 @@ namespace WinFormAnimation2D
         }
         public void EndModifyVertexData()
         {
-            GL.UnmapBuffer(BufferTarget.ArrayBuffer);
+            bool data_upload_ok = GL.UnmapBuffer(BufferTarget.ArrayBuffer);
+            if (! data_upload_ok)
+            {
+                // data store contents have become corrupt while the data store was mapped
+                // This can occur for system-specific reasons that affect the availability 
+                // of graphics memory, such as screen mode changes. 
+                // Then GL_FALSE is returned and data contents are undefined
+                // An application must detect this rare condition and reinitialize the data store. 
+                // We will not reinitialise the store, but simply bail out.
+                throw new Exception("OpenGL driver has failed.");
+            }
             _buffer_mapped = false;
         }
 
@@ -124,7 +134,17 @@ namespace WinFormAnimation2D
         }
         public void EndModifyNormalData()
         {
-            GL.UnmapBuffer(BufferTarget.ArrayBuffer);
+            bool data_upload_ok = GL.UnmapBuffer(BufferTarget.ArrayBuffer);
+            if (! data_upload_ok)
+            {
+                // data store contents have become corrupt while the data store was mapped
+                // This can occur for system-specific reasons that affect the availability 
+                // of graphics memory, such as screen mode changes. 
+                // Then GL_FALSE is returned and data contents are undefined
+                // An application must detect this rare condition and reinitialize the data store. 
+                // We will not reinitialise the store, but simply bail out.
+                throw new Exception("OpenGL driver has failed.");
+            }
             _buffer_mapped = false;
         }
 
@@ -171,7 +191,7 @@ namespace WinFormAnimation2D
                 temp[n++] = v.Y;
                 temp[n++] = v.Z;
             }
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)byteCount, temp, BufferUsageHint.DynamicCopy);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)byteCount, temp, BufferUsageHint.StreamDraw);
             VerifyArrayBufferSize(byteCount);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }
@@ -223,8 +243,7 @@ namespace WinFormAnimation2D
                 Debug.Assert(idx <= 0xffff);
                 temp[n++] = (ushort)idx;
             }
-            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)byteCount, 
-                temp, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)byteCount, temp, BufferUsageHint.StaticDraw);
 
 
             int bufferSize;
@@ -260,7 +279,7 @@ namespace WinFormAnimation2D
             }
 
             var byteCount = floatCount*sizeof (float);
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(byteCount), temp, BufferUsageHint.DynamicCopy);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(byteCount), temp, BufferUsageHint.StaticDraw);
             VerifyArrayBufferSize(byteCount);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }
@@ -326,7 +345,7 @@ namespace WinFormAnimation2D
                 byteColors[n++] = (byte)(c.A * 255);
             }
 
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(byteCount), byteColors, BufferUsageHint.DynamicCopy);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(byteCount), byteColors, BufferUsageHint.StaticDraw);
             VerifyArrayBufferSize(byteCount);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }       
