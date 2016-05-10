@@ -241,18 +241,20 @@ namespace WinFormAnimation2D
         public void set(string name, string value)
         {
             PropertyInfo[] possible = Properties.Settings.Default.GetType().GetProperties();
-            PropertyInfo prop = possible.First(p => p.Name == name);
-            if (prop != null)
+            PropertyInfo prop = possible.SingleOrDefault(p => p.Name == name);
+            if (prop == null)
             {
-                // get converter for value
-                var conv = TypeDescriptor.GetConverter(prop.PropertyType);
-                // for converted output
-                if (! conv.IsValid(value))
-                {
-                    return;
-                }
-                prop.SetValue(Properties.Settings.Default, conv.ConvertFromString(value));
+                SetError("property to set not found");
+                return;
             }
+            // get converter for value
+            var conv = TypeDescriptor.GetConverter(prop.PropertyType);
+            // for converted output
+            if (! conv.IsValid(value))
+            {
+                return;
+            }
+            prop.SetValue(Properties.Settings.Default, conv.ConvertFromString(value));
         }
 
         public void help()
@@ -269,11 +271,20 @@ namespace WinFormAnimation2D
 
         public void RunCmd(string input)
         {
-            IEnumerable<string> tokens = input.Trim(' ').Split(' ');
+            input = input.Trim(' ');
+            IEnumerable<string> tokens;
+            if (input.Contains(' '))
+            {
+                tokens = input.Split(' ');
+            }
+            else
+            {
+                tokens = new string[] { input };
+            }
             int qty_args = tokens.Count() - 1;
             string fname = tokens.First();
             // find the function
-            MethodInfo cmdinfo = Commands.Single(f => f.Name == (string)fname);
+            MethodInfo cmdinfo = Commands.SingleOrDefault(f => f.Name == (string)fname);
             if (cmdinfo == null)
             {
                 SetError("command not found");
