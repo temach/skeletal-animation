@@ -37,7 +37,6 @@ namespace WinFormAnimation2D
             GL.Enable(EnableCap.ColorMaterial);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Lighting);
-            GL.Enable(EnableCap.CullFace);
             // other settings
             GL.ShadeModel(ShadingModel.Flat);
             GL.ClearColor(Color.DarkGray);
@@ -97,6 +96,14 @@ namespace WinFormAnimation2D
             // TEST CODE to visualize mid point (pivot) and origin
             // var view = Matrix4.LookAt(0, 50, 500, 0, 0, 0, 0, 1, 0);
             //GL.LoadMatrix(ref view);
+            if (Properties.Settings.Default.OpenGLCullFace)
+            {
+                GL.Enable(EnableCap.CullFace);
+            }
+            else
+            {
+                GL.Disable(EnableCap.CullFace);
+            }
             GL.LoadIdentity();
             GL.LoadMatrix(ref camera_matrix);
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);

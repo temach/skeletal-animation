@@ -130,5 +130,17 @@ namespace WinFormAnimation2D.Properties {
                 this["RenderVertexColors"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OpenGLCullFace {
+            get {
+                return ((bool)(this["OpenGLCullFace"]));
+            }
+            set {
+                this["OpenGLCullFace"] = value;
+            }
+        }
     }
 }
