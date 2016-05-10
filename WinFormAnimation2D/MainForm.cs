@@ -61,7 +61,7 @@ namespace WinFormAnimation2D
             _world = new World();
             try
             {
-                _world.LoadScene(Properties.Resources.suzane_1);
+                _world.LoadScene(Properties.Resources.ninja_simple_rig_1);
             }
             catch (Exception ex)
             {
