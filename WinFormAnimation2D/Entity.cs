@@ -131,8 +131,6 @@ namespace WinFormAnimation2D
             {
                 MeshDraw mesh_draw = _mesh_id2mesh_draw[mesh_id];
                 mesh_draw.RenderVBO();
-                MeshBounds aabb = _extra_geometry._mesh_id2box[mesh_id];
-                aabb.SafeStartUpdateNearFar();
             }
             foreach (Node child in nd.Children)
             {
@@ -144,13 +142,11 @@ namespace WinFormAnimation2D
         {
             foreach (var aabb in geom._mesh_id2box.Values)
             {
-                aabb.EndUpdateNearFar();
                 if (Properties.Settings.Default.RenderAllMeshBounds)
                 {
                     aabb.Render();
                 }
             }
-            //_extra_geometry.RenderEntityBorder();
         }
 
         public void UpdateModel(double dt_ms)
