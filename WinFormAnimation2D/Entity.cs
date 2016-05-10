@@ -75,17 +75,17 @@ namespace WinFormAnimation2D
             _transform = new TransformState(Matrix4.Identity, 10, 17);
         }
 
-        public void UploadMeshVBO()
+        public void UploadMeshVBO(IList<Material> materials)
         {
-            InnerMakeMeshDraw(_scene._inner.Meshes);
+            InnerMakeMeshDraw(_scene._inner.Meshes, materials);
         }
 
         // Make a class that will be responsible for managind the buffer lists
-        public void InnerMakeMeshDraw(IList<Mesh> meshes)
+        public void InnerMakeMeshDraw(IList<Mesh> meshes, IList<Material> materials)
         {
             for (int i = 0; i < meshes.Count; i++)
             {
-                _mesh_id2mesh_draw[i] = new MeshDraw(meshes[i]);
+                _mesh_id2mesh_draw[i] = new MeshDraw(meshes[i], materials);
             }
         }
 

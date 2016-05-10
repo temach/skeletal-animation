@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Graphics;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
@@ -21,11 +22,8 @@ namespace WinFormAnimation2D
         public int ColorBufferId;
         public int TexCoordBufferId;
         public int NormalBufferId;
-        public int TangentBufferId;
         public int ElementBufferId;
         public int NumIndices;
-        public int BitangentBufferId;
-        public bool Is32BitIndices; 
     }
 
     /// <summary>
@@ -38,15 +36,19 @@ namespace WinFormAnimation2D
         public Mesh _mesh;
         public Dictionary<int,Matrix4x4> _vertex_id2matrix = new Dictionary<int,Matrix4x4>();
         public Vbo _vbo;
+        public Material _material;
+        public int _apply_material_id;
 
         /// <summary>
         /// Uploads the data to the GPU.
         /// </summary>
-        public MeshDraw(Mesh mesh)
+        public MeshDraw(Mesh mesh, IList<Material> materials)
         {
             Debug.Assert(mesh != null);
             _mesh = mesh;
+            _material = materials[mesh.MaterialIndex];
             Upload(out _vbo);
+            _apply_material_id = CompileMaterialDisplayList();
         }
 
         /// <summary>
@@ -58,6 +60,11 @@ namespace WinFormAnimation2D
             GL.PushClientAttrib(ClientAttribMask.ClientVertexArrayBit);
             Debug.Assert(_vbo.VertexBufferId != 0);
             Debug.Assert(_vbo.ElementBufferId != 0);
+            // material
+            if (Properties.Settings.Default.OpenGLMaterial)
+            {
+                GL.CallList(_apply_material_id);
+            }
             // normals
             if (Properties.Settings.Default.RenderNormals)
             {
@@ -146,6 +153,130 @@ namespace WinFormAnimation2D
                 throw new Exception("OpenGL driver has failed.");
             }
             _buffer_mapped = false;
+        }
+
+        public int CompileMaterialDisplayList()
+        {
+            int id = GL.GenLists(1);
+            GL.NewList(id, ListMode.Compile);
+            ApplyMaterial();
+            GL.EndList();
+            return id;
+        }
+
+        public OpenTK.Graphics.Color4 Assimp2OpenTK(Assimp.Color4D input)
+        {
+            return new Color4(input.R, input.G, input.B, input.A);
+        }
+
+        double AlphaSuppressionThreshold = 0.01;
+        private void ApplyMaterial()
+        {
+            var hasColors = _mesh != null && _mesh.HasVertexColors(0);
+            if (hasColors)
+            {
+                GL.Enable(EnableCap.ColorMaterial);
+                GL.ColorMaterial(MaterialFace.FrontAndBack, ColorMaterialParameter.AmbientAndDiffuse);
+            }
+            else
+            {
+                GL.Disable(EnableCap.ColorMaterial);
+            }
+            // note: keep semantics of hasAlpha consistent with IsAlphaMaterial()
+            var hasAlpha = false;
+            var hasTexture = false;
+
+            GL.Disable(EnableCap.Texture2D);
+            GL.Enable(EnableCap.Normalize);
+
+            var alpha = 1.0f;
+            if (_material.HasOpacity)
+            {
+                alpha = _material.Opacity;
+                // ignore zero alpha channel
+                if (alpha < AlphaSuppressionThreshold) 
+                {
+                    alpha = 1.0f;
+                }
+            }
+
+            var color = new Color4(.8f, .8f, .8f, 1.0f);
+            if (_material.HasColorDiffuse)
+            {
+                color = Assimp2OpenTK(_material.ColorDiffuse);
+                if (color.A < AlphaSuppressionThreshold) // s.a.
+                {
+                    color.A = 1.0f;
+                }
+            }
+            color.A *= alpha;
+            hasAlpha = hasAlpha || color.A < 1.0f;
+
+            // if the material has a texture but the diffuse color texture is all black,
+            // then heuristically assume that this is an import/export flaw and substitute
+            // white.
+            if (hasTexture && color.R < 1e-3f && color.G < 1e-3f && color.B < 1e-3f)
+            {
+                GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Diffuse, Color4.White);
+            }
+            else
+            {
+                GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Diffuse, color);
+            }
+
+            color = new Color4(0, 0, 0, 1.0f);
+            if (_material.HasColorSpecular)
+            {
+                color = Assimp2OpenTK(_material.ColorSpecular);              
+            }
+            GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Specular, color);
+
+            color = new Color4(.2f, .2f, .2f, 1.0f);
+            if (_material.HasColorAmbient)
+            {
+                color = Assimp2OpenTK(_material.ColorAmbient);              
+            }
+            GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Ambient, color);
+
+            color = new Color4(0, 0, 0, 1.0f);
+            if (_material.HasColorEmissive)
+            {
+                color = Assimp2OpenTK(_material.ColorEmissive);              
+            }
+            GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Emission, color);
+
+            float shininess = 1;
+            float strength = 1;
+            if (_material.HasShininess)
+            {
+                shininess = _material.Shininess;
+
+            }
+            // todo: I don't even remember how shininess strength was supposed to be handled in assimp
+            if (_material.HasShininessStrength)
+            {
+                strength = _material.ShininessStrength;
+            }
+
+            var exp = shininess*strength;
+            if (exp >= 128.0f) // 128 is the maximum exponent as per the Gl spec
+            {
+                exp = 128.0f;
+            }
+
+            GL.Material(MaterialFace.FrontAndBack, MaterialParameter.Shininess, exp);
+
+            if (hasAlpha)
+            {
+                GL.Enable(EnableCap.Blend);
+                GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+                GL.DepthMask(false);
+            }
+            else
+            {
+                GL.Disable(EnableCap.Blend);
+                GL.DepthMask(true);
+            }
         }
 
 

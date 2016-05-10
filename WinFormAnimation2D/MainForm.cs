@@ -313,7 +313,7 @@ namespace WinFormAnimation2D
         {
             _world._renderer.InitOpenGL();
             // we have to wait for OpenGL to load before uploading VBOs to OpenGL server
-            _world._enttity_one.UploadMeshVBO();
+            _world._enttity_one.UploadMeshVBO(_world._cur_scene._inner.Materials);
             _world._renderer.ResizeOpenGL(this.glControl1.Width, this.glControl1.Height);
             LoadOpenGLDone = true;
             // register Idle event so we get regular callbacks for drawing
