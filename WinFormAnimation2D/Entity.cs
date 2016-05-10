@@ -207,7 +207,6 @@ namespace WinFormAnimation2D
                 // iterate over inital vertex positions
                 Mesh cur_mesh = _scene._inner.Meshes[mesh_id];
                 MeshBounds aabb = _extra_geometry._mesh_id2box[mesh_id];
-                aabb.SafeStartUpdateNearFar();
                 // go over every vertex in the mesh
                 unsafe
                 {
@@ -225,33 +224,9 @@ namespace WinFormAnimation2D
                         coords[vertex_id*sz + 0] = vertex.X;
                         coords[vertex_id*sz + 1] = vertex.Y;
                         coords[vertex_id*sz + 2] = vertex.Z;
-                        aabb.UpdateNearFar(vertex);
                     }
                 }
                 mesh_draw.EndModifyVertexData();
-
-                // for debug take a look at normals
-                IntPtr normal_data;
-                int qty_normals;
-                mesh_draw.BeginModifyNormalData(out normal_data, out qty_normals);
-                unsafe
-                {
-                    int sz = 3;
-                    float* normals = (float*)normal_data;
-                    for (int normal_id = 0; normal_id < qty_normals; normal_id++)
-                    {
-                        Matrix4 matrix_with_offset = mesh_draw._vertex_id2matrix[normal_id].eToOpenTK();
-                        // get the initial position of vertex when scene was loaded
-                        Vector3 normal_default = cur_mesh.Normals[normal_id].eToOpenTK();
-                        Vector3 normal;
-                        Vector3.TransformNormal(ref normal_default, ref matrix_with_offset, out normal);
-                        // write new coords back into array
-                        normals[normal_id*sz + 0] = normal.X;
-                        normals[normal_id*sz + 1] = normal.Y;
-                        normals[normal_id*sz + 2] = normal.Z;
-                    }
-                }
-                mesh_draw.EndModifyNormalData();
 
                 foreach (Node child in nd.Children)
                 {
