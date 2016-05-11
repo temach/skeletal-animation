@@ -234,14 +234,43 @@ namespace WinFormAnimation2D
         public Dictionary<int,MeshBounds> _mesh_id2box = new Dictionary<int,MeshBounds>();
         public Dictionary<string,BoneBounds> _bone_id2triangle = new Dictionary<string,BoneBounds>();
         public BoundingBoxGroup EntityBox;
+        public double _average_bone_length;
 
         /// Build geometry data for node (usually use only for one of the children of scene.RootNode)
         public Geometry(IList<Mesh> scene_meshes, Node nd, BoneNode armature)
         {
             MakeBoundingBoxes(scene_meshes, nd);
             MakeBoundingTriangles(armature);
+            _average_bone_length = FindAverageBoneLength(armature);
             UpdateBonePositions(armature);
             EntityBox = new BoundingBoxGroup(_mesh_id2box.Values);
+        }
+        
+        public double FindAverageBoneLength(BoneNode nd)
+        {
+            double len = 0;
+            int qty = 0;
+            InnerFindAverageLength(nd, ref len, ref qty);
+            return len / qty;
+        }
+
+        public void InnerFindAverageLength(BoneNode nd, ref double total_length, ref int bones_count)
+        {
+            var triangle = _bone_id2triangle[nd._inner.Name];
+            Vector3 bone_start = nd.GlobalTransform.ExtractTranslation();
+            // dont analyse bones with no children
+            if (nd.Children.Count > 0)
+            {
+                // this bone's end == the beginning of __any__ child bone
+                Vector3 bone_end = nd.Children[0].GlobalTransform.ExtractTranslation();
+                double len = (bone_start - bone_end).Length;
+                total_length += len;
+                bones_count++;
+                foreach (var child_nd in nd.Children)
+                {
+                    InnerFindAverageLength(child_nd, ref total_length, ref bones_count);
+                }
+            }
         }
 
         public void UpdateBonePositions(BoneNode nd)
@@ -266,8 +295,9 @@ namespace WinFormAnimation2D
                 // strategy 2: get geometric center of the vertices that this bone acts on
                 // we have to use the Y-unit vector instead of X because we defined Y_UP 
                 // in the collada.dae file, so all the matrices work such that direct unit vector is unit Y
+                // strategy 3: choose the length of the smallest bone found
                 var delta = Vector3.TransformVector(Vector3.UnitY, nd.GlobalTransform);
-                Vector3 new_end = new_start + Vector3.Multiply(delta, 70.0f);
+                Vector3 new_end = new_start + Vector3.Multiply(delta, (float)_average_bone_length);
                 triangle._start = new_start;
                 triangle._end = new_end;
             }
