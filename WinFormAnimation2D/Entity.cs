@@ -193,6 +193,30 @@ namespace WinFormAnimation2D
             }
         }
 
+        /// <summary>Transform a Position by the given Matrix</summary>
+        /// <param name="pos">The position to transform</param>
+        /// <param name="mat">The desired transformation</param>
+        /// <param name="result">The transformed position</param>
+        public static void TransformPositionAssimp(ref Vector3D pos, ref Matrix4x4 mat, out Vector3D result)
+        {
+            // this is taken from https://github.com/opentk/opentk/blob/32665ca1cbdccb1c3be109ed0b7ff3f7cb5cb5b7/Source/Compatibility/Math/Vector3.cs
+            // Note that assimp is row major, while opentk is column major
+            result.X = pos.X * mat.A1 +
+                       pos.Y * mat.A2 +
+                       pos.Z * mat.A3 +
+                       mat.A4;
+
+            result.Y = pos.X * mat.B1 +
+                       pos.Y * mat.B2 +
+                       pos.Z * mat.B3 +
+                       mat.B4;
+
+            result.Z = pos.X * mat.C1 +
+                       pos.Y * mat.C2 +
+                       pos.Z * mat.C3 +
+                       mat.C4;
+        }
+
         // Second pass: transform all vertices in a mesh according to bone
         // just apply the previously caluclated matrix
         public void RecursiveTransformVertices(Node nd)
@@ -215,11 +239,11 @@ namespace WinFormAnimation2D
                     float* coords = (float*)data;
                     for (int vertex_id = 0; vertex_id < qty_vertices; vertex_id++)
                     {
-                        Matrix4 matrix_with_offset = mesh_draw._vertex_id2matrix[vertex_id].eToOpenTK();
+                        Matrix4x4 matrix_with_offset = mesh_draw._vertex_id2matrix[vertex_id];
                         // get the initial position of vertex when scene was loaded
-                        Vector3 vertex_default = cur_mesh.Vertices[vertex_id].eToOpenTK();
-                        Vector3 vertex;
-                        Vector3.Transform(ref vertex_default, ref matrix_with_offset, out vertex);
+                        Vector3D vertex_default = cur_mesh.Vertices[vertex_id];
+                        Vector3D vertex;
+                        Entity.TransformPositionAssimp(ref vertex_default, ref matrix_with_offset, out vertex);
                         // write new coords back into array
                         coords[vertex_id*sz + 0] = vertex.X;
                         coords[vertex_id*sz + 1] = vertex.Y;
