@@ -35,6 +35,8 @@ namespace WinFormAnimation2D
         private GUIConfig _gui_conf = new GUIConfig();
         private CommandLine _cmd;
 
+        private IHighlightableNode last_selected_node;
+
         private Entity _current;
         private Entity Current
         {
@@ -191,7 +193,13 @@ namespace WinFormAnimation2D
             var view_nd = (IHighlightableNode)this.treeView_entity_info.SelectedNode;
             if (view_nd != null)
             {
+                last_selected_node = view_nd;
                 view_nd.Render();
+            }
+            // last_selected_node is null only on scene load
+            else if (last_selected_node != null)
+            {
+                last_selected_node.Render();
             }
         }
 
