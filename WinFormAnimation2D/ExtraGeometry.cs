@@ -75,6 +75,8 @@ namespace WinFormAnimation2D
         public void Render(Pen p = null)
         {
             // Util.GR.DrawLines(p == null ? Pens.Aqua : p, tmp);
+            GL.Enable(EnableCap.ColorMaterial);
+            GL.Material(MaterialFace.FrontAndBack, MaterialParameter.AmbientAndDiffuse, Color.Aqua);
             GL.Color3(Color.Aqua);
             GL.Begin(BeginMode.LineLoop);
             foreach (Vector3 vec in Triangle)
