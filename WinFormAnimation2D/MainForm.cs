@@ -347,12 +347,14 @@ namespace WinFormAnimation2D
             // render entity
             _world.RenderWorld();
             // currently selected in tree view
-            if (_current != null)
+            // Disable depth test because we want bones to always be visible
+            GL.Disable(EnableCap.DepthTest);
+            if (Current != null)
             {
-                _current._extra_geometry.UpdateBonePositions(_current._armature);
+                Current._extra_geometry.UpdateBonePositions(Current._armature);
                 if (Properties.Settings.Default.RenderAllBoneBounds)
                 {
-                    RenderBones(_current);
+                    RenderBones(Current);
                 }
             }
             HighlightSlectedNode();

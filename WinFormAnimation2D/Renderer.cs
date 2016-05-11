@@ -112,7 +112,7 @@ namespace WinFormAnimation2D
             col *= (0.25f + 1.5f * 10 / 100.0f) * 1.5f;
             GL.Light(LightName.Light0, LightParameter.Ambient, new float[] { col.X, col.Y, col.Z, 1 });
             // 3d
-            GL.DepthMask(true);
+            GL.Enable(EnableCap.DepthTest);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
 
