@@ -40,8 +40,9 @@ namespace WinFormAnimation2D
         {
             get {
                 var bone_vec = _end - _start;
-                var sidevec = new Vector3(bone_vec.Y, -1 * bone_vec.X, 0.0f);
-                return Vector3.Multiply(Vector3.NormalizeFast(sidevec), 5.0f);
+                var len = bone_vec.LengthFast;
+                var sidevec = new Vector3(-1*(bone_vec.Y + bone_vec.X), 1.0f, 1.0f);
+                return Vector3.Multiply(Vector3.NormalizeFast(sidevec), len/5.0f);
             }
         }
 
@@ -78,6 +79,7 @@ namespace WinFormAnimation2D
             GL.Enable(EnableCap.ColorMaterial);
             GL.Material(MaterialFace.FrontAndBack, MaterialParameter.AmbientAndDiffuse, Color.Aqua);
             GL.Color3(Color.Aqua);
+            GL.LineWidth(3.0f);
             GL.Begin(BeginMode.LineLoop);
             foreach (Vector3 vec in Triangle)
             {

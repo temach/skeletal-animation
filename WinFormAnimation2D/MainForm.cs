@@ -211,7 +211,7 @@ namespace WinFormAnimation2D
                 return;
             }
             _world._renderer.ClearOpenglFrameForRender(_camera.MatrixToOpenGL());
-            _world._renderer.DrawAxis3D();
+            // _world._renderer.DrawAxis3D();
 
             UpdateFrame();
 
