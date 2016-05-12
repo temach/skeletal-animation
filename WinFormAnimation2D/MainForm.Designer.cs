@@ -50,16 +50,18 @@
             this.button_RunCli = new System.Windows.Forms.Button();
             this.checkBox_renderBones = new System.Windows.Forms.CheckBox();
             this.checkBox_render_boxes = new System.Windows.Forms.CheckBox();
-            this.checkBox_triangulate = new System.Windows.Forms.CheckBox();
-            this.checkBox_moveCamera = new System.Windows.Forms.CheckBox();
             this.glControl1 = new OpenTK.GLControl();
-            this.checkBox_FixCameraPlane = new System.Windows.Forms.CheckBox();
             this.tabControl_panel = new System.Windows.Forms.TabControl();
             this.tabPage_TreeView = new System.Windows.Forms.TabPage();
             this.tabPage_RenderOptions = new System.Windows.Forms.TabPage();
+            this.checkBox_RenderNormals = new System.Windows.Forms.CheckBox();
             this.checkBox_OrbitingCamera = new System.Windows.Forms.CheckBox();
             this.tabPage_CmdLine = new System.Windows.Forms.TabPage();
-            this.checkBox_RenderNormals = new System.Windows.Forms.CheckBox();
+            this.checkBox_playall = new System.Windows.Forms.CheckBox();
+            this.checkBox_OpenGL_Material = new System.Windows.Forms.CheckBox();
+            this.button_step_frame = new System.Windows.Forms.Button();
+            this.button_back_one_frame = new System.Windows.Forms.Button();
+            this.checkBox_OpenGLDrawAxis = new System.Windows.Forms.CheckBox();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_time)).BeginInit();
             this.tabControl_panel.SuspendLayout();
@@ -101,6 +103,7 @@
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(46, 19);
             this.toolStripStatusLabel1.Text = "mouse:";
+            this.toolStripStatusLabel1.Visible = false;
             // 
             // toolStripStatusLabel_is_selected
             // 
@@ -108,6 +111,7 @@
             this.toolStripStatusLabel_is_selected.Name = "toolStripStatusLabel_is_selected";
             this.toolStripStatusLabel_is_selected.Size = new System.Drawing.Size(122, 19);
             this.toolStripStatusLabel_is_selected.Text = "toolStripStatusLabel1";
+            this.toolStripStatusLabel_is_selected.Visible = false;
             // 
             // toolStripStatusLabel_mouse_coords
             // 
@@ -116,12 +120,14 @@
             this.toolStripStatusLabel_mouse_coords.Name = "toolStripStatusLabel_mouse_coords";
             this.toolStripStatusLabel_mouse_coords.Size = new System.Drawing.Size(140, 19);
             this.toolStripStatusLabel_mouse_coords.Text = "toolStripStatusLabel2";
+            this.toolStripStatusLabel_mouse_coords.Visible = false;
             // 
             // toolStripStatusLabel2
             // 
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
             this.toolStripStatusLabel2.Size = new System.Drawing.Size(49, 19);
             this.toolStripStatusLabel2.Text = "camera:";
+            this.toolStripStatusLabel2.Visible = false;
             // 
             // toolStripStatusLabel_camera_position
             // 
@@ -130,12 +136,14 @@
             this.toolStripStatusLabel_camera_position.Name = "toolStripStatusLabel_camera_position";
             this.toolStripStatusLabel_camera_position.Size = new System.Drawing.Size(118, 19);
             this.toolStripStatusLabel_camera_position.Text = "toolStripStatusLabel1";
+            this.toolStripStatusLabel_camera_position.Visible = false;
             // 
             // toolStripStatusLabel3
             // 
             this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
             this.toolStripStatusLabel3.Size = new System.Drawing.Size(40, 19);
             this.toolStripStatusLabel3.Text = "entity:";
+            this.toolStripStatusLabel3.Visible = false;
             // 
             // toolStripStatusLabel_entity_position
             // 
@@ -144,6 +152,7 @@
             this.toolStripStatusLabel_entity_position.Name = "toolStripStatusLabel_entity_position";
             this.toolStripStatusLabel_entity_position.Size = new System.Drawing.Size(118, 19);
             this.toolStripStatusLabel_entity_position.Text = "toolStripStatusLabel1";
+            this.toolStripStatusLabel_entity_position.Visible = false;
             // 
             // toolStripStatusLabel4
             // 
@@ -181,6 +190,7 @@
             // trackBar_time
             // 
             this.trackBar_time.Location = new System.Drawing.Point(91, 4);
+            this.trackBar_time.Maximum = 20;
             this.trackBar_time.Name = "trackBar_time";
             this.trackBar_time.Size = new System.Drawing.Size(555, 45);
             this.trackBar_time.TabIndex = 36;
@@ -267,28 +277,6 @@
             this.checkBox_render_boxes.UseVisualStyleBackColor = true;
             this.checkBox_render_boxes.CheckedChanged += new System.EventHandler(this.checkBox_render_boxes_CheckedChanged);
             // 
-            // checkBox_triangulate
-            // 
-            this.checkBox_triangulate.AutoSize = true;
-            this.checkBox_triangulate.Location = new System.Drawing.Point(19, 164);
-            this.checkBox_triangulate.Name = "checkBox_triangulate";
-            this.checkBox_triangulate.Size = new System.Drawing.Size(108, 17);
-            this.checkBox_triangulate.TabIndex = 45;
-            this.checkBox_triangulate.Text = "Triangulate Mesh";
-            this.checkBox_triangulate.UseVisualStyleBackColor = true;
-            this.checkBox_triangulate.CheckedChanged += new System.EventHandler(this.checkBox_triangulate_CheckedChanged);
-            // 
-            // checkBox_moveCamera
-            // 
-            this.checkBox_moveCamera.AutoSize = true;
-            this.checkBox_moveCamera.Location = new System.Drawing.Point(19, 221);
-            this.checkBox_moveCamera.Name = "checkBox_moveCamera";
-            this.checkBox_moveCamera.Size = new System.Drawing.Size(113, 17);
-            this.checkBox_moveCamera.TabIndex = 46;
-            this.checkBox_moveCamera.Text = "Move only camera";
-            this.checkBox_moveCamera.UseVisualStyleBackColor = true;
-            this.checkBox_moveCamera.CheckedChanged += new System.EventHandler(this.checkBox_moveCamera_CheckedChanged);
-            // 
             // glControl1
             // 
             this.glControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -303,17 +291,6 @@
             this.glControl1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.glControl1_MouseDown);
             this.glControl1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.glControl1_MouseMove);
             this.glControl1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.glControl1_MouseUp);
-            // 
-            // checkBox_FixCameraPlane
-            // 
-            this.checkBox_FixCameraPlane.AutoSize = true;
-            this.checkBox_FixCameraPlane.Location = new System.Drawing.Point(19, 198);
-            this.checkBox_FixCameraPlane.Name = "checkBox_FixCameraPlane";
-            this.checkBox_FixCameraPlane.Size = new System.Drawing.Size(108, 17);
-            this.checkBox_FixCameraPlane.TabIndex = 49;
-            this.checkBox_FixCameraPlane.Text = "Fix Camera Plane";
-            this.checkBox_FixCameraPlane.UseVisualStyleBackColor = true;
-            this.checkBox_FixCameraPlane.CheckedChanged += new System.EventHandler(this.checkBox_FixCameraPlane_CheckedChanged);
             // 
             // tabControl_panel
             // 
@@ -343,15 +320,17 @@
             // 
             // tabPage_RenderOptions
             // 
+            this.tabPage_RenderOptions.Controls.Add(this.checkBox_OpenGLDrawAxis);
+            this.tabPage_RenderOptions.Controls.Add(this.button_back_one_frame);
+            this.tabPage_RenderOptions.Controls.Add(this.button_step_frame);
+            this.tabPage_RenderOptions.Controls.Add(this.checkBox_OpenGL_Material);
+            this.tabPage_RenderOptions.Controls.Add(this.checkBox_playall);
             this.tabPage_RenderOptions.Controls.Add(this.checkBox_RenderNormals);
             this.tabPage_RenderOptions.Controls.Add(this.checkBox_OrbitingCamera);
-            this.tabPage_RenderOptions.Controls.Add(this.checkBox_moveCamera);
-            this.tabPage_RenderOptions.Controls.Add(this.checkBox_FixCameraPlane);
             this.tabPage_RenderOptions.Controls.Add(this.checkBox_breakpoints_on);
             this.tabPage_RenderOptions.Controls.Add(this.button_ResetCamera);
             this.tabPage_RenderOptions.Controls.Add(this.checkBox_renderBones);
             this.tabPage_RenderOptions.Controls.Add(this.checkBox_render_boxes);
-            this.tabPage_RenderOptions.Controls.Add(this.checkBox_triangulate);
             this.tabPage_RenderOptions.Location = new System.Drawing.Point(4, 22);
             this.tabPage_RenderOptions.Name = "tabPage_RenderOptions";
             this.tabPage_RenderOptions.Padding = new System.Windows.Forms.Padding(3);
@@ -360,10 +339,21 @@
             this.tabPage_RenderOptions.Text = "Render";
             this.tabPage_RenderOptions.UseVisualStyleBackColor = true;
             // 
+            // checkBox_RenderNormals
+            // 
+            this.checkBox_RenderNormals.AutoSize = true;
+            this.checkBox_RenderNormals.Location = new System.Drawing.Point(19, 76);
+            this.checkBox_RenderNormals.Name = "checkBox_RenderNormals";
+            this.checkBox_RenderNormals.Size = new System.Drawing.Size(122, 17);
+            this.checkBox_RenderNormals.TabIndex = 51;
+            this.checkBox_RenderNormals.Text = "Render with normals";
+            this.checkBox_RenderNormals.UseVisualStyleBackColor = true;
+            this.checkBox_RenderNormals.CheckedChanged += new System.EventHandler(this.checkBox_RenderNormals_CheckedChanged);
+            // 
             // checkBox_OrbitingCamera
             // 
             this.checkBox_OrbitingCamera.AutoSize = true;
-            this.checkBox_OrbitingCamera.Location = new System.Drawing.Point(19, 245);
+            this.checkBox_OrbitingCamera.Location = new System.Drawing.Point(19, 163);
             this.checkBox_OrbitingCamera.Name = "checkBox_OrbitingCamera";
             this.checkBox_OrbitingCamera.Size = new System.Drawing.Size(101, 17);
             this.checkBox_OrbitingCamera.TabIndex = 50;
@@ -384,16 +374,58 @@
             this.tabPage_CmdLine.Text = "Cmd Line";
             this.tabPage_CmdLine.UseVisualStyleBackColor = true;
             // 
-            // checkBox_RenderNormals
+            // checkBox_playall
             // 
-            this.checkBox_RenderNormals.AutoSize = true;
-            this.checkBox_RenderNormals.Location = new System.Drawing.Point(19, 76);
-            this.checkBox_RenderNormals.Name = "checkBox_RenderNormals";
-            this.checkBox_RenderNormals.Size = new System.Drawing.Size(122, 17);
-            this.checkBox_RenderNormals.TabIndex = 51;
-            this.checkBox_RenderNormals.Text = "Render with normals";
-            this.checkBox_RenderNormals.UseVisualStyleBackColor = true;
-            this.checkBox_RenderNormals.CheckedChanged += new System.EventHandler(this.checkBox_RenderNormals_CheckedChanged);
+            this.checkBox_playall.AutoSize = true;
+            this.checkBox_playall.Location = new System.Drawing.Point(19, 199);
+            this.checkBox_playall.Name = "checkBox_playall";
+            this.checkBox_playall.Size = new System.Drawing.Size(94, 17);
+            this.checkBox_playall.TabIndex = 52;
+            this.checkBox_playall.Text = "Play animation";
+            this.checkBox_playall.UseVisualStyleBackColor = true;
+            this.checkBox_playall.CheckedChanged += new System.EventHandler(this.checkBox_playall_CheckedChanged);
+            // 
+            // checkBox_OpenGL_Material
+            // 
+            this.checkBox_OpenGL_Material.AutoSize = true;
+            this.checkBox_OpenGL_Material.Location = new System.Drawing.Point(19, 222);
+            this.checkBox_OpenGL_Material.Name = "checkBox_OpenGL_Material";
+            this.checkBox_OpenGL_Material.Size = new System.Drawing.Size(91, 17);
+            this.checkBox_OpenGL_Material.TabIndex = 53;
+            this.checkBox_OpenGL_Material.Text = "Apply material";
+            this.checkBox_OpenGL_Material.UseVisualStyleBackColor = true;
+            this.checkBox_OpenGL_Material.CheckedChanged += new System.EventHandler(this.checkBox_OpenGL_Material_CheckedChanged);
+            // 
+            // button_step_frame
+            // 
+            this.button_step_frame.Location = new System.Drawing.Point(19, 245);
+            this.button_step_frame.Name = "button_step_frame";
+            this.button_step_frame.Size = new System.Drawing.Size(129, 23);
+            this.button_step_frame.TabIndex = 54;
+            this.button_step_frame.Text = "Small jump forward";
+            this.button_step_frame.UseVisualStyleBackColor = true;
+            this.button_step_frame.Click += new System.EventHandler(this.button_step_frame_Click);
+            // 
+            // button_back_one_frame
+            // 
+            this.button_back_one_frame.Location = new System.Drawing.Point(19, 274);
+            this.button_back_one_frame.Name = "button_back_one_frame";
+            this.button_back_one_frame.Size = new System.Drawing.Size(129, 23);
+            this.button_back_one_frame.TabIndex = 56;
+            this.button_back_one_frame.Text = "Play back one keyframe";
+            this.button_back_one_frame.UseVisualStyleBackColor = true;
+            this.button_back_one_frame.Click += new System.EventHandler(this.button_back_one_frame_Click);
+            // 
+            // checkBox_OpenGLDrawAxis
+            // 
+            this.checkBox_OpenGLDrawAxis.AutoSize = true;
+            this.checkBox_OpenGLDrawAxis.Location = new System.Drawing.Point(19, 304);
+            this.checkBox_OpenGLDrawAxis.Name = "checkBox_OpenGLDrawAxis";
+            this.checkBox_OpenGLDrawAxis.Size = new System.Drawing.Size(89, 17);
+            this.checkBox_OpenGLDrawAxis.TabIndex = 57;
+            this.checkBox_OpenGLDrawAxis.Text = "Draw 3D axis";
+            this.checkBox_OpenGLDrawAxis.UseVisualStyleBackColor = true;
+            this.checkBox_OpenGLDrawAxis.CheckedChanged += new System.EventHandler(this.checkBox_OpenGLDrawAxis_CheckedChanged);
             // 
             // MainForm
             // 
@@ -446,16 +478,18 @@
         private System.Windows.Forms.Button button_RunCli;
         private System.Windows.Forms.CheckBox checkBox_renderBones;
         private System.Windows.Forms.CheckBox checkBox_render_boxes;
-        private System.Windows.Forms.CheckBox checkBox_triangulate;
-        private System.Windows.Forms.CheckBox checkBox_moveCamera;
         private OpenTK.GLControl glControl1;
-        private System.Windows.Forms.CheckBox checkBox_FixCameraPlane;
         private System.Windows.Forms.TabControl tabControl_panel;
         private System.Windows.Forms.TabPage tabPage_TreeView;
         private System.Windows.Forms.TabPage tabPage_RenderOptions;
         private System.Windows.Forms.TabPage tabPage_CmdLine;
         private System.Windows.Forms.CheckBox checkBox_OrbitingCamera;
         private System.Windows.Forms.CheckBox checkBox_RenderNormals;
+        private System.Windows.Forms.CheckBox checkBox_playall;
+        private System.Windows.Forms.CheckBox checkBox_OpenGL_Material;
+        private System.Windows.Forms.Button button_step_frame;
+        private System.Windows.Forms.Button button_back_one_frame;
+        private System.Windows.Forms.CheckBox checkBox_OpenGLDrawAxis;
     }
 }
 

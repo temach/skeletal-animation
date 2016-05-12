@@ -69,9 +69,12 @@ namespace WinFormAnimation2D
         /// </summary>
         public void DrawAxis3D()
         {
+            GL.Disable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.ColorMaterial);
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+            GL.Material(MaterialFace.FrontAndBack, MaterialParameter.AmbientAndDiffuse, Color.Aqua);
             GL.Normal3(0, 0, 1);
-            int shift = 5;
+            int shift = 1;
             GL.Begin(BeginMode.Triangles);
             // x axis
             GL.Color3(1.0f, 0.0f, 0.0f);
@@ -89,6 +92,7 @@ namespace WinFormAnimation2D
             GL.Vertex3(-shift, 0, 20);
             GL.Vertex3(shift, 0, 20);
             GL.End();
+            GL.Enable(EnableCap.DepthTest);
         }
 
         public void ClearOpenglFrameForRender(Matrix4 camera_matrix)

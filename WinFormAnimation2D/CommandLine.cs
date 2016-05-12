@@ -200,21 +200,23 @@ namespace WinFormAnimation2D
         }
 
         // step through all animation with 0.1 blend interval
+        // basically a small jump forwards in time
         public void stepall()
         {
             if (_current == null)
             {
                 return;
             }
-            if (_current._action.KfBlend < 1.0)
-            {
-                _current._action.KfBlend += 0.1;
-            }
-            else
-            {
-                _current._action.KfBlend = 0.0;
-                _current._action.NextInterval();
-            }
+            _current._action.SetTime(_current._action.TimeCursorInTicks + 0.8);
+            //if (_current._action.KfBlend < 1.0)
+            //{
+            //    _current._action.KfBlend += 0.1;
+            //}
+            //else
+            //{
+            //    _current._action.KfBlend = 0.0;
+            //    _current._action.NextInterval();
+            //}
             _world._action_one.ApplyAnimation(_current._armature
                 , _current._action);
             NeedWindowRedraw = true;

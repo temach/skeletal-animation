@@ -47,6 +47,11 @@ namespace WinFormAnimation2D
             }
         }
 
+        private int TrackBarTimeRange
+        {
+            get { return this.trackBar_time.Maximum - this.trackBar_time.Minimum; }
+        }
+
         private KeyboardInput _kbd;
 
         // camera related stuff
@@ -77,6 +82,13 @@ namespace WinFormAnimation2D
         public void SetAnimTime(double val)
         {
             this.toolStripStatusLabel_AnimTime.Text = val.ToString();
+            // if the user is not working with the track bar
+            if (! this.trackBar_time.Focused)
+            {
+                double factor = TrackBarTimeRange / Current._action.TotalDurationSeconds;
+                int track_val = (int)(val * factor);
+                this.trackBar_time.Value = track_val;
+            }
         }
 
         /// <summary>
@@ -211,7 +223,10 @@ namespace WinFormAnimation2D
                 return;
             }
             _world._renderer.ClearOpenglFrameForRender(_camera.MatrixToOpenGL());
-            // _world._renderer.DrawAxis3D();
+            if (Properties.Settings.Default.OpenGLDrawAxis)
+            {
+                _world._renderer.DrawAxis3D();
+            }
 
             UpdateFrame();
 
@@ -240,11 +255,16 @@ namespace WinFormAnimation2D
             {
                 return;
             }
-            double factor = Current._action.TotalDurationSeconds / 10.0;
-            double time_seconds = (sender as TrackBar).Value * factor;
-            Current._action.SetTime(time_seconds);
-            _world._action_one.ApplyAnimation(Current._armature
-                , Current._action);
+            // if the user changed the value
+            if (this.trackBar_time.Focused)
+            {
+                double factor = Current._action.TotalDurationSeconds / TrackBarTimeRange;
+                double time_seconds = (sender as TrackBar).Value * factor;
+                Current._action.SetTime(time_seconds);
+                _world._action_one.ApplyAnimation(Current._armature
+                    , Current._action);
+                this.toolStripStatusLabel_AnimTime.Text = time_seconds.ToString();
+            }
         }
 
         private void checkBox_renderBones_CheckedChanged(object sender, EventArgs e)
@@ -266,13 +286,13 @@ namespace WinFormAnimation2D
 
         private void checkBox_triangulate_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.TriangulateMesh = this.checkBox_triangulate.Checked;
+            //Properties.Settings.Default.TriangulateMesh = this.checkBox_triangulate.Checked;
             // this._cmd.RunCmd("set TriangulateMesh " + this.checkBox_triangulate.Checked);
         }
 
         private void checkBox_moveCamera_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.MoveCamera = this.checkBox_moveCamera.Checked;
+            //Properties.Settings.Default.MoveCamera = this.checkBox_moveCamera.Checked;
             // this._cmd.RunCmd("set MoveCamera " + this.checkBox_triangulate.Checked);
         }
 
@@ -289,7 +309,7 @@ namespace WinFormAnimation2D
 
         private void checkBox_FixCameraPlane_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.FixCameraPlane = this.checkBox_FixCameraPlane.Checked;
+            //Properties.Settings.Default.FixCameraPlane = this.checkBox_FixCameraPlane.Checked;
         }
 
         private void MainForm_ResizeEnd(object sender, EventArgs e)
@@ -398,5 +418,29 @@ namespace WinFormAnimation2D
             _camera = new CameraDevice(opengl_camera_init);
         }
 
+        private void checkBox_playall_CheckedChanged(object sender, EventArgs e)
+        {
+            _cmd.playall(this.checkBox_playall.Checked);
+        }
+
+        private void checkBox_OpenGL_Material_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.OpenGLMaterial = this.checkBox_OpenGL_Material.Checked;
+        }
+
+        private void button_step_frame_Click(object sender, EventArgs e)
+        {
+            _cmd.stepall();
+        }
+
+        private void button_back_one_frame_Click(object sender, EventArgs e)
+        {
+            _cmd.bkf();
+        }
+
+        private void checkBox_OpenGLDrawAxis_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.OpenGLDrawAxis = this.checkBox_OpenGLDrawAxis.Checked;
+        }
     }
 }

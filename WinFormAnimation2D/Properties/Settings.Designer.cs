@@ -154,5 +154,17 @@ namespace WinFormAnimation2D.Properties {
                 this["OpenGLMaterial"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OpenGLDrawAxis {
+            get {
+                return ((bool)(this["OpenGLDrawAxis"]));
+            }
+            set {
+                this["OpenGLDrawAxis"] = value;
+            }
+        }
     }
 }
