@@ -216,26 +216,6 @@ namespace WinFormAnimation2D
             UpdateFrame();
 
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
-            GL.Normal3(0, 0, 1);
-            // Important points to remember:
-            // Set normals.
-            // Must be clock wise vertex draw order
-            // The x-axis is accross the screen, so the Z-axis triangle must have component along X: +-1
-            // since look at looks towards the center, we need to offset it a bit to see the Z axis.
-            int shift = 5;
-            GL.Begin(BeginMode.Triangles);
-            var ent_group = _world._enttity_one._extra_geometry.EntityBox;
-            // to near
-            GL.Color3(1.0f, 1.0f, 0.0f);
-            GL.Vertex3(shift,-shift,0);
-            GL.Vertex3(shift,shift,0);
-            GL.Vertex3(ent_group.OverallBox._zero_near);
-            // to far
-            GL.Color3(0.0f, 1.0f, 1.0f);
-            GL.Vertex3(shift,shift,0);
-            GL.Vertex3(shift,-shift,0);
-            GL.Vertex3(ent_group.OverallBox._zero_far);
-            GL.End();
             GL.Color3(Color.Green);
         }
 
