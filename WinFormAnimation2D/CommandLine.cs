@@ -24,7 +24,7 @@ namespace WinFormAnimation2D
         public Timer _timer;
         public MainForm _form;
         public Entity _current;
-        public ListBox _box_debug;
+        //public ListBox _box_debug;
 
         public EventHandler StepInterval;
         public EventHandler StepAll;
@@ -52,12 +52,12 @@ namespace WinFormAnimation2D
 
         public Dictionary<string, string> _debug = new Dictionary<string, string>();
 
-        public CommandLine(World world, ListBox debug, MainForm form)
+        public CommandLine(World world, MainForm form)
         {
             _world = world;
             _timer = new Timer();
             _timer.Interval = 50;
-            _box_debug = debug;
+            // _box_debug = debug;
             _form = form;
             StepInterval = delegate { this.stepf(); };
             StepAll = delegate { this.stepall(); };
@@ -66,11 +66,11 @@ namespace WinFormAnimation2D
 
         public void ShowDebug()
         {
-            this._box_debug.Items.Clear();
-            foreach (var v in _debug)
-            {
-                _box_debug.Items.Add(v.Key + " = " + v.Value);
-            }
+            // this._box_debug.Items.Clear();
+            // foreach (var v in _debug)
+            // {
+            //     _box_debug.Items.Add(v.Key + " = " + v.Value);
+            // }
         }
 
         // jump to time directly

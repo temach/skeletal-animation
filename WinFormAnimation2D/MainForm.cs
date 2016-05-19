@@ -60,7 +60,7 @@ namespace WinFormAnimation2D
         public MainForm()
         {
             InitializeComponent();
-            _kbd = new KeyboardInput(this.textBox_cli);
+            _kbd = new KeyboardInput();
             Matrix4 opengl_camera_init = Matrix4.LookAt(0, 50, 500, 0, 0, 0, 0, 1, 0).Inverted();
             _camera = new CameraDevice(opengl_camera_init);
             // manually register the mousewheel event handler.
@@ -74,7 +74,7 @@ namespace WinFormAnimation2D
             {
                 MessageBox.Show(ex.Message);
             }
-            _cmd = new CommandLine(_world, this.listBox_display, this);
+            _cmd = new CommandLine(_world, this);
             _cmd._current = _world._enttity_one;
             InitFillTreeFromWorldSingleEntity();
         }
@@ -113,7 +113,7 @@ namespace WinFormAnimation2D
             }
             else if (action == KeyboardAction.RunCommand)
             {
-                _cmd.RunCmd(this.textBox_cli.Text);
+                // _cmd.RunCmd(this.textBox_cli.Text);
                 return true;
             }
             else if (action == KeyboardAction.None)
@@ -246,7 +246,7 @@ namespace WinFormAnimation2D
         // cmdname arg1 arg2 arg3
         private void button_RunCli_Click(object sender, EventArgs e)
         {
-            this._cmd.RunCmd(this.textBox_cli.Text);
+            // this._cmd.RunCmd(this.textBox_cli.Text);
         }
 
         private void trackBar_AnimationTime_ValueChanged(object sender, EventArgs e)
@@ -441,6 +441,11 @@ namespace WinFormAnimation2D
         private void checkBox_OpenGLDrawAxis_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.OpenGLDrawAxis = this.checkBox_OpenGLDrawAxis.Checked;
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Курсовая работа \n \"Программа скелетная анимация\" \n Выполнил студент БПИ 151 \n Абрамов Артем Михайлович");
         }
     }
 }

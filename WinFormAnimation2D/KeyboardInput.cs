@@ -31,15 +31,15 @@ namespace WinFormAnimation2D
 
         public Keys RecentKey;
 
-        private TextBox _cmd_line_control;
+        // private TextBox _cmd_line_control;
         public bool CmdHasFocus
         {
-            get { return _cmd_line_control.Focused; }
+            get { return false; } // _cmd_line_control.Focused; }
         }
 
-        public KeyboardInput(TextBox control)
+        public KeyboardInput()
         {
-            _cmd_line_control = control;
+            // _cmd_line_control = control;
         }
 
         public KeyboardAction ProcessKeydown(Keys key)
