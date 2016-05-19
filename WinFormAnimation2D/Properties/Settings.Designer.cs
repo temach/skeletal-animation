@@ -166,5 +166,40 @@ namespace WinFormAnimation2D.Properties {
                 this["OpenGLDrawAxis"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection RecentFiles {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["RecentFiles"]));
+            }
+            set {
+                this["RecentFiles"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string RecentDirectory {
+            get {
+                return ((string)(this["RecentDirectory"]));
+            }
+            set {
+                this["RecentDirectory"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public int QtyOfRecentFiles {
+            get {
+                return ((int)(this["QtyOfRecentFiles"]));
+            }
+            set {
+                this["QtyOfRecentFiles"] = value;
+            }
+        }
     }
 }

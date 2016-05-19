@@ -133,6 +133,8 @@ namespace WinFormAnimation2D
         public Entity _enttity_one = null;
         public Renderer _renderer = null;
 
+        public bool HasScene = false;
+
         public SceneWrapper _cur_scene;
         public NodeInterpolator _action_one;
 
@@ -156,47 +158,53 @@ namespace WinFormAnimation2D
         public void LoadScene(byte[] filedata)
         {
             MemoryStream sphere = new MemoryStream(filedata);
-            _cur_scene = new SceneWrapper(BuildAssimpScene(sphere, "dae"));
+            var assimp_scene = BuildAssimpScene(sphere, "dae"); 
+            _cur_scene = new SceneWrapper(assimp_scene);
             _cur_scene.NameUnnamedMeshes();
             _cur_scene.NodeNamesAreUnique();
             // load other data
             _action_one = new NodeInterpolator(_cur_scene, _cur_scene._inner.Animations[0]);
             BoneNode armature = _cur_scene.BuildBoneNodes("Armature");
-            Node mesh = _cur_scene.FindNode("Cube");
+            string mesh_default_name = "Cube";
+            Node mesh = _cur_scene.FindNode(mesh_default_name);
             if (mesh == null)
             {
-                throw new Exception("Could not find node named 'Cube'");
+                throw new Exception("Could not find node named " + mesh_default_name);
             }
             ActionState state = new ActionState(_cur_scene._inner.Animations[0]);
             _enttity_one = new Entity(_cur_scene, mesh, armature, state);
             state._owner = _enttity_one;
             _action_one.ApplyAnimation(_enttity_one._armature, _enttity_one._action);
+            HasScene = true;
         }
 
         public Scene BuildAssimpScene(MemoryStream model_data, string format_hint)
         {
-            Scene cur_scene;
+            Scene tmp_scene;
             using (var importer = new AssimpContext())
             {
                 importer.SetConfig(new NormalSmoothingAngleConfig(66.0f));
                 LogStream logstream = new LogStream((msg, userData) => _logger.Log(msg));
                 logstream.Attach();
-                cur_scene = importer.ImportFileFromStream(model_data
+                tmp_scene = importer.ImportFileFromStream(model_data
                     , PostProcessPreset.TargetRealTimeFast
                     , format_hint);
                 // we could load the model into our own data structures here
             }
-            if (cur_scene == null || cur_scene.SceneFlags.HasFlag(SceneFlags.Incomplete))
+            if (tmp_scene == null || tmp_scene.SceneFlags.HasFlag(SceneFlags.Incomplete))
             {
                 throw new Exception("Failed to load scene");
             }
-            return cur_scene;
+            return tmp_scene;
         }
 
         // dt = delta time since last frame in milliseconds
         public void Update(double dt_millisecs)
         {
-            _enttity_one.UpdateModel(dt_millisecs);
+            if (HasScene)
+            {
+                _enttity_one.UpdateModel(dt_millisecs);
+            }
         }
 
         /// <summary>
@@ -204,11 +212,18 @@ namespace WinFormAnimation2D
         /// </summary>
         public void RenderWorld()
         {
-            _enttity_one.RenderModel(_renderer.GlobalDrawConf);
+            if (HasScene)
+            {
+                _enttity_one.RenderModel(_renderer.GlobalDrawConf);
+            }
         }
 
         public bool CheckMouseEntitySelect(MouseState mouse_state)
         {
+            if (! HasScene)
+            {
+                return false;
+            }
             var vec = new Vector2(mouse_state.InnerWorldPos.X, mouse_state.InnerWorldPos.Y);
             if (_enttity_one.ContainsPoint(vec))
             {

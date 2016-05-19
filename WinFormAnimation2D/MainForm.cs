@@ -26,6 +26,8 @@ namespace WinFormAnimation2D
 
         private World _world;
 
+        RecentFilesFolders Recent = new RecentFilesFolders();
+
         private Stopwatch _last_frame_sw = new Stopwatch();
         private double LastFrameDelay;
 
@@ -66,17 +68,21 @@ namespace WinFormAnimation2D
             // manually register the mousewheel event handler.
             this.glControl1.MouseWheel += new MouseEventHandler(this.glControl1_MouseWheel);
             _world = new World();
-            try
-            {
-                _world.LoadScene(Properties.Resources.ninja_simple_rig_1);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
             _cmd = new CommandLine(_world, this);
-            _cmd._current = _world._enttity_one;
-            InitFillTreeFromWorldSingleEntity();
+            Recent.CurrentlyOpenFilePathChanged
+                += (new_filepath) => this.Text = "Current file: " + new_filepath;
+            RefreshOpenRecentMenu();
+        }
+
+        /// <summary>
+        /// Get the items to show in open recent menu
+        /// </summary>
+        private void RefreshOpenRecentMenu()
+        {
+            // just replace old menu item wth a new one to refresh it
+            Recent.ReplaceOpenRecentMenu(this.recentToolStripMenuItem
+                , filepath => OpenFileCollada(filepath)
+            );
         }
 
         public void SetAnimTime(double val)
@@ -320,8 +326,6 @@ namespace WinFormAnimation2D
         private void glControl1_Load(object sender, EventArgs e)
         {
             _world._renderer.InitOpenGL();
-            // we have to wait for OpenGL to load before uploading VBOs to OpenGL server
-            _world._enttity_one.UploadMeshVBO(_world._cur_scene._inner.Materials);
             _world._renderer.ResizeOpenGL(this.glControl1.Width, this.glControl1.Height);
             LoadOpenGLDone = true;
             // register Idle event so we get regular callbacks for drawing
@@ -345,6 +349,11 @@ namespace WinFormAnimation2D
         {
             PrepareOpenGLRenderFrame();
             // render entity
+            if (! _world.HasScene)
+            {
+                glControl1.SwapBuffers();
+                return;
+            }
             _world.RenderWorld();
             // currently selected in tree view
             // Disable depth test because we want bones to always be visible
@@ -376,8 +385,8 @@ namespace WinFormAnimation2D
         {
             _mouse.RecordMouseClick(e);
             _mouse.RecordInnerWorldMouseClick(_camera.ConvertScreen2WorldCoordinates(_mouse.ClickPos));
-            this.toolStripStatusLabel_entity_position.Text = Current.GetTranslation.ToString();
-            this.treeView_entity_info.SelectedNode = this.treeView_entity_info.Nodes[Current.Name];
+            // this.toolStripStatusLabel_entity_position.Text = Current.GetTranslation.ToString();
+            // this.treeView_entity_info.SelectedNode = this.treeView_entity_info.Nodes[Current.Name];
         }
 
         private void glControl1_MouseMove(object sender, MouseEventArgs e)
@@ -447,5 +456,66 @@ namespace WinFormAnimation2D
         {
             MessageBox.Show("Курсовая работа \n \"Программа скелетная анимация\" \n Выполнил студент БПИ 151 \n Абрамов Артем Михайлович");
         }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Properties.Settings.Default.Save();
+        }
+
+        /// <summary>
+        /// Open file, read and verify data
+        /// </summary>
+        private void OpenFileCollada(string filepath)
+        {
+            try {
+                byte[] data = File.ReadAllBytes(filepath);
+                _world.LoadScene(data);
+                // we have to wait for OpenGL to load before uploading VBOs to OpenGL server
+                _world._enttity_one.UploadMeshVBO(_world._cur_scene._inner.Materials);
+                _cmd._current = _world._enttity_one;
+                InitFillTreeFromWorldSingleEntity();
+                Recent.CurrentlyOpenFilePath = filepath;
+                // add to open recent
+                Recent.AddRecentFile(filepath);
+                RefreshOpenRecentMenu();
+            }
+            catch (Exception ex) {
+                MessageBox.Show("Error: Could not open file from disk. ");
+                return;
+            }
+        }
+
+        /// <summary>
+        /// Show open file dialog to choose csv file.
+        /// </summary>
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string filepath = OpenFileDialogGetPath();
+            if (filepath == null) {
+                return;
+            }
+            Properties.Settings.Default.RecentDirectory = Path.GetDirectoryName(filepath);
+            OpenFileCollada(filepath);
+        }
+
+        /// <summary>
+        /// Opens a dialog to get path of file to open from te user.
+        /// </summary>
+        public string OpenFileDialogGetPath()
+        {
+            OpenFileDialog file_dialog = new OpenFileDialog
+            {
+                InitialDirectory = Properties.Settings.Default.RecentDirectory,
+                Filter = "Collada files (*.dae)|*.dae|All files (*.*)|*.*",
+                FilterIndex = 0,
+                RestoreDirectory = true,
+                Title = "Select a collada file...",
+            };
+            if (file_dialog.ShowDialog() == DialogResult.OK) {
+                return file_dialog.FileName;
+            }
+            return null;
+        }
+
     }
 }

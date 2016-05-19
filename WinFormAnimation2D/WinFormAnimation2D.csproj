@@ -79,6 +79,7 @@
     <Compile Include="MouseState.cs" />
     <Compile Include="OpentkMatrixExtensions.cs" />
     <Compile Include="OpentkVectorExtensions.cs" />
+    <Compile Include="RecentFileFolders.cs" />
     <Compile Include="Renderer.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
