@@ -1,6 +1,4 @@
-﻿/// @file
-/// 
-/// @mainpage
+﻿/// @mainpage
 /// This program is a demo of skeletal animation in C#.
 /// Feed it collada files with animation and bone data.
 /// 

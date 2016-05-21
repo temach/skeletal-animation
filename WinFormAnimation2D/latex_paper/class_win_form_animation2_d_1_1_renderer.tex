@@ -1,0 +1,26 @@
+\subsection{Класс Renderer}
+\label{class_win_form_animation2_d_1_1_renderer}\index{Renderer@{Renderer}}
+\subsubsection*{Открытые члены}
+\begin{DoxyCompactItemize}
+\item 
+void {\bf Draw\+Axis3D} ()
+\end{DoxyCompactItemize}
+
+
+\subsubsection{Подробное описание}
+Class to control open\+GL settings and do the actual drawing. All open\+GL calls will be here. 
+
+
+
+\subsubsection{Методы}
+\index{Win\+Form\+Animation2\+D\+::\+Renderer@{Win\+Form\+Animation2\+D\+::\+Renderer}!Draw\+Axis3D@{Draw\+Axis3D}}
+\index{Draw\+Axis3D@{Draw\+Axis3D}!Win\+Form\+Animation2\+D\+::\+Renderer@{Win\+Form\+Animation2\+D\+::\+Renderer}}
+\paragraph[{Draw\+Axis3\+D()}]{\setlength{\rightskip}{0pt plus 5cm}void Draw\+Axis3D (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{class_win_form_animation2_d_1_1_renderer_a78178415342aec84aff33ff22fd711eb}
+
+
+Important points to remember\+: Set normals. Must be clock wise vertex draw order The x-\/axis is accross the screen, so the Z-\/axis triangle must have component along X\+: +-\/1 since look at looks towards the center, we need to offset it a bit to see the Z axis. 
+
