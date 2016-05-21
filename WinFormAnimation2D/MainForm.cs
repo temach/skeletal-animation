@@ -62,6 +62,8 @@ namespace WinFormAnimation2D
         public MainForm()
         {
             InitializeComponent();
+            this.checkBox_OpenGLDrawAxis.Checked = Properties.Settings.Default.OpenGLDrawAxis;
+            this.toolStripStatusLabel_AnimTime.Text = "";
             _kbd = new KeyboardInput();
             Matrix4 opengl_camera_init = Matrix4.LookAt(0, 50, 500, 0, 0, 0, 0, 1, 0).Inverted();
             _camera = new CameraDevice(opengl_camera_init);
@@ -87,7 +89,7 @@ namespace WinFormAnimation2D
 
         public void SetAnimTime(double val)
         {
-            this.toolStripStatusLabel_AnimTime.Text = val.ToString();
+            this.toolStripStatusLabel_AnimTime.Text = val.ToString("F4");
             // if the user is not working with the track bar
             if (! this.trackBar_time.Focused)
             {
@@ -269,7 +271,7 @@ namespace WinFormAnimation2D
                 Current._action.SetTime(time_seconds);
                 _world._action_one.ApplyAnimation(Current._armature
                     , Current._action);
-                this.toolStripStatusLabel_AnimTime.Text = time_seconds.ToString();
+                this.toolStripStatusLabel_AnimTime.Text = time_seconds.ToString("F4");
             }
         }
 
@@ -454,11 +456,15 @@ namespace WinFormAnimation2D
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Курсовая работа \n \"Программа скелетная анимация\" \n Выполнил студент БПИ 151 \n Абрамов Артем Михайлович");
+            MessageBox.Show("Курсовая работа \n \"Программа скелетная анимация\" \n Выполнил студент БПИ 151 \n Абрамов Артем");
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            Properties.Settings.Default.RenderNormals = false;
+            Properties.Settings.Default.RenderAllBoneBounds = false;
+            Properties.Settings.Default.OpenGLMaterial = false;
+            Properties.Settings.Default.OpenGLDrawAxis = true;
             Properties.Settings.Default.Save();
         }
 
@@ -478,9 +484,12 @@ namespace WinFormAnimation2D
                 // add to open recent
                 Recent.AddRecentFile(filepath);
                 RefreshOpenRecentMenu();
+                this.treeView_entity_info.SelectedNode = null;
+                last_selected_node = null;
+                this.toolStripStatusLabel_AnimTime.Text = "";
             }
             catch (Exception ex) {
-                MessageBox.Show("Error: Could not open file from disk. ");
+                MessageBox.Show("Sorry, the file format is invalid.");
                 return;
             }
         }

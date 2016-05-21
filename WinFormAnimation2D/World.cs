@@ -193,7 +193,7 @@ namespace WinFormAnimation2D
             }
             if (tmp_scene == null || tmp_scene.SceneFlags.HasFlag(SceneFlags.Incomplete))
             {
-                throw new Exception("Failed to load scene");
+                throw new Exception("Bad file format. Could not read data.");
             }
             return tmp_scene;
         }
